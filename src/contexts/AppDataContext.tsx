@@ -52,19 +52,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
       id: `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
     
-    setProducts((prev) => {
-      // Limit to 5 products
-      const updatedProducts = [...prev, newProduct];
-      if (updatedProducts.length > 5) {
-        toast({
-          title: "Maximum products reached",
-          description: "You can only save up to 5 products",
-          variant: "destructive",
-        });
-        return prev;
-      }
-      return updatedProducts;
-    });
+    setProducts((prev) => [...prev, newProduct]);
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {

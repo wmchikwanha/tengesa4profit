@@ -8,7 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Product } from '@/lib/types';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Info } from 'lucide-react';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
@@ -24,7 +30,7 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
 
 const ProductForm: React.FC = () => {
   const { t } = useLanguage();
-  const { products, addProduct, getProduct, deleteProduct } = useAppData();
+  const { products, addProduct, getProduct, deleteProduct, updateProduct } = useAppData();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
@@ -34,7 +40,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'name' ? value : Number(value)
+      [name]: name === 'name' ? value : value === '' ? '' : Number(value)
     }));
   };
 
@@ -46,10 +52,10 @@ const ProductForm: React.FC = () => {
   };
 
   const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const sellingPrice = Number(e.target.value);
+    const value = e.target.value;
     setFormData(prev => ({
       ...prev,
-      sellingPrice
+      sellingPrice: value === '' ? 0 : Number(value)
     }));
   };
 
@@ -92,7 +98,11 @@ const ProductForm: React.FC = () => {
     
     if (activeProductId) {
       // Update existing product
-      // Note: We're not implementing this in our initial version
+      updateProduct(activeProductId, formData);
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
     } else {
       // Add new product
       addProduct(formData);
@@ -120,21 +130,37 @@ const ProductForm: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Products List */}
-      <Card>
+      <Card className="bg-white border border-blue-200">
         <CardContent className="pt-6">
-          <h2 className="text-xl font-bold mb-2">{t.productsList}</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-bold">{t.productsList}</h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                    <Info className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-blue-50 border border-blue-200">
+                  <p>{t.productInstructions}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          
           {products.length === 0 ? (
             <p className="text-trader-neutral">{t.noProducts}</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-48 overflow-y-auto">
               {products.map((product) => (
-                <div key={product.id} className="flex justify-between items-center bg-trader-secondaryBg/50 p-3 rounded-lg">
+                <div key={product.id} className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
                   <span className="font-medium">{product.name}</span>
                   <div className="flex gap-2">
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => handleSelectProduct(product.id)}
+                      className="border-blue-300 hover:bg-blue-100"
                     >
                       {t.loadProduct}
                     </Button>
@@ -162,7 +188,7 @@ const ProductForm: React.FC = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="trader-input"
+            className="trader-input border-blue-200 focus:border-blue-400"
             placeholder="e.g. Tomatoes"
           />
         </div>
@@ -176,7 +202,7 @@ const ProductForm: React.FC = () => {
             onChange={handleChange}
             type="number"
             min="1"
-            className="trader-input"
+            className="trader-input border-blue-200 focus:border-blue-400"
             placeholder="e.g. 100"
           />
         </div>
@@ -193,7 +219,7 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0.01"
             step="0.01"
-            className="trader-input"
+            className="trader-input border-blue-200 focus:border-blue-400"
             placeholder="e.g. 0.50"
           />
         </div>
@@ -210,7 +236,7 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0"
             step="0.01"
-            className="trader-input"
+            className="trader-input border-blue-200 focus:border-blue-400"
             placeholder="e.g. 5.00"
           />
         </div>
@@ -227,13 +253,13 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0"
             step="0.01"
-            className="trader-input"
+            className="trader-input border-blue-200 focus:border-blue-400"
             placeholder="e.g. 3.00"
           />
         </div>
         
         {/* Cost calculations display */}
-        <Card className="bg-trader-secondaryBg/50">
+        <Card className="bg-blue-50 border border-blue-200">
           <CardContent className="pt-6">
             <div className="mb-4">
               <p className="font-semibold">{t.costPerUnit}: {t.currency}{costPerUnit.toFixed(2)}</p>
@@ -267,7 +293,7 @@ const ProductForm: React.FC = () => {
                 type="number"
                 min="0.01"
                 step="0.01"
-                className="trader-input"
+                className="trader-input border-blue-200 focus:border-blue-400"
                 placeholder={calculatedSellingPrice.toFixed(2)}
               />
               <p className="text-sm text-trader-neutral mt-1">
@@ -282,16 +308,16 @@ const ProductForm: React.FC = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
             onClick={resetForm}
           >
             {t.clear}
           </Button>
           <Button
             type="submit"
-            className="trader-btn-primary w-full"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           >
-            {t.save}
+            {activeProductId ? t.update : t.save}
           </Button>
         </div>
       </form>

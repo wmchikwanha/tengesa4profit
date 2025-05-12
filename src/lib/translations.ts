@@ -18,6 +18,7 @@ export interface TranslationDictionary {
   desiredSellingPrice: string;
   save: string;
   clear: string;
+  update: string;
   
   // Daily tally
   quantitySold: string;
@@ -40,6 +41,10 @@ export interface TranslationDictionary {
   optional: string;
   calculate: string;
   currency: string;
+  
+  // Tooltips
+  productInstructions: string;
+  tallyInstructions: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -60,6 +65,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     desiredSellingPrice: 'Selling Price',
     save: 'Save',
     clear: 'Clear',
+    update: 'Update',
     
     // Daily tally
     quantitySold: 'Quantity Sold',
@@ -82,6 +88,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     optional: 'optional',
     calculate: 'Calculate',
     currency: '$',
+    
+    // Tooltips
+    productInstructions: 'Enter your product details here. You can add as many products as you want. After saving, you can select a product to edit it.',
+    tallyInstructions: 'Select a product, enter how many items you sold and/or discarded, then calculate your profits.',
   },
   sn: {
     // App title and navigation
@@ -100,6 +110,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     desiredSellingPrice: 'Mutengo wekutengesa',
     save: 'Chengetedza',
     clear: 'Dzima',
+    update: 'Chinja',
     
     // Daily tally
     quantitySold: 'Huwandu Hwakatengeswa',
@@ -122,6 +133,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     optional: 'hazvina kukosha',
     calculate: 'Verengera',
     currency: '$',
+    
+    // Tooltips
+    productInstructions: 'Isa zvigadzirwa zvako pano. Unogona kuwedzera zvigadzirwa zvakawanda. Kana wachengetedza, unokwanisa kusarudza chigadzirwa kuchinja.',
+    tallyInstructions: 'Sarudza chigadzirwa, isa huwandu hwawakatengesera uye/kana hwakarasika, wobva waverengera purofiti yako.',
   },
   nd: {
     // App title and navigation
@@ -140,6 +155,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     desiredSellingPrice: 'Intengo yokuthengisa',
     save: 'Londoloza',
     clear: 'Sula',
+    update: 'Buyekeza',
     
     // Daily tally
     quantitySold: 'Inani Elithengisiweyo',
@@ -162,5 +178,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     optional: 'okungeyisiyo impoqo',
     calculate: 'Bala',
     currency: '$',
+    
+    // Tooltips
+    productInstructions: 'Faka imininingwane yempahla yakho lapha. Ungafaka impahla eminingi ngokuthanda kwakho. Ngemva kokulondoloza, ungakhetha impahla ukuze uyilungise.',
+    tallyInstructions: 'Khetha impahla, faka inani othengise ngalo kanye/noma elilahlekile, bese ubala inzuzo yakho.',
   }
 };
