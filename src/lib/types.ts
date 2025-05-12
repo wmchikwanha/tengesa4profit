@@ -1,0 +1,52 @@
+
+export interface Product {
+  id: string;
+  name: string;
+  quantityBought: number;
+  buyingPrice: number;
+  transportCost: number;
+  stallFee: number;
+  markupPercentage: number;
+  sellingPrice: number;
+  quantitySold: number;
+  quantityDiscarded: number;
+}
+
+export interface ProductCalculation {
+  costPerUnit: number;
+  sellingPrice: number;
+  profitPerUnit: number;
+  stockRemaining: number;
+  dailyProfit: number;
+  lowMargin: boolean;
+}
+
+export const calculateProduct = (product: Product): ProductCalculation => {
+  const costPerUnit = 
+    product.buyingPrice + 
+    (product.transportCost / product.quantityBought) + 
+    (product.stallFee / product.quantityBought);
+  
+  let sellingPrice = product.sellingPrice;
+  if (!sellingPrice) {
+    // Calculate selling price based on markup
+    sellingPrice = costPerUnit * (1 + product.markupPercentage / 100);
+  }
+  
+  const profitPerUnit = sellingPrice - costPerUnit;
+  const stockRemaining = product.quantityBought - (product.quantitySold + product.quantityDiscarded);
+  const dailyProfit = product.quantitySold * profitPerUnit;
+  
+  // Determine if the profit margin is low (less than 5%)
+  const profitMargin = (profitPerUnit / sellingPrice) * 100;
+  const lowMargin = profitMargin < 5;
+  
+  return {
+    costPerUnit,
+    sellingPrice,
+    profitPerUnit,
+    stockRemaining,
+    dailyProfit,
+    lowMargin,
+  };
+};

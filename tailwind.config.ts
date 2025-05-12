@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for our app
+				trader: {
+					primary: '#9b87f5',
+					dark: '#1A1F2C',
+					background: '#FDE1D3',
+					secondaryBg: '#E5DEFF',
+					accent: '#F97316',
+					success: '#F2FCE2',
+					danger: '#ea384c',
+					neutral: '#8E9196'
 				}
 			},
 			borderRadius: {
