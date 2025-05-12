@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -118,10 +117,16 @@ const ProductForm: React.FC = () => {
     setActiveProductId(null);
   };
 
-  const costPerUnit = 
-    formData.buyingPrice + 
-    (formData.transportCost / (formData.quantityBought || 1)) + 
-    (formData.stallFee / (formData.quantityBought || 1));
+  const calculateCostPerUnit = (): number => {
+    const quantityBought = Number(formData.quantityBought) || 1; // Prevent division by zero
+    const buyingPrice = Number(formData.buyingPrice) || 0;
+    const transportCost = Number(formData.transportCost) || 0;
+    const stallFee = Number(formData.stallFee) || 0;
+    
+    return buyingPrice + (transportCost / quantityBought) + (stallFee / quantityBought);
+  };
+  
+  const costPerUnit = calculateCostPerUnit();
   
   // Calculate selling price based on markup if it's not manually set
   const calculatedSellingPrice = formData.sellingPrice || 
