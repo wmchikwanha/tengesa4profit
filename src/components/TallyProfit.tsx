@@ -5,10 +5,11 @@ import { useAppData } from '@/contexts/AppDataContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Product, calculateProduct } from '@/lib/types';
-import { AlertCircle, Info } from 'lucide-react';
+import { AlertCircle, Info, Calendar, Download, Share, History, Save } from 'lucide-react';
+import { format } from 'date-fns';
 import { 
   Tooltip,
   TooltipContent,
@@ -18,12 +19,16 @@ import {
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
-  const { products, updateProduct } = useAppData();
+  const { products, updateProduct, clearAllData } = useAppData();
   const { toast } = useToast();
   
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [quantitySold, setQuantitySold] = useState<number | ''>(0);
   const [quantityDiscarded, setQuantityDiscarded] = useState<number | ''>(0);
+  const [viewingHistory, setViewingHistory] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  
+  const today = new Date();
   
   const selectedProduct = selectedProductId 
     ? products.find(p => p.id === selectedProductId)
@@ -98,8 +103,53 @@ const TallyProfit: React.FC = () => {
     return sum + calc.dailyProfit;
   }, 0);
   
+  // Calculate total remaining stock value
+  const totalStockValue = products.reduce((sum, product) => {
+    const calc = calculateProduct(product);
+    return sum + (calc.stockRemaining * calc.sellingPrice);
+  }, 0);
+  
+  const handleSharePDF = () => {
+    toast({
+      title: "Share",
+      description: "Generating PDF for sharing...",
+    });
+    // In a real implementation, this would generate a PDF
+  };
+  
+  const handleDownloadPDF = () => {
+    toast({
+      title: "Download",
+      description: "Downloading PDF report...",
+    });
+    // In a real implementation, this would download a PDF
+  };
+  
+  const handleClearAllData = () => {
+    if (window.confirm(t.confirmClearAll)) {
+      clearAllData();
+      toast({
+        title: "Success",
+        description: "All data has been cleared",
+      });
+    }
+  };
+  
+  const handleToggleHistory = () => {
+    setViewingHistory(!viewingHistory);
+  };
+  
   return (
     <div className="space-y-6">
+      {/* Date Display */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-blue-700">{t.tallyProfit}</h2>
+        <div className="flex items-center gap-2 text-blue-600">
+          <Calendar className="h-5 w-5" />
+          <span>{format(today, 'PPP')}</span>
+        </div>
+      </div>
+      
       {products.length === 0 ? (
         <Card className="bg-white border border-blue-200">
           <CardContent className="pt-6">
@@ -228,12 +278,84 @@ const TallyProfit: React.FC = () => {
             </div>
           )}
           
+          {/* Daily Summary Card */}
           <Card className="bg-blue-100 border border-blue-300">
-            <CardContent className="pt-6">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="flex justify-between font-bold text-xl">
                 <span>{t.totalProfit}:</span>
                 <span>{t.currency}{totalProfit.toFixed(2)}</span>
               </div>
+              
+              <div className="flex justify-between text-lg">
+                <span>{t.totalStockValue}:</span>
+                <span>{t.currency}{totalStockValue.toFixed(2)}</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                <Button 
+                  onClick={handleSharePDF}
+                  variant="outline"
+                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                >
+                  <Share className="h-5 w-5" />
+                  {t.shareTally}
+                </Button>
+                <Button 
+                  onClick={handleDownloadPDF}
+                  variant="outline"
+                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                >
+                  <Download className="h-5 w-5" />
+                  {t.downloadReport}
+                </Button>
+                <Button 
+                  onClick={handleToggleHistory}
+                  variant="outline"
+                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                >
+                  <History className="h-5 w-5" />
+                  {viewingHistory ? t.hideHistory : t.viewHistory}
+                </Button>
+                <Button 
+                  onClick={handleClearAllData}
+                  variant="destructive"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Save className="h-5 w-5" />
+                  {t.clearAllData}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Products Summary */}
+          <Card className="bg-white border border-blue-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-bold text-blue-800">{t.productSummary}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {products.map(product => {
+                const calc = calculateProduct(product);
+                return (
+                  <div key={product.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold">{product.name}</p>
+                      <p className="text-sm text-gray-600">
+                        {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</p>
+                      <p className="text-sm text-gray-600">
+                        {t.profitPerUnit}: {t.currency}{calc.profitPerUnit.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         </>

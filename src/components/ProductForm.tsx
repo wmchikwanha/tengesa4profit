@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -7,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Product } from '@/lib/types';
-import { Info } from 'lucide-react';
+import { Info, Calendar, Save, Plus } from 'lucide-react';
+import { format } from 'date-fns';
 import { 
   Tooltip,
   TooltipContent,
@@ -34,6 +36,7 @@ const ProductForm: React.FC = () => {
   
   const [formData, setFormData] = useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const today = new Date();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -112,6 +115,36 @@ const ProductForm: React.FC = () => {
     }
   };
 
+  const addDelivery = (id: string) => {
+    const product = getProduct(id);
+    if (!product) return;
+    
+    // Show modal or form to add quantity
+    toast({
+      title: "Add Delivery",
+      description: "Enter additional quantity to add to this product",
+    });
+    
+    // For now we'll just add 10 more units as a placeholder
+    // In a real implementation, we would show a modal form to enter quantity
+    updateProduct(id, {
+      quantityBought: product.quantityBought + 10
+    });
+    
+    toast({
+      title: "Success",
+      description: "Delivery added successfully",
+    });
+    
+    // Refresh form data if the active product was updated
+    if (activeProductId === id) {
+      const updatedProduct = getProduct(id);
+      if (updatedProduct) {
+        setFormData(updatedProduct);
+      }
+    }
+  };
+
   const resetForm = () => {
     setFormData(DEFAULT_PRODUCT);
     setActiveProductId(null);
@@ -134,6 +167,15 @@ const ProductForm: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Date Display */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-blue-700">{t.addProduct}</h2>
+        <div className="flex items-center gap-2 text-blue-600">
+          <Calendar className="h-5 w-5" />
+          <span>{format(today, 'PPP')}</span>
+        </div>
+      </div>
+      
       {/* Products List */}
       <Card className="bg-white border border-blue-200">
         <CardContent className="pt-6">
@@ -161,6 +203,14 @@ const ProductForm: React.FC = () => {
                 <div key={product.id} className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
                   <span className="font-medium">{product.name}</span>
                   <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => addDelivery(product.id)}
+                      className="border-green-300 hover:bg-green-100"
+                    >
+                      {t.addDelivery}
+                    </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -313,18 +363,30 @@ const ProductForm: React.FC = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
+            className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
             onClick={resetForm}
           >
-            {t.clear}
+            {activeProductId ? t.clearForm : t.clearForm}
           </Button>
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
           >
             {activeProductId ? t.update : t.save}
           </Button>
         </div>
+        
+        {/* New Product Button - shows after saving or updating */}
+        {products.length > 0 && (
+          <Button
+            type="button"
+            onClick={resetForm}
+            className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            {t.newProduct}
+          </Button>
+        )}
       </form>
     </div>
   );

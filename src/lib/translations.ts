@@ -19,6 +19,8 @@ export interface TranslationDictionary {
   save: string;
   clear: string;
   update: string;
+  clearForm: string;
+  newProduct: string;
   
   // Daily tally
   quantitySold: string;
@@ -36,6 +38,7 @@ export interface TranslationDictionary {
   noProducts: string;
   loadProduct: string;
   deleteProduct: string;
+  addDelivery: string;
 
   // Form helpers
   optional: string;
@@ -45,6 +48,19 @@ export interface TranslationDictionary {
   // Tooltips
   productInstructions: string;
   tallyInstructions: string;
+  
+  // New features
+  dailySummary: string;
+  productSummary: string;
+  totalStockValue: string;
+  shareTally: string;
+  downloadReport: string;
+  viewHistory: string;
+  hideHistory: string;
+  clearAllData: string;
+  confirmClearAll: string;
+  sold: string;
+  remaining: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -66,6 +82,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     save: 'Save',
     clear: 'Clear',
     update: 'Update',
+    clearForm: 'Clear Form',
+    newProduct: 'Add New Product',
     
     // Daily tally
     quantitySold: 'Quantity Sold',
@@ -83,6 +101,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     noProducts: 'No products yet. Add some!',
     loadProduct: 'Select',
     deleteProduct: 'Delete',
+    addDelivery: 'Add Stock',
 
     // Form helpers
     optional: 'optional',
@@ -92,6 +111,19 @@ export const translations: Record<Language, TranslationDictionary> = {
     // Tooltips
     productInstructions: 'Enter your product details here. You can add as many products as you want. After saving, you can select a product to edit it.',
     tallyInstructions: 'Select a product, enter how many items you sold and/or discarded, then calculate your profits.',
+    
+    // New features
+    dailySummary: 'Daily Summary',
+    productSummary: 'Product Sales Summary',
+    totalStockValue: 'Total Stock Value',
+    shareTally: 'Share Report',
+    downloadReport: 'Download PDF',
+    viewHistory: 'View History',
+    hideHistory: 'Hide History',
+    clearAllData: 'End Day & Clear All',
+    confirmClearAll: 'Are you sure you want to clear all data? This cannot be undone!',
+    sold: 'Sold',
+    remaining: 'Left',
   },
   sn: {
     // App title and navigation
@@ -111,6 +143,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     save: 'Chengetedza',
     clear: 'Dzima',
     update: 'Chinja',
+    clearForm: 'Dzima Fomu',
+    newProduct: 'Wedzera Chimwe Chigadzirwa',
     
     // Daily tally
     quantitySold: 'Huwandu Hwakatengeswa',
@@ -128,6 +162,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     noProducts: 'Hapana zvigadzirwa. Wedzera zvimwe!',
     loadProduct: 'Sarudza',
     deleteProduct: 'Dzima',
+    addDelivery: 'Wedzera Stock',
 
     // Form helpers
     optional: 'hazvina kukosha',
@@ -137,6 +172,19 @@ export const translations: Record<Language, TranslationDictionary> = {
     // Tooltips
     productInstructions: 'Isa zvigadzirwa zvako pano. Unogona kuwedzera zvigadzirwa zvakawanda. Kana wachengetedza, unokwanisa kusarudza chigadzirwa kuchinja.',
     tallyInstructions: 'Sarudza chigadzirwa, isa huwandu hwawakatengesera uye/kana hwakarasika, wobva waverengera purofiti yako.',
+    
+    // New features
+    dailySummary: 'Zvebasa Rezuva',
+    productSummary: 'Zvigadzirwa Zvatengeswa',
+    totalStockValue: 'Mari yeZvigadzirwa Zvose',
+    shareTally: 'Tumira Ripoti',
+    downloadReport: 'Dhaunirodha PDF',
+    viewHistory: 'Tarira Zvakaitwa',
+    hideHistory: 'Viga Zvakaitwa',
+    clearAllData: 'Pedza Zuva & Dzima Zvose',
+    confirmClearAll: 'Chokwadi unoda kudzima zvose? Izvi hazvigoni kudzoswa!',
+    sold: 'Zvatengeswa',
+    remaining: 'Zvakasara',
   },
   nd: {
     // App title and navigation
@@ -156,6 +204,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     save: 'Londoloza',
     clear: 'Sula',
     update: 'Buyekeza',
+    clearForm: 'Sula Ifomu',
+    newProduct: 'Enga Impahla Entsha',
     
     // Daily tally
     quantitySold: 'Inani Elithengisiweyo',
@@ -173,6 +223,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     noProducts: 'Akukho mpahla. Engeza ezinye!',
     loadProduct: 'Khetha',
     deleteProduct: 'Sula',
+    addDelivery: 'Engeza Stock',
 
     // Form helpers
     optional: 'okungeyisiyo impoqo',
@@ -182,5 +233,18 @@ export const translations: Record<Language, TranslationDictionary> = {
     // Tooltips
     productInstructions: 'Faka imininingwane yempahla yakho lapha. Ungafaka impahla eminingi ngokuthanda kwakho. Ngemva kokulondoloza, ungakhetha impahla ukuze uyilungise.',
     tallyInstructions: 'Khetha impahla, faka inani othengise ngalo kanye/noma elilahlekile, bese ubala inzuzo yakho.',
+    
+    // New features
+    dailySummary: 'Isifinyezo Sosuku',
+    productSummary: 'Isifinyezo Sempahla Ethengisiwe',
+    totalStockValue: 'Intengo Yempahla Yonke',
+    shareTally: 'Thumela Umbiko',
+    downloadReport: 'Landa iPDF',
+    viewHistory: 'Bona Umlando',
+    hideHistory: 'Fihla Umlando',
+    clearAllData: 'Qeda Usuku & Sula Konke',
+    confirmClearAll: 'Uqinisekile ukuthi ufuna ukusula konke? Lokhu ngeke kuphindwe futhi!',
+    sold: 'Ethengisiwe',
+    remaining: 'Esele',
   }
 };

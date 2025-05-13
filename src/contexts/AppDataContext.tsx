@@ -9,6 +9,7 @@ interface AppDataContextType {
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
+  clearAllData: () => void;
 }
 
 const AppDataContext = createContext<AppDataContextType>({
@@ -17,6 +18,7 @@ const AppDataContext = createContext<AppDataContextType>({
   updateProduct: () => {},
   deleteProduct: () => {},
   getProduct: () => undefined,
+  clearAllData: () => {},
 });
 
 export const useAppData = () => useContext(AppDataContext);
@@ -69,6 +71,10 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     return products.find((p) => p.id === id);
   };
 
+  const clearAllData = () => {
+    setProducts([]);
+  };
+
   return (
     <AppDataContext.Provider
       value={{
@@ -77,6 +83,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
         updateProduct,
         deleteProduct,
         getProduct,
+        clearAllData,
       }}
     >
       {children}
