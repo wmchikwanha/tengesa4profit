@@ -63,13 +63,24 @@ export const sharePDF = async (elementId: string, fileName: string = 'report.pdf
     const pdfBlob = await generatePDF(elementId, fileName);
     
     // Check if Web Share API is supported
-    if (navigator.share) {
+    if (navigator.share && navigator.canShare) {
       const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
-      await navigator.share({
-        title: 'Trader Profit Report',
-        text: 'Here is your daily profit report',
-        files: [file]
-      });
+      
+      // Check if the browser can share this file
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'Trader Profit Report',
+          text: 'Here is your daily profit report',
+          files: [file]
+        });
+      } else {
+        // Fallback if file sharing is not supported
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(pdfBlob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
     } else {
       // Fallback if Web Share API is not supported
       const link = document.createElement('a');
