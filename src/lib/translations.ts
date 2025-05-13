@@ -13,7 +13,7 @@ export interface TranslationDictionary {
   quantityBought: string;
   buyingPrice: string;
   transportCost: string;
-  stallFee: string;
+  otherFees: string;
   markupPercentage: string;
   desiredSellingPrice: string;
   save: string;
@@ -39,6 +39,10 @@ export interface TranslationDictionary {
   loadProduct: string;
   deleteProduct: string;
   addDelivery: string;
+  addDeliveryPrompt: string;
+  enterQuantity: string;
+  cancel: string;
+  add: string;
 
   // Form helpers
   optional: string;
@@ -61,12 +65,14 @@ export interface TranslationDictionary {
   confirmClearAll: string;
   sold: string;
   remaining: string;
+  history: string;
+  noHistory: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
   en: {
     // App title and navigation
-    appTitle: 'Trader Profit Buddy',
+    appTitle: 'Zim Market Trader',
     addProduct: 'Add Product',
     tallyProfit: 'Tally & Profit',
     language: 'Language',
@@ -76,7 +82,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     quantityBought: 'Quantity Bought',
     buyingPrice: 'Buying Price (per unit)',
     transportCost: 'Transport Cost',
-    stallFee: 'Stall Fee',
+    otherFees: 'Other Fees (stall, parking, rates, etc.)',
     markupPercentage: 'Markup %',
     desiredSellingPrice: 'Selling Price',
     save: 'Save',
@@ -102,6 +108,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     loadProduct: 'Select',
     deleteProduct: 'Delete',
     addDelivery: 'Add Stock',
+    addDeliveryPrompt: 'Add Stock',
+    enterQuantity: 'Enter quantity to add:',
+    cancel: 'Cancel',
+    add: 'Add',
 
     // Form helpers
     optional: 'optional',
@@ -124,10 +134,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmClearAll: 'Are you sure you want to clear all data? This cannot be undone!',
     sold: 'Sold',
     remaining: 'Left',
+    history: 'Sales History',
+    noHistory: 'No history available',
   },
   sn: {
     // App title and navigation
-    appTitle: 'Shamwari yeMutengo',
+    appTitle: 'Zim Market Trader',
     addProduct: 'Wedzera Zvigadzirwa',
     tallyProfit: 'Verenga & Purofiti',
     language: 'Mutauro',
@@ -137,7 +149,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     quantityBought: 'Huwandu Hwakatenga',
     buyingPrice: 'Mutengo wekutenga (pahuwandu)',
     transportCost: 'Mari yeTransport',
-    stallFee: 'Mari yeStall',
+    otherFees: 'Dzimwe Mari (stall, parking, rates, etc.)',
     markupPercentage: 'Markup %',
     desiredSellingPrice: 'Mutengo wekutengesa',
     save: 'Chengetedza',
@@ -163,6 +175,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     loadProduct: 'Sarudza',
     deleteProduct: 'Dzima',
     addDelivery: 'Wedzera Stock',
+    addDeliveryPrompt: 'Wedzera Stock',
+    enterQuantity: 'Isa huwandu hwekuwedzera:',
+    cancel: 'Kanzura',
+    add: 'Wedzera',
 
     // Form helpers
     optional: 'hazvina kukosha',
@@ -185,10 +201,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmClearAll: 'Chokwadi unoda kudzima zvose? Izvi hazvigoni kudzoswa!',
     sold: 'Zvatengeswa',
     remaining: 'Zvakasara',
+    history: 'Mbiri yekutengesa',
+    noHistory: 'Hapana mbiri iripo',
   },
   nd: {
     // App title and navigation
-    appTitle: 'Umngane Wentengo',
+    appTitle: 'Zim Market Trader',
     addProduct: 'Faka Impahla',
     tallyProfit: 'Bala & Inzuzo',
     language: 'Ulimi',
@@ -198,7 +216,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     quantityBought: 'Inani Elithengiweyo',
     buyingPrice: 'Intengo yokuThenga (ngenani)',
     transportCost: 'Imali Yokuhamba',
-    stallFee: 'Imali Yendawo',
+    otherFees: 'Ezinye Izindleko (stall, parking, rates, etc.)',
     markupPercentage: 'Markup %',
     desiredSellingPrice: 'Intengo yokuthengisa',
     save: 'Londoloza',
@@ -224,6 +242,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     loadProduct: 'Khetha',
     deleteProduct: 'Sula',
     addDelivery: 'Engeza Stock',
+    addDeliveryPrompt: 'Engeza Stock',
+    enterQuantity: 'Faka inani ongalengeza:',
+    cancel: 'Khansela',
+    add: 'Engeza',
 
     // Form helpers
     optional: 'okungeyisiyo impoqo',
@@ -246,5 +268,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     confirmClearAll: 'Uqinisekile ukuthi ufuna ukusula konke? Lokhu ngeke kuphindwe futhi!',
     sold: 'Ethengisiwe',
     remaining: 'Esele',
+    history: 'Umlando wokuthengisa',
+    noHistory: 'Awukho umlando otholakalayo',
   }
 };

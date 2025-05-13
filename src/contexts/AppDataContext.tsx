@@ -3,22 +3,32 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Product } from '@/lib/types';
 import { useToast } from '@/components/ui/use-toast';
 
+export interface SalesRecord {
+  date: string;
+  products: Product[];
+  totalProfit: number;
+}
+
 interface AppDataContextType {
   products: Product[];
+  salesHistory: SalesRecord[];
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
   clearAllData: () => void;
+  addToHistory: () => void;
 }
 
 const AppDataContext = createContext<AppDataContextType>({
   products: [],
+  salesHistory: [],
   addProduct: () => {},
   updateProduct: () => {},
   deleteProduct: () => {},
   getProduct: () => undefined,
   clearAllData: () => {},
+  addToHistory: () => {},
 });
 
 export const useAppData = () => useContext(AppDataContext);
@@ -35,6 +45,16 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   });
 
+  const [salesHistory, setSalesHistory] = useState<SalesRecord[]>(() => {
+    try {
+      const savedHistory = localStorage.getItem('salesHistory');
+      return savedHistory ? JSON.parse(savedHistory) : [];
+    } catch (error) {
+      console.error('Failed to load sales history from localStorage:', error);
+      return [];
+    }
+  });
+
   useEffect(() => {
     try {
       localStorage.setItem('products', JSON.stringify(products));
@@ -47,6 +67,19 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
     }
   }, [products, toast]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+    } catch (error) {
+      console.error('Failed to save sales history to localStorage:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save your history data",
+        variant: "destructive",
+      });
+    }
+  }, [salesHistory, toast]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
@@ -71,7 +104,41 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     return products.find((p) => p.id === id);
   };
 
+  const addToHistory = () => {
+    if (products.length === 0) return;
+    
+    const todayFormatted = new Date().toISOString().split('T')[0];
+    const todayTotalProfit = products.reduce((sum, product) => {
+      const profit = product.quantitySold * 
+        (product.sellingPrice - 
+         (product.buyingPrice + 
+          (product.transportCost / product.quantityBought) + 
+          (product.stallFee / product.quantityBought)));
+      return sum + profit;
+    }, 0);
+
+    // Create a deep copy of products to avoid reference issues
+    const productsCopy = JSON.parse(JSON.stringify(products));
+    
+    const newRecord: SalesRecord = {
+      date: todayFormatted,
+      products: productsCopy,
+      totalProfit: todayTotalProfit
+    };
+    
+    setSalesHistory(prev => [...prev, newRecord]);
+    
+    toast({
+      title: "History Saved",
+      description: "Today's sales have been added to history",
+    });
+  };
+
   const clearAllData = () => {
+    // Add current state to history before clearing
+    addToHistory();
+    
+    // Clear current products
     setProducts([]);
   };
 
@@ -79,11 +146,13 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     <AppDataContext.Provider
       value={{
         products,
+        salesHistory,
         addProduct,
         updateProduct,
         deleteProduct,
         getProduct,
         clearAllData,
+        addToHistory,
       }}
     >
       {children}

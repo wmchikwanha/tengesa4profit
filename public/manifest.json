@@ -1,7 +1,7 @@
 
 {
-  "name": "Trader Profit Buddy",
-  "short_name": "Profit Buddy",
+  "name": "Zim Market Trader",
+  "short_name": "Market Trader",
   "description": "A simple profit calculator for Zimbabwean traders",
   "start_url": "/",
   "display": "standalone",

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -8,18 +9,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Product, calculateProduct } from '@/lib/types';
 import { AlertCircle, Info, Calendar, Download, Share, History, Save } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { downloadPDF, sharePDF } from '@/utils/pdfUtils';
 import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
-  const { products, updateProduct, clearAllData } = useAppData();
+  const { products, salesHistory, updateProduct, clearAllData } = useAppData();
   const { toast } = useToast();
   
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
@@ -117,17 +117,35 @@ const TallyProfit: React.FC = () => {
         description: "Generating PDF for sharing...",
       });
       
-      await sharePDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+      if (reportRef.current) {
+        await sharePDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+      } else {
+        throw new Error("Report content not found");
+      }
+    } catch (error) {
+      console.error("Share PDF error:", error);
+      
+      // Even if there's an error, try to use the Web Share API directly if available
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Zim Market Trader - Daily Report',
+            text: `Daily sales report for ${format(today, 'PPP')}. Total profit: ${t.currency}${totalProfit.toFixed(2)}`,
+          });
+          
+          toast({
+            title: "Success",
+            description: "Shared successfully",
+          });
+          return;
+        } catch (shareError) {
+          console.error("Share API error:", shareError);
+        }
+      }
       
       toast({
-        title: "Success",
-        description: "Report shared successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Could not generate or share the report",
-        variant: "destructive",
+        title: "Warning",
+        description: "Could not generate report, but sharing options will appear",
       });
     }
   };
@@ -139,13 +157,18 @@ const TallyProfit: React.FC = () => {
         description: "Downloading PDF report...",
       });
       
-      await downloadPDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
-      
-      toast({
-        title: "Success",
-        description: "Report downloaded successfully",
-      });
+      if (reportRef.current) {
+        await downloadPDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+        
+        toast({
+          title: "Success",
+          description: "Report downloaded successfully",
+        });
+      } else {
+        throw new Error("Report content not found");
+      }
     } catch (error) {
+      console.error("Download PDF error:", error);
       toast({
         title: "Error",
         description: "Could not generate or download the report",
@@ -193,18 +216,16 @@ const TallyProfit: React.FC = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <label htmlFor="product-select" className="trader-label">{t.productName}</label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
-                          <Info className="h-5 w-5" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-blue-50 border border-blue-200">
-                        <p>{t.tallyInstructions}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                        <Info className="h-5 w-5" />
+                      </Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="bg-blue-50 border border-blue-200">
+                      <p>{t.tallyInstructions}</p>
+                    </HoverCardContent>
+                  </HoverCard>
                 </div>
                 
                 <Select value={selectedProductId || ''} onValueChange={handleSelectProduct}>
@@ -361,6 +382,47 @@ const TallyProfit: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* History Section */}
+            {viewingHistory && (
+              <Card className="bg-white border border-blue-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-bold text-blue-800">{t.history}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {salesHistory.length === 0 ? (
+                    <p className="text-gray-500">{t.noHistory}</p>
+                  ) : (
+                    salesHistory.map((record, index) => (
+                      <div key={index} className="border border-blue-100 rounded-lg p-4 bg-blue-50">
+                        <div className="flex justify-between items-center mb-3">
+                          <h3 className="font-bold">
+                            {format(parseISO(record.date), 'PPP')}
+                          </h3>
+                          <span className="font-bold text-blue-700">
+                            {t.currency}{record.totalProfit.toFixed(2)}
+                          </span>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          {record.products.map(product => {
+                            const calc = calculateProduct(product);
+                            return (
+                              <div key={product.id} className="flex justify-between text-sm">
+                                <span>{product.name}</span>
+                                <span>
+                                  {t.sold}: {product.quantitySold} | {t.currency}{calc.dailyProfit.toFixed(2)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            )}
             
             {/* Products Summary */}
             <Card className="bg-white border border-blue-200">

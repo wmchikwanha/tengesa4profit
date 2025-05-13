@@ -6,7 +6,17 @@ import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Card, CardContent } from '@/components/ui/card';
+import { 
+  Card, 
+  CardContent 
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Product } from '@/lib/types';
 import { Info, Calendar, Save, Plus } from 'lucide-react';
 import { format } from 'date-fns';
@@ -36,6 +46,9 @@ const ProductForm: React.FC = () => {
   
   const [formData, setFormData] = useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const [isAddStockDialogOpen, setIsAddStockDialogOpen] = useState(false);
+  const [stockQuantityToAdd, setStockQuantityToAdd] = useState<string>('');
+  const [targetProductId, setTargetProductId] = useState<string | null>(null);
   const today = new Date();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,34 +128,40 @@ const ProductForm: React.FC = () => {
     }
   };
 
-  const addDelivery = (id: string) => {
-    const product = getProduct(id);
+  const openAddStockDialog = (id: string) => {
+    setTargetProductId(id);
+    setStockQuantityToAdd('');
+    setIsAddStockDialogOpen(true);
+  };
+
+  const handleAddStock = () => {
+    const product = getProduct(targetProductId!);
     if (!product) return;
     
-    // Show modal or form to add quantity
-    toast({
-      title: "Add Delivery",
-      description: "Enter additional quantity to add to this product",
-    });
+    const quantityToAdd = Number(stockQuantityToAdd);
+    if (isNaN(quantityToAdd) || quantityToAdd <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid quantity",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    // For now we'll just add 10 more units as a placeholder
-    // In a real implementation, we would show a modal form to enter quantity
-    updateProduct(id, {
-      quantityBought: product.quantityBought + 10
+    updateProduct(targetProductId!, {
+      quantityBought: product.quantityBought + quantityToAdd
     });
     
     toast({
       title: "Success",
-      description: "Delivery added successfully",
+      description: "Stock added successfully",
     });
     
-    // Refresh form data if the active product was updated
-    if (activeProductId === id) {
-      const updatedProduct = getProduct(id);
-      if (updatedProduct) {
-        setFormData(updatedProduct);
-      }
-    }
+    // Close the dialog
+    setIsAddStockDialogOpen(false);
+    
+    // Select the product we just added stock to
+    handleSelectProduct(targetProductId!);
   };
 
   const resetForm = () => {
@@ -206,7 +225,7 @@ const ProductForm: React.FC = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => addDelivery(product.id)}
+                      onClick={() => openAddStockDialog(product.id)}
                       className="border-green-300 hover:bg-green-100"
                     >
                       {t.addDelivery}
@@ -298,7 +317,7 @@ const ProductForm: React.FC = () => {
         
         <div>
           <label htmlFor="stallFee" className="trader-label">
-            {t.stallFee} ({t.currency}) <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.otherFees} ({t.currency}) <span className="text-sm text-trader-neutral">({t.optional})</span>
           </label>
           <Input
             id="stallFee"
@@ -388,6 +407,46 @@ const ProductForm: React.FC = () => {
           </Button>
         )}
       </form>
+
+      {/* Add Stock Dialog */}
+      <Dialog open={isAddStockDialogOpen} onOpenChange={setIsAddStockDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t.addDeliveryPrompt}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="stockQuantity" className="trader-label">
+                {t.enterQuantity}
+              </label>
+              <Input
+                id="stockQuantity"
+                value={stockQuantityToAdd}
+                onChange={(e) => setStockQuantityToAdd(e.target.value)}
+                type="number"
+                min="1"
+                className="trader-input border-blue-200 focus:border-blue-400"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex justify-between sm:justify-between">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setIsAddStockDialogOpen(false)}
+            >
+              {t.cancel}
+            </Button>
+            <Button 
+              type="button" 
+              className="bg-green-600 hover:bg-green-700"
+              onClick={handleAddStock}
+            >
+              {t.add}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
