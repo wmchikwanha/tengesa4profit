@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -10,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Product, calculateProduct } from '@/lib/types';
 import { AlertCircle, Info, Calendar, Download, Share, History, Save } from 'lucide-react';
 import { format } from 'date-fns';
+import { downloadPDF, sharePDF } from '@/utils/pdfUtils';
 import { 
   Tooltip,
   TooltipContent,
@@ -27,6 +27,7 @@ const TallyProfit: React.FC = () => {
   const [quantityDiscarded, setQuantityDiscarded] = useState<number | ''>(0);
   const [viewingHistory, setViewingHistory] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const reportRef = useRef<HTMLDivElement>(null);
   
   const today = new Date();
   
@@ -109,20 +110,48 @@ const TallyProfit: React.FC = () => {
     return sum + (calc.stockRemaining * calc.sellingPrice);
   }, 0);
   
-  const handleSharePDF = () => {
-    toast({
-      title: "Share",
-      description: "Generating PDF for sharing...",
-    });
-    // In a real implementation, this would generate a PDF
+  const handleSharePDF = async () => {
+    try {
+      toast({
+        title: "Share",
+        description: "Generating PDF for sharing...",
+      });
+      
+      await sharePDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+      
+      toast({
+        title: "Success",
+        description: "Report shared successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not generate or share the report",
+        variant: "destructive",
+      });
+    }
   };
   
-  const handleDownloadPDF = () => {
-    toast({
-      title: "Download",
-      description: "Downloading PDF report...",
-    });
-    // In a real implementation, this would download a PDF
+  const handleDownloadPDF = async () => {
+    try {
+      toast({
+        title: "Download",
+        description: "Downloading PDF report...",
+      });
+      
+      await downloadPDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+      
+      toast({
+        title: "Success",
+        description: "Report downloaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not generate or download the report",
+        variant: "destructive",
+      });
+    }
   };
   
   const handleClearAllData = () => {
@@ -150,216 +179,219 @@ const TallyProfit: React.FC = () => {
         </div>
       </div>
       
-      {products.length === 0 ? (
-        <Card className="bg-white border border-blue-200">
-          <CardContent className="pt-6">
-            <p>{t.noProducts}</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
+      {/* Report Content Wrapper - This div will be used for PDF generation */}
+      <div id="report-content" ref={reportRef}>
+        {products.length === 0 ? (
           <Card className="bg-white border border-blue-200">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <label htmlFor="product-select" className="trader-label">{t.productName}</label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
-                        <Info className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-blue-50 border border-blue-200">
-                      <p>{t.tallyInstructions}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              
-              <Select value={selectedProductId || ''} onValueChange={handleSelectProduct}>
-                <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                  <SelectValue placeholder="Select a product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map(product => (
-                    <SelectItem key={product.id} value={product.id}>
-                      {product.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <p>{t.noProducts}</p>
             </CardContent>
           </Card>
-          
-          {selectedProduct && (
-            <div className="space-y-4">
-              <Card className="bg-white border border-blue-200">
-                <CardContent className="pt-6 space-y-4">
-                  <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
-                  
-                  <div>
-                    <label htmlFor="quantitySold" className="trader-label">
-                      {t.quantitySold}
-                    </label>
-                    <Input
-                      id="quantitySold"
-                      value={quantitySold}
-                      onChange={handleQuantitySoldChange}
-                      type="number"
-                      min="0"
-                      max={selectedProduct.quantityBought}
-                      className="trader-input border-blue-200 focus:border-blue-400"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="quantityDiscarded" className="trader-label">
-                      {t.quantityDiscarded} <span className="text-sm text-trader-neutral">({t.optional})</span>
-                    </label>
-                    <Input
-                      id="quantityDiscarded"
-                      value={quantityDiscarded}
-                      onChange={handleQuantityDiscardedChange}
-                      type="number"
-                      min="0"
-                      max={selectedProduct.quantityBought - (typeof quantitySold === 'number' ? quantitySold : 0)}
-                      className="trader-input border-blue-200 focus:border-blue-400"
-                    />
-                  </div>
-                  
-                  <Button 
-                    onClick={handleCalculate}
-                    className="trader-btn-accent w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    {t.calculate}
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              {calculation && (
-                <Card className={calculation.lowMargin ? "bg-red-50 border border-red-200" : "bg-green-50 border border-green-200"}>
-                  <CardContent className="pt-6">
-                    {calculation.lowMargin && (
-                      <div className="flex items-center gap-2 mb-4 text-red-600">
-                        <AlertCircle className="h-5 w-5" />
-                        <p className="font-bold">{t.lowProfitWarning}</p>
-                      </div>
-                    )}
+        ) : (
+          <>
+            <Card className="bg-white border border-blue-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="product-select" className="trader-label">{t.productName}</label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                          <Info className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-blue-50 border border-blue-200">
+                        <p>{t.tallyInstructions}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                
+                <Select value={selectedProductId || ''} onValueChange={handleSelectProduct}>
+                  <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select a product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map(product => (
+                      <SelectItem key={product.id} value={product.id}>
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+            
+            {selectedProduct && (
+              <div className="space-y-4">
+                <Card className="bg-white border border-blue-200">
+                  <CardContent className="pt-6 space-y-4">
+                    <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
                     
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="font-semibold">{t.costPerUnit}:</span>
-                        <span>{t.currency}{calculation.costPerUnit.toFixed(2)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="font-semibold">{t.sellingPrice}:</span>
-                        <span>{t.currency}{calculation.sellingPrice.toFixed(2)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="font-semibold">{t.profitPerUnit}:</span>
-                        <span>{t.currency}{calculation.profitPerUnit.toFixed(2)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="font-semibold">{t.stockRemaining}:</span>
-                        <span>{calculation.stockRemaining}</span>
-                      </div>
-                      
-                      <div className="flex justify-between font-bold text-lg">
-                        <span>{t.dailyProfit}:</span>
-                        <span>{t.currency}{calculation.dailyProfit.toFixed(2)}</span>
-                      </div>
+                    <div>
+                      <label htmlFor="quantitySold" className="trader-label">
+                        {t.quantitySold}
+                      </label>
+                      <Input
+                        id="quantitySold"
+                        value={quantitySold}
+                        onChange={handleQuantitySoldChange}
+                        type="number"
+                        min="0"
+                        max={selectedProduct.quantityBought}
+                        className="trader-input border-blue-200 focus:border-blue-400"
+                      />
                     </div>
+                    
+                    <div>
+                      <label htmlFor="quantityDiscarded" className="trader-label">
+                        {t.quantityDiscarded} <span className="text-sm text-trader-neutral">({t.optional})</span>
+                      </label>
+                      <Input
+                        id="quantityDiscarded"
+                        value={quantityDiscarded}
+                        onChange={handleQuantityDiscardedChange}
+                        type="number"
+                        min="0"
+                        max={selectedProduct.quantityBought - (typeof quantitySold === 'number' ? quantitySold : 0)}
+                        className="trader-input border-blue-200 focus:border-blue-400"
+                      />
+                    </div>
+                    
+                    <Button 
+                      onClick={handleCalculate}
+                      className="trader-btn-accent w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      {t.calculate}
+                    </Button>
                   </CardContent>
                 </Card>
-              )}
-            </div>
-          )}
-          
-          {/* Daily Summary Card */}
-          <Card className="bg-blue-100 border border-blue-300">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between font-bold text-xl">
-                <span>{t.totalProfit}:</span>
-                <span>{t.currency}{totalProfit.toFixed(2)}</span>
+                
+                {calculation && (
+                  <Card className={calculation.lowMargin ? "bg-red-50 border border-red-200" : "bg-green-50 border border-green-200"}>
+                    <CardContent className="pt-6">
+                      {calculation.lowMargin && (
+                        <div className="flex items-center gap-2 mb-4 text-red-600">
+                          <AlertCircle className="h-5 w-5" />
+                          <p className="font-bold">{t.lowProfitWarning}</p>
+                        </div>
+                      )}
+                      
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="font-semibold">{t.costPerUnit}:</span>
+                          <span>{t.currency}{calculation.costPerUnit.toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between">
+                          <span className="font-semibold">{t.sellingPrice}:</span>
+                          <span>{t.currency}{calculation.sellingPrice.toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between">
+                          <span className="font-semibold">{t.profitPerUnit}:</span>
+                          <span>{t.currency}{calculation.profitPerUnit.toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between">
+                          <span className="font-semibold">{t.stockRemaining}:</span>
+                          <span>{calculation.stockRemaining}</span>
+                        </div>
+                        
+                        <div className="flex justify-between font-bold text-lg">
+                          <span>{t.dailyProfit}:</span>
+                          <span>{t.currency}{calculation.dailyProfit.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-              
-              <div className="flex justify-between text-lg">
-                <span>{t.totalStockValue}:</span>
-                <span>{t.currency}{totalStockValue.toFixed(2)}</span>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                <Button 
-                  onClick={handleSharePDF}
-                  variant="outline"
-                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
-                >
-                  <Share className="h-5 w-5" />
-                  {t.shareTally}
-                </Button>
-                <Button 
-                  onClick={handleDownloadPDF}
-                  variant="outline"
-                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
-                >
-                  <Download className="h-5 w-5" />
-                  {t.downloadReport}
-                </Button>
-                <Button 
-                  onClick={handleToggleHistory}
-                  variant="outline"
-                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
-                >
-                  <History className="h-5 w-5" />
-                  {viewingHistory ? t.hideHistory : t.viewHistory}
-                </Button>
-                <Button 
-                  onClick={handleClearAllData}
-                  variant="destructive"
-                  className="flex items-center justify-center gap-2"
-                >
-                  <Save className="h-5 w-5" />
-                  {t.clearAllData}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Products Summary */}
-          <Card className="bg-white border border-blue-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-blue-800">{t.productSummary}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {products.map(product => {
-                const calc = calculateProduct(product);
-                return (
-                  <div key={product.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <div>
-                      <p className="font-semibold">{product.name}</p>
-                      <p className="text-sm text-gray-600">
-                        {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
-                      </p>
+            )}
+            
+            {/* Daily Summary Card */}
+            <Card className="bg-blue-100 border border-blue-300">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between font-bold text-xl">
+                  <span>{t.totalProfit}:</span>
+                  <span>{t.currency}{totalProfit.toFixed(2)}</span>
+                </div>
+                
+                <div className="flex justify-between text-lg">
+                  <span>{t.totalStockValue}:</span>
+                  <span>{t.currency}{totalStockValue.toFixed(2)}</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                  <Button 
+                    onClick={handleSharePDF}
+                    variant="outline"
+                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                  >
+                    <Share className="h-5 w-5" />
+                    {t.shareTally}
+                  </Button>
+                  <Button 
+                    onClick={handleDownloadPDF}
+                    variant="outline"
+                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                  >
+                    <Download className="h-5 w-5" />
+                    {t.downloadReport}
+                  </Button>
+                  <Button 
+                    onClick={handleToggleHistory}
+                    variant="outline"
+                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+                  >
+                    <History className="h-5 w-5" />
+                    {viewingHistory ? t.hideHistory : t.viewHistory}
+                  </Button>
+                  <Button 
+                    onClick={handleClearAllData}
+                    variant="destructive"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Save className="h-5 w-5" />
+                    {t.clearAllData}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Products Summary */}
+            <Card className="bg-white border border-blue-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-bold text-blue-800">{t.productSummary}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {products.map(product => {
+                  const calc = calculateProduct(product);
+                  return (
+                    <div key={product.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                      <div>
+                        <p className="font-semibold">{product.name}</p>
+                        <p className="text-sm text-gray-600">
+                          {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</p>
+                        <p className="text-sm text-gray-600">
+                          {t.profitPerUnit}: {t.currency}{calc.profitPerUnit.toFixed(2)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</p>
-                      <p className="text-sm text-gray-600">
-                        {t.profitPerUnit}: {t.currency}{calc.profitPerUnit.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        </>
-      )}
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </div>
     </div>
   );
 };
