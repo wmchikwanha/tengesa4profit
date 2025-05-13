@@ -1,11 +1,35 @@
+
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 import { cn } from "@/lib/utils"
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = TooltipPrimitive.Root
+// Create a custom Tooltip component that handles mobile differently
+const Tooltip = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> & { 
+    delayDuration?: number 
+  }
+>(({ children, delayDuration = 400, ...props }, ref) => {
+  const isMobile = useIsMobile()
+  
+  // On mobile, set a very long delay so tooltip stays open until manually closed
+  const mobileDelay = 100000000 // Very long delay for mobile
+  
+  return (
+    <TooltipPrimitive.Root
+      ref={ref as any}
+      delayDuration={isMobile ? mobileDelay : delayDuration}
+      {...props}
+    >
+      {children}
+    </TooltipPrimitive.Root>
+  )
+})
+Tooltip.displayName = "Tooltip"
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 

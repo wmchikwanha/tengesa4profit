@@ -25,17 +25,17 @@ const LanguageSettings: React.FC = () => {
           >
             <div className="flex items-center space-x-2 border p-3 rounded-lg">
               <RadioGroupItem value="en" id="english" />
-              <Label htmlFor="english" className="flex-1">🇬🇧 English</Label>
+              <Label htmlFor="english" className="flex-1">English</Label>
             </div>
             
             <div className="flex items-center space-x-2 border p-3 rounded-lg">
               <RadioGroupItem value="sn" id="shona" />
-              <Label htmlFor="shona" className="flex-1">🇿🇼 Shona (Chivanhu)</Label>
+              <Label htmlFor="shona" className="flex-1">Shona</Label>
             </div>
             
             <div className="flex items-center space-x-2 border p-3 rounded-lg">
               <RadioGroupItem value="nd" id="ndebele" />
-              <Label htmlFor="ndebele" className="flex-1">🇿🇦 Ndebele (isiNdebele)</Label>
+              <Label htmlFor="ndebele" className="flex-1">Ndebele</Label>
             </div>
           </RadioGroup>
         </CardContent>
@@ -43,7 +43,7 @@ const LanguageSettings: React.FC = () => {
       
       <Card>
         <CardContent className="pt-6 text-center">
-          <h3 className="text-lg font-semibold mb-2">Trader Profit Buddy</h3>
+          <h3 className="text-lg font-semibold mb-2">Zim Market Trader</h3>
           <p className="text-trader-neutral">Version 1.0</p>
           <p className="text-trader-neutral text-sm mt-4">
             {language === 'en' && "An app for Zimbabwean traders"}

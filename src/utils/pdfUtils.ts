@@ -3,45 +3,54 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export const generatePDF = async (elementId: string, fileName: string = 'report.pdf'): Promise<Blob> => {
-  const element = document.getElementById(elementId);
-  if (!element) {
-    throw new Error(`Element with ID ${elementId} not found`);
-  }
-  
-  // Create canvas from the element
-  const canvas = await html2canvas(element, {
-    scale: 2, // Higher scale for better quality
-    useCORS: true,
-    logging: false,
-  });
-  
-  const imgData = canvas.toDataURL('image/png');
-  
-  // Calculate dimensions
-  const imgWidth = 210; // A4 width in mm
-  const pageHeight = 297; // A4 height in mm
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  
-  // Create PDF document
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  
-  let heightLeft = imgHeight;
-  let position = 0;
-  
-  // Add image to first page
-  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
-  
-  // Add new pages if needed for long content
-  while (heightLeft >= 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
+  try {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      throw new Error(`Element with ID ${elementId} not found`);
+    }
+    
+    // Create canvas from the element
+    const canvas = await html2canvas(element, {
+      scale: 2, // Higher scale for better quality
+      useCORS: true,
+      logging: false,
+      allowTaint: true, // Allow cross-domain images
+      backgroundColor: '#ffffff', // Ensure white background
+      windowWidth: element.scrollWidth, // Capture full width
+      windowHeight: element.scrollHeight, // Capture full height
+    });
+    
+    const imgData = canvas.toDataURL('image/png', 0.95); // Higher quality
+    
+    // Calculate dimensions
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    // Create PDF document
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    let heightLeft = imgHeight;
+    let position = 0;
+    
+    // Add image to first page
     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
+    
+    // Add new pages if needed for long content
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+    
+    // Return the PDF blob
+    return pdf.output('blob');
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    throw error;
   }
-  
-  // Save the PDF
-  return pdf.output('blob');
 };
 
 export const downloadPDF = async (elementId: string, fileName: string = 'report.pdf'): Promise<void> => {
@@ -69,28 +78,43 @@ export const sharePDF = async (elementId: string, fileName: string = 'report.pdf
       // Check if the browser can share this file
       if (navigator.canShare({ files: [file] })) {
         await navigator.share({
-          title: 'Trader Profit Report',
+          title: 'Zim Market Trader - Daily Report',
           text: 'Here is your daily profit report',
           files: [file]
         });
-      } else {
-        // Fallback if file sharing is not supported
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = fileName;
-        link.click();
-        URL.revokeObjectURL(link.href);
+        return;
       }
-    } else {
-      // Fallback if Web Share API is not supported
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(pdfBlob);
-      link.download = fileName;
-      link.click();
-      URL.revokeObjectURL(link.href);
     }
+    
+    // If Web Share API isn't available or doesn't support files, fall back to basic share
+    if (navigator.share) {
+      await navigator.share({
+        title: 'Zim Market Trader - Daily Report',
+        text: 'Here is my daily profit report from Zim Market Trader'
+      });
+      return;
+    }
+    
+    // Last resort - download the file
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(pdfBlob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
   } catch (error) {
     console.error('Error sharing PDF:', error);
-    throw error;
+    
+    // Even if PDF generation fails, try to use basic text sharing
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Zim Market Trader - Daily Report',
+          text: 'Here is my daily profit report from Zim Market Trader'
+        });
+      }
+    } catch (shareError) {
+      console.error('Sharing failed:', shareError);
+      throw error; // Re-throw the original error
+    }
   }
 };

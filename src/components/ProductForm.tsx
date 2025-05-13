@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -207,7 +206,7 @@ const ProductForm: React.FC = () => {
                     <Info className="h-5 w-5" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-blue-50 border border-blue-200">
+                <TooltipContent className="bg-blue-50 border border-blue-200 max-w-[250px]">
                   <p>{t.productInstructions}</p>
                 </TooltipContent>
               </Tooltip>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -12,10 +11,11 @@ import { AlertCircle, Info, Calendar, Download, Share, History, Save } from 'luc
 import { format, parseISO } from 'date-fns';
 import { downloadPDF, sharePDF } from '@/utils/pdfUtils';
 import { 
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
@@ -109,6 +109,32 @@ const TallyProfit: React.FC = () => {
     const calc = calculateProduct(product);
     return sum + (calc.stockRemaining * calc.sellingPrice);
   }, 0);
+  
+  // Calculate total sales per product across all history (for the summary)
+  const calculateTotalSalesPerProduct = (productId: string) => {
+    let totalQuantitySold = 0;
+    let totalProfit = 0;
+    
+    // Calculate from current products
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      const calc = calculateProduct(product);
+      totalQuantitySold += product.quantitySold || 0;
+      totalProfit += calc.dailyProfit;
+    }
+    
+    // Add from history too if available
+    salesHistory.forEach(record => {
+      const historyProduct = record.products.find(p => p.id === productId);
+      if (historyProduct) {
+        const calc = calculateProduct(historyProduct);
+        totalQuantitySold += historyProduct.quantitySold || 0;
+        totalProfit += calc.dailyProfit;
+      }
+    });
+    
+    return { totalQuantitySold, totalProfit };
+  };
   
   const handleSharePDF = async () => {
     try {
@@ -216,16 +242,18 @@ const TallyProfit: React.FC = () => {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <label htmlFor="product-select" className="trader-label">{t.productName}</label>
-                  <HoverCard>
-                    <HoverCardTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
-                        <Info className="h-5 w-5" />
-                      </Button>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="bg-blue-50 border border-blue-200">
-                      <p>{t.tallyInstructions}</p>
-                    </HoverCardContent>
-                  </HoverCard>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                          <Info className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-blue-50 border border-blue-200 max-w-[250px]">
+                        <p>{t.tallyInstructions}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 
                 <Select value={selectedProductId || ''} onValueChange={handleSelectProduct}>
@@ -432,6 +460,8 @@ const TallyProfit: React.FC = () => {
               <CardContent className="space-y-3">
                 {products.map(product => {
                   const calc = calculateProduct(product);
+                  const totals = calculateTotalSalesPerProduct(product.id);
+                  
                   return (
                     <div key={product.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
                       <div>
@@ -439,16 +469,28 @@ const TallyProfit: React.FC = () => {
                         <p className="text-sm text-gray-600">
                           {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
                         </p>
+                        <p className="text-xs font-medium text-blue-700 mt-1">
+                          {t.sold} {t.totalProfit}: {totals.totalQuantitySold}
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</p>
                         <p className="text-sm text-gray-600">
                           {t.profitPerUnit}: {t.currency}{calc.profitPerUnit.toFixed(2)}
                         </p>
+                        <p className="text-xs font-bold text-blue-700 mt-1">
+                          {t.totalProfit}: {t.currency}{totals.totalProfit.toFixed(2)}
+                        </p>
                       </div>
                     </div>
                   );
                 })}
+                
+                {/* Display grand total at the bottom */}
+                <div className="flex justify-between items-center p-3 bg-blue-100 rounded-lg font-bold mt-2">
+                  <span>{t.totalProfit} ({t.sold}):</span>
+                  <span>{t.currency}{totalProfit.toFixed(2)}</span>
+                </div>
               </CardContent>
             </Card>
           </>
