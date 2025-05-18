@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { downloadPDF, sharePDF } from '@/utils/pdfUtils';
-import { calculateProduct } from '@/lib/types';
 import { CalendarIcon } from 'lucide-react';
 import { ProductSelector } from './ProductSelector';
 import { ProductCalculationForm } from './ProductCalculationForm';
@@ -14,134 +13,35 @@ import { CalculationResults } from './CalculationResults';
 import { DailySummary } from './DailySummary';
 import { HistorySection } from './HistorySection';
 import { ProductSummary } from './ProductSummary';
+import { useProfitCalculations } from '@/hooks/useProfitCalculations';
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
-  const { products, salesHistory, updateProduct, clearAllData } = useAppData();
+  const { salesHistory, clearAllData } = useAppData();
   const { toast } = useToast();
-  
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [quantitySold, setQuantitySold] = useState<number | ''>(0);
-  const [quantityDiscarded, setQuantityDiscarded] = useState<number | ''>(0);
   const [viewingHistory, setViewingHistory] = useState(false);
-  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   
   const reportRef = useRef<HTMLDivElement>(null);
   const today = new Date();
   
-  const selectedProduct = selectedProductId 
-    ? products.find(p => p.id === selectedProductId)
-    : null;
-  
-  const calculation = selectedProduct && typeof quantitySold === 'number' && typeof quantityDiscarded === 'number'
-    ? calculateProduct({
-        ...selectedProduct,
-        quantitySold,
-        quantityDiscarded
-      })
-    : null;
-  
-  const handleSelectProduct = (id: string) => {
-    const product = products.find(p => p.id === id);
-    if (product) {
-      setSelectedProductId(id);
-      setQuantitySold(product.quantitySold || 0);
-      setQuantityDiscarded(product.quantityDiscarded || 0);
-      setInvalidFields(new Set());
-    }
-  };
-  
-  const handleQuantitySoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuantitySold(value === '' ? '' : Number(value));
-    
-    // Clear validation error
-    if (value !== '') {
-      setInvalidFields(prev => {
-        const updated = new Set(prev);
-        updated.delete('quantitySold');
-        return updated;
-      });
-    }
-  };
-  
-  const handleQuantityDiscardedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuantityDiscarded(value === '' ? '' : Number(value));
-  };
-  
-  const validateForm = (): boolean => {
-    if (!selectedProduct) return false;
-    
-    const newInvalidFields = new Set<string>();
-    const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
-    
-    if (soldQty < 0) {
-      newInvalidFields.add('quantitySold');
-    }
-    
-    setInvalidFields(newInvalidFields);
-    return newInvalidFields.size === 0;
-  };
-  
-  const handleCalculate = () => {
-    if (!selectedProduct) return;
-    
-    if (!validateForm()) {
-      toast({
-        title: "Error",
-        description: "Please fix the highlighted fields",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
-    const discardedQty = typeof quantityDiscarded === 'number' ? quantityDiscarded : 0;
-    
-    if (soldQty + discardedQty > selectedProduct.quantityBought) {
-      toast({
-        title: "Error",
-        description: "Total quantity cannot exceed quantity bought",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Save updated values
-    updateProduct(selectedProductId!, {
-      quantitySold: soldQty,
-      quantityDiscarded: discardedQty
-    });
-    
-    toast({
-      title: "Success",
-      description: "Calculation complete",
-    });
-  };
-
-  // Calculate total profit across all products
-  const totalProfit = products.reduce((sum, product) => {
-    const calc = calculateProduct(product);
-    return sum + calc.dailyProfit;
-  }, 0);
-  
-  // Calculate total remaining stock value
-  const totalStockValue = products.reduce((sum, product) => {
-    const calc = calculateProduct(product);
-    return sum + (calc.stockRemaining * calc.sellingPrice);
-  }, 0);
-  
-  // Calculate total sales value
-  const totalSalesValue = products.reduce((sum, product) => {
-    return sum + (product.quantitySold * product.sellingPrice);
-  }, 0);
-  
-  // Calculate total cost value
-  const totalCostValue = products.reduce((sum, product) => {
-    const calc = calculateProduct(product);
-    return sum + (product.quantitySold * calc.costPerUnit);
-  }, 0);
+  const {
+    products,
+    selectedProduct,
+    selectedProductId,
+    quantitySold,
+    quantityDiscarded,
+    invalidFields,
+    calculation,
+    totalProfit,
+    totalSalesValue,
+    totalCostValue,
+    totalStockValue,
+    handleSelectProduct,
+    handleQuantitySoldChange,
+    handleQuantityDiscardedChange,
+    handleCalculate,
+    calculateTotalSalesPerProduct
+  } = useProfitCalculations();
   
   const handleSharePDF = async () => {
     try {
@@ -295,6 +195,7 @@ const TallyProfit: React.FC = () => {
               totalSalesValue={totalSalesValue}
               totalCostValue={totalCostValue}
               totalProfit={totalProfit}
+              calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}
             />
           </>
         )}

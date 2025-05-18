@@ -16,6 +16,12 @@ interface ProductSummaryProps {
   totalSalesValue: number;
   totalCostValue: number;
   totalProfit: number;
+  calculateTotalSalesPerProduct: (productId: string) => {
+    totalQuantitySold: number;
+    totalProfit: number;
+    totalSalesValue: number;
+    totalCostValue: number;
+  };
 }
 
 export const ProductSummary: React.FC<ProductSummaryProps> = ({
@@ -23,41 +29,10 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
   salesHistory,
   totalSalesValue,
   totalCostValue, 
-  totalProfit
+  totalProfit,
+  calculateTotalSalesPerProduct
 }) => {
   const { t } = useLanguage();
-
-  // Calculate total sales per product across all history
-  const calculateTotalSalesPerProduct = (productId: string) => {
-    let totalQuantitySold = 0;
-    let totalProfit = 0;
-    let totalSalesValue = 0;
-    let totalCostValue = 0;
-    
-    // Calculate from current products
-    const product = products.find(p => p.id === productId);
-    if (product) {
-      const calc = calculateProduct(product);
-      totalQuantitySold += product.quantitySold || 0;
-      totalProfit += calc.dailyProfit;
-      totalSalesValue += product.quantitySold * product.sellingPrice;
-      totalCostValue += product.quantitySold * calc.costPerUnit;
-    }
-    
-    // Add from history too if available
-    salesHistory.forEach(record => {
-      const historyProduct = record.products.find(p => p.id === productId);
-      if (historyProduct) {
-        const calc = calculateProduct(historyProduct);
-        totalQuantitySold += historyProduct.quantitySold || 0;
-        totalProfit += calc.dailyProfit;
-        totalSalesValue += historyProduct.quantitySold * historyProduct.sellingPrice;
-        totalCostValue += historyProduct.quantitySold * calc.costPerUnit;
-      }
-    });
-    
-    return { totalQuantitySold, totalProfit, totalSalesValue, totalCostValue };
-  };
 
   return (
     <Card className="bg-white border border-blue-200">
