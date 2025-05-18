@@ -21,7 +21,6 @@ const Tooltip = React.forwardRef<
   
   return (
     <TooltipPrimitive.Root
-      ref={ref as any}
       delayDuration={isMobile ? mobileDelay : delayDuration}
       {...props}
     >
