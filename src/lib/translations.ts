@@ -67,6 +67,25 @@ export interface TranslationDictionary {
   remaining: string;
   history: string;
   noHistory: string;
+  
+  // Delete confirmation
+  deleteConfirmation: string;
+  deleteWarning: string;
+  
+  // Sales and costs
+  totalSalesValue: string;
+  totalCostValue: string;
+  salesValue: string;
+  costValue: string;
+  salesQty: string;
+  
+  // Date filtering
+  selectDateRange: string;
+  startDate: string;
+  endDate: string;
+  reset: string;
+  apply: string;
+  noMatchingHistory: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -136,6 +155,25 @@ export const translations: Record<Language, TranslationDictionary> = {
     remaining: 'Left',
     history: 'Sales History',
     noHistory: 'No history available',
+    
+    // Delete confirmation
+    deleteConfirmation: 'Confirm Delete',
+    deleteWarning: 'Are you sure you want to delete this product? This cannot be undone!',
+    
+    // Sales and costs
+    totalSalesValue: 'Total Sales Value',
+    totalCostValue: 'Total Cost Value',
+    salesValue: 'Sales Value',
+    costValue: 'Cost Value',
+    salesQty: 'Total Sales Quantity',
+    
+    // Date filtering
+    selectDateRange: 'Select date range',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    reset: 'Reset',
+    apply: 'Apply',
+    noMatchingHistory: 'No matching history for selected dates',
   },
   sn: {
     // App title and navigation
@@ -203,6 +241,25 @@ export const translations: Record<Language, TranslationDictionary> = {
     remaining: 'Zvakasara',
     history: 'Mbiri yekutengesa',
     noHistory: 'Hapana mbiri iripo',
+    
+    // Delete confirmation
+    deleteConfirmation: 'Simbisa Kudzima',
+    deleteWarning: 'Chokwadi unoda kudzima chigadzirwa ichi? Izvi hazvigoni kudzoswa!',
+    
+    // Sales and costs
+    totalSalesValue: 'Mari Yose Yakaunganwa',
+    totalCostValue: 'Mari Yose Yakashandiswa',
+    salesValue: 'Mari Yakaunganwa',
+    costValue: 'Mari Yakashandiswa',
+    salesQty: 'Huwandu Hwese Hwakatengeswa',
+    
+    // Date filtering
+    selectDateRange: 'Sarudza mazuva',
+    startDate: 'Zuva Rekutanga',
+    endDate: 'Zuva Rekupedzisira',
+    reset: 'Dzosera',
+    apply: 'Ita',
+    noMatchingHistory: 'Hapana mbiri inoenderana nemazuva asarudzwa',
   },
   nd: {
     // App title and navigation
@@ -270,5 +327,24 @@ export const translations: Record<Language, TranslationDictionary> = {
     remaining: 'Esele',
     history: 'Umlando wokuthengisa',
     noHistory: 'Awukho umlando otholakalayo',
+    
+    // Delete confirmation
+    deleteConfirmation: 'Qinisekisa Ukusulwa',
+    deleteWarning: 'Uqinisekile ukuthi ufuna ukusula le mpahla? Lokhu ngeke kuphindwe futhi!',
+    
+    // Sales and costs
+    totalSalesValue: 'Inani Lemali Yentengo Iphelele',
+    totalCostValue: 'Inani Lemali Yezindleko Iphelele',
+    salesValue: 'Inani Lemali Yentengo',
+    costValue: 'Inani Lemali Yezindleko',
+    salesQty: 'Inani Eliphelele Elithengisiweyo',
+    
+    // Date filtering
+    selectDateRange: 'Khetha usuku',
+    startDate: 'Usuku Lokuqala',
+    endDate: 'Usuku Lokugcina',
+    reset: 'Setha kabusha',
+    apply: 'Faka',
+    noMatchingHistory: 'Awukho umlando ohambisana nosuku olukhethiweyo',
   }
 };
