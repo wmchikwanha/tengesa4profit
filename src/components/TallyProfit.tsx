@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -6,16 +7,32 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { Product, calculateProduct } from '@/lib/types';
-import { AlertCircle, Info, Calendar, Download, Share, History, Save } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { AlertCircle, Info, Calendar as CalendarIcon, Download, Share, History, Save, AlertCircle as AlertIcon, Check, X } from 'lucide-react';
+import { format, parseISO, isAfter, isBefore, startOfDay, endOfDay, isEqual } from 'date-fns';
 import { downloadPDF, sharePDF } from '@/utils/pdfUtils';
+import { useForm } from 'react-hook-form';
 import { 
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
+interface DateFilterForm {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
@@ -26,10 +43,19 @@ const TallyProfit: React.FC = () => {
   const [quantitySold, setQuantitySold] = useState<number | ''>(0);
   const [quantityDiscarded, setQuantityDiscarded] = useState<number | ''>(0);
   const [viewingHistory, setViewingHistory] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
-  const reportRef = useRef<HTMLDivElement>(null);
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  const [filteredHistory, setFilteredHistory] = useState(salesHistory);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
   
+  const reportRef = useRef<HTMLDivElement>(null);
   const today = new Date();
+  
+  const form = useForm<DateFilterForm>({
+    defaultValues: {
+      startDate: undefined,
+      endDate: undefined
+    }
+  });
   
   const selectedProduct = selectedProductId 
     ? products.find(p => p.id === selectedProductId)
@@ -49,12 +75,22 @@ const TallyProfit: React.FC = () => {
       setSelectedProductId(id);
       setQuantitySold(product.quantitySold || 0);
       setQuantityDiscarded(product.quantityDiscarded || 0);
+      setInvalidFields(new Set());
     }
   };
   
   const handleQuantitySoldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuantitySold(value === '' ? '' : Number(value));
+    
+    // Clear validation error
+    if (value !== '') {
+      setInvalidFields(prev => {
+        const updated = new Set(prev);
+        updated.delete('quantitySold');
+        return updated;
+      });
+    }
   };
   
   const handleQuantityDiscardedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,20 +98,34 @@ const TallyProfit: React.FC = () => {
     setQuantityDiscarded(value === '' ? '' : Number(value));
   };
   
+  const validateForm = (): boolean => {
+    if (!selectedProduct) return false;
+    
+    const newInvalidFields = new Set<string>();
+    const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
+    
+    if (soldQty < 0) {
+      newInvalidFields.add('quantitySold');
+    }
+    
+    setInvalidFields(newInvalidFields);
+    return newInvalidFields.size === 0;
+  };
+  
   const handleCalculate = () => {
     if (!selectedProduct) return;
     
-    const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
-    const discardedQty = typeof quantityDiscarded === 'number' ? quantityDiscarded : 0;
-    
-    if (soldQty < 0 || discardedQty < 0) {
+    if (!validateForm()) {
       toast({
         title: "Error",
-        description: "Quantities cannot be negative",
+        description: "Please fix the highlighted fields",
         variant: "destructive",
       });
       return;
     }
+    
+    const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
+    const discardedQty = typeof quantityDiscarded === 'number' ? quantityDiscarded : 0;
     
     if (soldQty + discardedQty > selectedProduct.quantityBought) {
       toast({
@@ -110,10 +160,23 @@ const TallyProfit: React.FC = () => {
     return sum + (calc.stockRemaining * calc.sellingPrice);
   }, 0);
   
+  // Calculate total sales value
+  const totalSalesValue = products.reduce((sum, product) => {
+    return sum + (product.quantitySold * product.sellingPrice);
+  }, 0);
+  
+  // Calculate total cost value
+  const totalCostValue = products.reduce((sum, product) => {
+    const calc = calculateProduct(product);
+    return sum + (product.quantitySold * calc.costPerUnit);
+  }, 0);
+  
   // Calculate total sales per product across all history (for the summary)
   const calculateTotalSalesPerProduct = (productId: string) => {
     let totalQuantitySold = 0;
     let totalProfit = 0;
+    let totalSalesValue = 0;
+    let totalCostValue = 0;
     
     // Calculate from current products
     const product = products.find(p => p.id === productId);
@@ -121,19 +184,23 @@ const TallyProfit: React.FC = () => {
       const calc = calculateProduct(product);
       totalQuantitySold += product.quantitySold || 0;
       totalProfit += calc.dailyProfit;
+      totalSalesValue += product.quantitySold * product.sellingPrice;
+      totalCostValue += product.quantitySold * calc.costPerUnit;
     }
     
     // Add from history too if available
-    salesHistory.forEach(record => {
+    filteredHistory.forEach(record => {
       const historyProduct = record.products.find(p => p.id === productId);
       if (historyProduct) {
         const calc = calculateProduct(historyProduct);
         totalQuantitySold += historyProduct.quantitySold || 0;
         totalProfit += calc.dailyProfit;
+        totalSalesValue += historyProduct.quantitySold * historyProduct.sellingPrice;
+        totalCostValue += historyProduct.quantitySold * calc.costPerUnit;
       }
     });
     
-    return { totalQuantitySold, totalProfit };
+    return { totalQuantitySold, totalProfit, totalSalesValue, totalCostValue };
   };
   
   const handleSharePDF = async () => {
@@ -145,6 +212,11 @@ const TallyProfit: React.FC = () => {
       
       if (reportRef.current) {
         await sharePDF('report-content', `trader-profit-report-${format(today, 'yyyy-MM-dd')}.pdf`);
+        
+        toast({
+          title: "Success",
+          description: "Report shared successfully",
+        });
       } else {
         throw new Error("Report content not found");
       }
@@ -215,6 +287,49 @@ const TallyProfit: React.FC = () => {
   
   const handleToggleHistory = () => {
     setViewingHistory(!viewingHistory);
+    if (viewingHistory) {
+      // Reset filters when closing history view
+      setFilteredHistory(salesHistory);
+      form.reset();
+    }
+  };
+  
+  const applyDateFilter = (data: DateFilterForm) => {
+    const { startDate, endDate } = data;
+    
+    if (!startDate && !endDate) {
+      setFilteredHistory(salesHistory);
+      return;
+    }
+    
+    const filtered = salesHistory.filter(record => {
+      const recordDate = parseISO(record.date);
+      
+      if (startDate && endDate) {
+        return (
+          (isAfter(recordDate, startOfDay(startDate)) || isEqual(recordDate, startDate)) && 
+          (isBefore(recordDate, endOfDay(endDate)) || isEqual(recordDate, endDate))
+        );
+      }
+      
+      if (startDate && !endDate) {
+        return isAfter(recordDate, startOfDay(startDate)) || isEqual(recordDate, startDate);
+      }
+      
+      if (!startDate && endDate) {
+        return isBefore(recordDate, endOfDay(endDate)) || isEqual(recordDate, endDate);
+      }
+      
+      return true;
+    });
+    
+    setFilteredHistory(filtered);
+    setIsDateFilterOpen(false);
+  };
+  
+  const resetDateFilter = () => {
+    form.reset();
+    setFilteredHistory(salesHistory);
   };
   
   return (
@@ -223,7 +338,7 @@ const TallyProfit: React.FC = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-blue-700">{t.tallyProfit}</h2>
         <div className="flex items-center gap-2 text-blue-600">
-          <Calendar className="h-5 w-5" />
+          <CalendarIcon className="h-5 w-5" />
           <span>{format(today, 'PPP')}</span>
         </div>
       </div>
@@ -278,9 +393,13 @@ const TallyProfit: React.FC = () => {
                     <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
                     
                     <div>
-                      <label htmlFor="quantitySold" className="trader-label">
-                        {t.quantitySold}
-                      </label>
+                      <div className="flex items-center gap-1 mb-1">
+                        <label htmlFor="quantitySold" className="trader-label">{t.quantitySold}</label>
+                        <span className="text-red-500">*</span>
+                        {invalidFields.has('quantitySold') && (
+                          <AlertCircle className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
                       <Input
                         id="quantitySold"
                         value={quantitySold}
@@ -288,7 +407,7 @@ const TallyProfit: React.FC = () => {
                         type="number"
                         min="0"
                         max={selectedProduct.quantityBought}
-                        className="trader-input border-blue-200 focus:border-blue-400"
+                        className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantitySold') ? 'border-red-500' : ''}`}
                       />
                     </div>
                     
@@ -321,7 +440,7 @@ const TallyProfit: React.FC = () => {
                     <CardContent className="pt-6">
                       {calculation.lowMargin && (
                         <div className="flex items-center gap-2 mb-4 text-red-600">
-                          <AlertCircle className="h-5 w-5" />
+                          <AlertIcon className="h-5 w-5" />
                           <p className="font-bold">{t.lowProfitWarning}</p>
                         </div>
                       )}
@@ -370,6 +489,16 @@ const TallyProfit: React.FC = () => {
                 </div>
                 
                 <div className="flex justify-between text-lg">
+                  <span>{t.totalSalesValue}:</span>
+                  <span>{t.currency}{totalSalesValue.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between text-lg">
+                  <span>{t.totalCostValue}:</span>
+                  <span>{t.currency}{totalCostValue.toFixed(2)}</span>
+                </div>
+                
+                <div className="flex justify-between text-lg">
                   <span>{t.totalStockValue}:</span>
                   <span>{t.currency}{totalStockValue.toFixed(2)}</span>
                 </div>
@@ -415,13 +544,84 @@ const TallyProfit: React.FC = () => {
             {viewingHistory && (
               <Card className="bg-white border border-blue-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-bold text-blue-800">{t.history}</CardTitle>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <CardTitle className="text-lg font-bold text-blue-800">{t.history}</CardTitle>
+                    <div className="flex space-x-2">
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(applyDateFilter)} className="flex space-x-2">
+                          <Popover open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="w-auto border-blue-300 justify-start text-left font-normal"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {form.watch('startDate') && form.watch('endDate') ? (
+                                  <span>
+                                    {format(form.watch('startDate')!, 'PPP')} - {format(form.watch('endDate')!, 'PPP')}
+                                  </span>
+                                ) : (
+                                  <span>{t.selectDateRange}</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <div className="grid gap-2 p-4">
+                                <div className="grid gap-2">
+                                  <FormLabel>{t.startDate}</FormLabel>
+                                  <FormField
+                                    control={form.control}
+                                    name="startDate"
+                                    render={({ field }) => (
+                                      <Calendar
+                                        mode="single"
+                                        selected={field.value}
+                                        onSelect={field.onChange}
+                                        disabled={(date) => field.value && form.watch('endDate') ? isAfter(date, form.watch('endDate')!) : false}
+                                        initialFocus
+                                      />
+                                    )}
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <FormLabel>{t.endDate}</FormLabel>
+                                  <FormField
+                                    control={form.control}
+                                    name="endDate"
+                                    render={({ field }) => (
+                                      <Calendar
+                                        mode="single"
+                                        selected={field.value}
+                                        onSelect={field.onChange}
+                                        disabled={(date) => field.value && form.watch('startDate') ? isBefore(date, form.watch('startDate')!) : false}
+                                        initialFocus
+                                      />
+                                    )}
+                                  />
+                                </div>
+                                <div className="flex justify-between pt-2">
+                                  <Button type="button" variant="outline" onClick={resetDateFilter}>
+                                    {t.reset}
+                                  </Button>
+                                  <Button type="submit" onClick={() => setIsDateFilterOpen(false)}>
+                                    {t.apply}
+                                  </Button>
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </form>
+                      </Form>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {salesHistory.length === 0 ? (
+                  {filteredHistory.length === 0 && salesHistory.length === 0 ? (
                     <p className="text-gray-500">{t.noHistory}</p>
+                  ) : filteredHistory.length === 0 ? (
+                    <p className="text-gray-500">{t.noMatchingHistory}</p>
                   ) : (
-                    salesHistory.map((record, index) => (
+                    filteredHistory.map((record, index) => (
                       <div key={index} className="border border-blue-100 rounded-lg p-4 bg-blue-50">
                         <div className="flex justify-between items-center mb-3">
                           <h3 className="font-bold">
@@ -463,33 +663,54 @@ const TallyProfit: React.FC = () => {
                   const totals = calculateTotalSalesPerProduct(product.id);
                   
                   return (
-                    <div key={product.id} className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                      <div>
+                    <div key={product.id} className="flex flex-col md:flex-row md:justify-between items-start md:items-center p-3 bg-blue-50 rounded-lg">
+                      <div className="mb-2 md:mb-0">
                         <p className="font-semibold">{product.name}</p>
                         <p className="text-sm text-gray-600">
                           {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
                         </p>
                         <p className="text-xs font-medium text-blue-700 mt-1">
-                          {t.sold} {t.totalProfit}: {totals.totalQuantitySold}
+                          {t.salesQty}: {totals.totalQuantitySold}
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</p>
-                        <p className="text-sm text-gray-600">
-                          {t.profitPerUnit}: {t.currency}{calc.profitPerUnit.toFixed(2)}
-                        </p>
-                        <p className="text-xs font-bold text-blue-700 mt-1">
-                          {t.totalProfit}: {t.currency}{totals.totalProfit.toFixed(2)}
-                        </p>
+                      <div className="text-right ml-auto md:ml-0">
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex justify-between gap-4">
+                            <span className="text-sm">{t.salesValue}:</span>
+                            <span className="font-medium">{t.currency}{totals.totalSalesValue.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between gap-4">
+                            <span className="text-sm">{t.costValue}:</span>
+                            <span className="font-medium">{t.currency}{totals.totalCostValue.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between gap-4">
+                            <span className="text-sm">{t.dailyProfit}:</span>
+                            <span className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between gap-4">
+                            <span className="text-sm">{t.totalProfit}:</span>
+                            <span className="font-bold text-blue-700">{t.currency}{totals.totalProfit.toFixed(2)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
                 
                 {/* Display grand total at the bottom */}
-                <div className="flex justify-between items-center p-3 bg-blue-100 rounded-lg font-bold mt-2">
-                  <span>{t.totalProfit} ({t.sold}):</span>
-                  <span>{t.currency}{totalProfit.toFixed(2)}</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-blue-100 rounded-lg font-bold mt-2">
+                  <div className="flex justify-between md:justify-start md:flex-col">
+                    <span>{t.totalSalesValue}:</span>
+                    <span className="ml-2 md:ml-0">{t.currency}{totalSalesValue.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between md:justify-start md:flex-col">
+                    <span>{t.totalCostValue}:</span>
+                    <span className="ml-2 md:ml-0">{t.currency}{totalCostValue.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between md:justify-start md:flex-col text-lg text-blue-800">
+                    <span>{t.totalProfit}:</span>
+                    <span className="ml-2 md:ml-0">{t.currency}{totalProfit.toFixed(2)}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

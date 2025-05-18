@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -16,8 +17,18 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Product } from '@/lib/types';
-import { Info, Calendar, Save, Plus } from 'lucide-react';
+import { Info, Calendar, Save, Plus, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { 
   Tooltip,
@@ -48,6 +59,10 @@ const ProductForm: React.FC = () => {
   const [isAddStockDialogOpen, setIsAddStockDialogOpen] = useState(false);
   const [stockQuantityToAdd, setStockQuantityToAdd] = useState<string>('');
   const [targetProductId, setTargetProductId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+  
   const today = new Date();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +71,15 @@ const ProductForm: React.FC = () => {
       ...prev,
       [name]: name === 'name' ? value : value === '' ? '' : Number(value)
     }));
+    
+    // Clear validation error when field is filled
+    if (value) {
+      setInvalidFields(prev => {
+        const updated = new Set(prev);
+        updated.delete(name);
+        return updated;
+      });
+    }
   };
 
   const handleMarkupChange = (value: number[]) => {
@@ -76,47 +100,89 @@ const ProductForm: React.FC = () => {
   const handleSelectProduct = (id: string) => {
     const product = getProduct(id);
     if (product) {
-      setFormData(product);
+      setFormData({...product});
       setActiveProductId(id);
     }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    deleteProduct(id);
-    if (activeProductId === id) {
+  const confirmDelete = (id: string) => {
+    setProductToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteProduct = () => {
+    if (!productToDelete) return;
+    
+    deleteProduct(productToDelete);
+    if (activeProductId === productToDelete) {
       setFormData(DEFAULT_PRODUCT);
       setActiveProductId(null);
     }
+    
+    setIsDeleteDialogOpen(false);
+    setProductToDelete(null);
+    
+    toast({
+      title: "Success",
+      description: "Product deleted successfully",
+    });
+  };
+
+  const validateForm = (): boolean => {
+    const newInvalidFields = new Set<string>();
+    
+    if (!formData.name) {
+      newInvalidFields.add('name');
+    }
+    
+    if (!formData.quantityBought || formData.quantityBought <= 0) {
+      newInvalidFields.add('quantityBought');
+    }
+    
+    if (!formData.buyingPrice || formData.buyingPrice <= 0) {
+      newInvalidFields.add('buyingPrice');
+    }
+    
+    setInvalidFields(newInvalidFields);
+    return newInvalidFields.size === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name) {
+    if (!validateForm()) {
       toast({
         title: "Error",
-        description: "Product name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (formData.quantityBought <= 0 || formData.buyingPrice <= 0) {
-      toast({
-        title: "Error",
-        description: "Quantity and buying price must be greater than zero",
+        description: "Please fill all required fields",
         variant: "destructive",
       });
       return;
     }
     
     if (activeProductId) {
-      // Update existing product
-      updateProduct(activeProductId, formData);
-      toast({
-        title: "Success",
-        description: "Product updated successfully",
-      });
+      // Update existing product, preserving quantitySold/Discarded
+      const existingProduct = getProduct(activeProductId);
+      if (existingProduct) {
+        // Calculate the quantity change
+        const quantityDifference = formData.quantityBought - existingProduct.quantityBought;
+        
+        // If quantity is reduced, ensure it doesn't go below what's been sold/discarded
+        const totalUsed = existingProduct.quantitySold + existingProduct.quantityDiscarded;
+        if (formData.quantityBought < totalUsed) {
+          toast({
+            title: "Error",
+            description: "Quantity cannot be less than what has already been sold or discarded",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        updateProduct(activeProductId, formData);
+        toast({
+          title: "Success",
+          description: "Product updated successfully",
+        });
+      }
     } else {
       // Add new product
       addProduct(formData);
@@ -166,6 +232,7 @@ const ProductForm: React.FC = () => {
   const resetForm = () => {
     setFormData(DEFAULT_PRODUCT);
     setActiveProductId(null);
+    setInvalidFields(new Set());
   };
 
   const calculateCostPerUnit = (): number => {
@@ -240,7 +307,7 @@ const ProductForm: React.FC = () => {
                     <Button 
                       variant="destructive" 
                       size="sm"
-                      onClick={() => handleDeleteProduct(product.id)}
+                      onClick={() => confirmDelete(product.id)}
                     >
                       {t.deleteProduct}
                     </Button>
@@ -255,19 +322,31 @@ const ProductForm: React.FC = () => {
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="trader-label">{t.productName}</label>
+          <div className="flex items-center gap-1 mb-1">
+            <label htmlFor="name" className="trader-label">{t.productName}</label>
+            <span className="text-red-500">*</span>
+            {invalidFields.has('name') && (
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            )}
+          </div>
           <Input
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('name') ? 'border-red-500' : ''}`}
             placeholder="e.g. Tomatoes"
           />
         </div>
         
         <div>
-          <label htmlFor="quantityBought" className="trader-label">{t.quantityBought}</label>
+          <div className="flex items-center gap-1 mb-1">
+            <label htmlFor="quantityBought" className="trader-label">{t.quantityBought}</label>
+            <span className="text-red-500">*</span>
+            {invalidFields.has('quantityBought') && (
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            )}
+          </div>
           <Input
             id="quantityBought"
             name="quantityBought"
@@ -275,15 +354,19 @@ const ProductForm: React.FC = () => {
             onChange={handleChange}
             type="number"
             min="1"
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantityBought') ? 'border-red-500' : ''}`}
             placeholder="e.g. 100"
           />
         </div>
         
         <div>
-          <label htmlFor="buyingPrice" className="trader-label">
-            {t.buyingPrice} ({t.currency})
-          </label>
+          <div className="flex items-center gap-1 mb-1">
+            <label htmlFor="buyingPrice" className="trader-label">{t.buyingPrice} ({t.currency})</label>
+            <span className="text-red-500">*</span>
+            {invalidFields.has('buyingPrice') && (
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            )}
+          </div>
           <Input
             id="buyingPrice"
             name="buyingPrice"
@@ -292,7 +375,7 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0.01"
             step="0.01"
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('buyingPrice') ? 'border-red-500' : ''}`}
             placeholder="e.g. 0.50"
           />
         </div>
@@ -446,6 +529,29 @@ const ProductForm: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.deleteConfirmation}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.deleteWarning}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              {t.cancel}
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteProduct}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {t.deleteProduct}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
