@@ -1,14 +1,12 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Language, TranslationDictionary, translations } from '@/lib/translations';
+import { Language, TranslationDictionary, translations, defaultLanguage } from '@/lib/translations';
 
 interface LanguageContextType {
   language: Language;
   t: TranslationDictionary;
   changeLanguage: (lang: Language) => void;
 }
-
-const defaultLanguage: Language = 'en';
 
 const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
