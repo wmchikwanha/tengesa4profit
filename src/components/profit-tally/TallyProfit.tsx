@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
-import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { CalendarIcon } from 'lucide-react';
@@ -14,12 +13,11 @@ import { HistorySection } from './HistorySection';
 import { ProductSummary } from './ProductSummary';
 import { useProfitCalculations } from '@/hooks/useProfitCalculations';
 import { usePDFReports } from '@/hooks/usePDFReports';
+import { useHistoryManagement } from '@/hooks/useHistoryManagement';
 
 const TallyProfit: React.FC = () => {
   const { t } = useLanguage();
   const { salesHistory, clearAllData } = useAppData();
-  const { toast } = useToast();
-  const [viewingHistory, setViewingHistory] = useState(false);
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   const today = new Date();
   
@@ -42,18 +40,19 @@ const TallyProfit: React.FC = () => {
     calculateTotalSalesPerProduct
   } = useProfitCalculations();
   
-  const handleClearAllData = () => {
-    if (window.confirm(t.confirmClearAll)) {
-      clearAllData();
-      toast({
-        title: "Success",
-        description: "All data has been cleared",
-      });
-    }
-  };
+  const {
+    viewingHistory,
+    filteredHistory,
+    isDateFilterOpen,
+    setIsDateFilterOpen,
+    handleToggleHistory,
+    handleClearAllData: triggerClearAllData,
+    applyDateFilter,
+    resetDateFilter
+  } = useHistoryManagement(salesHistory);
   
-  const handleToggleHistory = () => {
-    setViewingHistory(!viewingHistory);
+  const handleClearData = () => {
+    triggerClearAllData(clearAllData);
   };
   
   return (
@@ -108,12 +107,16 @@ const TallyProfit: React.FC = () => {
               onSharePDF={handleSharePDF}
               onDownloadPDF={handleDownloadPDF}
               onToggleHistory={handleToggleHistory}
-              onClearAllData={handleClearAllData}
+              onClearAllData={handleClearData}
             />
             
             <HistorySection 
               viewingHistory={viewingHistory}
-              salesHistory={salesHistory}
+              salesHistory={filteredHistory}
+              isDateFilterOpen={isDateFilterOpen}
+              setIsDateFilterOpen={setIsDateFilterOpen}
+              onApplyDateFilter={applyDateFilter}
+              onResetDateFilter={resetDateFilter}
             />
             
             <ProductSummary
