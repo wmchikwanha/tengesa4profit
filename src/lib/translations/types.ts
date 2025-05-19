@@ -43,6 +43,7 @@ export interface TranslationDictionary {
   enterQuantity: string;
   cancel: string;
   add: string;
+  confirmNegativeStock: string;
 
   // Form helpers
   optional: string;
@@ -57,6 +58,7 @@ export interface TranslationDictionary {
   dailySummary: string;
   productSummary: string;
   totalStockValue: string;
+  totalStockRemaining: string;
   shareTally: string;
   downloadReport: string;
   viewHistory: string;
@@ -78,6 +80,10 @@ export interface TranslationDictionary {
   salesValue: string;
   costValue: string;
   salesQty: string;
+  discardedQty: string;
+  discardedValue: string;
+  totalDiscardedQty: string;
+  totalDiscardedValue: string;
   
   // Date filtering
   selectDateRange: string;

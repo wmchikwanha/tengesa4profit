@@ -43,6 +43,7 @@ export const ndTranslations: TranslationDictionary = {
   enterQuantity: 'Faka inani ongalengeza:',
   cancel: 'Khansela',
   add: 'Engeza',
+  confirmNegativeStock: 'Isexwayiso: Uthengisa ngaphezu kwempahla oyitholayo. Vumela impahla engemva?',
 
   // Form helpers
   optional: 'okungeyisiyo impoqo',
@@ -57,6 +58,7 @@ export const ndTranslations: TranslationDictionary = {
   dailySummary: 'Isifinyezo Sosuku',
   productSummary: 'Isifinyezo Sempahla Ethengisiwe',
   totalStockValue: 'Intengo Yempahla Yonke',
+  totalStockRemaining: 'Inani Eliphelele Elitholakalayo',
   shareTally: 'Thumela Umbiko',
   downloadReport: 'Landa iPDF',
   viewHistory: 'Bona Umlando',
@@ -78,6 +80,10 @@ export const ndTranslations: TranslationDictionary = {
   salesValue: 'Inani Lemali Yentengo',
   costValue: 'Inani Lemali Yezindleko',
   salesQty: 'Inani Eliphelele Elithengisiweyo',
+  discardedQty: 'Inani Eliphelele Elilahlekileyo',
+  discardedValue: 'Intengo Elahlekileyo',
+  totalDiscardedQty: 'Inani Eliphelele Elilahlekileyo',
+  totalDiscardedValue: 'Intengo Ephelele Elahlekileyo',
   
   // Date filtering
   selectDateRange: 'Khetha usuku',

@@ -43,6 +43,7 @@ export const enTranslations: TranslationDictionary = {
   enterQuantity: 'Enter quantity to add:',
   cancel: 'Cancel',
   add: 'Add',
+  confirmNegativeStock: 'Warning: You are selling more than your available stock. Allow negative stock?',
 
   // Form helpers
   optional: 'optional',
@@ -57,14 +58,13 @@ export const enTranslations: TranslationDictionary = {
   dailySummary: 'Daily Summary',
   productSummary: 'Product Sales Summary',
   totalStockValue: 'Total Stock Value',
-  totalStockRemaining: 'Total Stock Remaining Value',
+  totalStockRemaining: 'Total Stock Remaining',
   shareTally: 'Share Report',
   downloadReport: 'Download PDF',
   viewHistory: 'View History',
   hideHistory: 'Hide History',
   clearAllData: 'End Day & Clear All',
   confirmClearAll: 'Are you sure you want to clear all data? This cannot be undone!',
-  confirmNegativeStock: 'Warning: You are selling more than your available stock. Allow negative stock?',
   sold: 'Sold',
   remaining: 'Left',
   history: 'Sales History',
@@ -81,8 +81,8 @@ export const enTranslations: TranslationDictionary = {
   costValue: 'Cost Value',
   salesQty: 'Total Sales Quantity',
   discardedQty: 'Total Discarded Quantity',
-  totalDiscardedQty: 'Total Discarded Quantity',
   discardedValue: 'Discarded Value',
+  totalDiscardedQty: 'Total Discarded Quantity',
   totalDiscardedValue: 'Total Discarded Value',
   
   // Date filtering

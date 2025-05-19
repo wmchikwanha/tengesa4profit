@@ -43,6 +43,7 @@ export const snTranslations: TranslationDictionary = {
   enterQuantity: 'Isa huwandu hwekuwedzera:',
   cancel: 'Kanzura',
   add: 'Wedzera',
+  confirmNegativeStock: 'Yambiro: Uri kutengesera zvakawanda kupfuura zvaunazvo. Bvumira kutengesera zvisipo?',
 
   // Form helpers
   optional: 'hazvina kukosha',
@@ -57,6 +58,7 @@ export const snTranslations: TranslationDictionary = {
   dailySummary: 'Zvebasa Rezuva',
   productSummary: 'Zvigadzirwa Zvatengeswa',
   totalStockValue: 'Mari yeZvigadzirwa Zvose',
+  totalStockRemaining: 'Zvigadzirwa Zvose Zvakasara',
   shareTally: 'Tumira Ripoti',
   downloadReport: 'Dhaunirodha PDF',
   viewHistory: 'Tarira Zvakaitwa',
@@ -78,6 +80,10 @@ export const snTranslations: TranslationDictionary = {
   salesValue: 'Mari Yakaunganwa',
   costValue: 'Mari Yakashandiswa',
   salesQty: 'Huwandu Hwese Hwakatengeswa',
+  discardedQty: 'Huwandu Hwese Hwakarasika',
+  discardedValue: 'Mari Yakarasika',
+  totalDiscardedQty: 'Huwandu Hwese Hwakarasika',
+  totalDiscardedValue: 'Mari Yese Yakarasika',
   
   // Date filtering
   selectDateRange: 'Sarudza mazuva',
