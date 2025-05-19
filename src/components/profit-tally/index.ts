@@ -6,3 +6,6 @@ export * from './CalculationResults';
 export * from './DailySummary';
 export * from './HistorySection';
 export * from './ProductSummary';
+export * from './MainReport';
+export * from './ReportHeader';
+export * from './ReportContent';
