@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SalesRecord } from '@/contexts/AppDataContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
@@ -14,8 +14,15 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [viewingHistory, setViewingHistory] = useState(false);
-  const [filteredHistory, setFilteredHistory] = useState(salesHistory);
+  const [filteredHistory, setFilteredHistory] = useState<SalesRecord[]>([]);
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  
+  // Sync filteredHistory with salesHistory when not viewing history
+  useEffect(() => {
+    if (!viewingHistory) {
+      setFilteredHistory(salesHistory);
+    }
+  }, [salesHistory, viewingHistory]);
   
   const handleToggleHistory = () => {
     setViewingHistory(!viewingHistory);
@@ -71,11 +78,6 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
   const resetDateFilter = () => {
     setFilteredHistory(salesHistory);
   };
-  
-  // Update filtered history when sales history changes
-  if (JSON.stringify(salesHistory) !== JSON.stringify(filteredHistory) && !viewingHistory) {
-    setFilteredHistory(salesHistory);
-  }
   
   return {
     viewingHistory,
