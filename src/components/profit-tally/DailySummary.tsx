@@ -52,7 +52,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         </div>
         
         <div className="flex justify-between text-lg">
-          <span>{t.totalStockValue}:</span>
+          <span>{t.totalStockRemaining}:</span>
           <span>{t.currency}{totalStockValue.toFixed(2)}</span>
         </div>
         

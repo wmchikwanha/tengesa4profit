@@ -33,6 +33,8 @@ const TallyProfit: React.FC = () => {
     totalSalesValue,
     totalCostValue,
     totalStockValue,
+    totalDiscardedValue,
+    totalDiscardedQuantity,
     handleSelectProduct,
     handleQuantitySoldChange,
     handleQuantityDiscardedChange,
@@ -125,6 +127,8 @@ const TallyProfit: React.FC = () => {
               totalSalesValue={totalSalesValue}
               totalCostValue={totalCostValue}
               totalProfit={totalProfit}
+              totalDiscardedValue={totalDiscardedValue}
+              totalDiscardedQuantity={totalDiscardedQuantity}
               calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}
             />
           </>

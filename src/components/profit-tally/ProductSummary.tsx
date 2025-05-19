@@ -16,11 +16,15 @@ interface ProductSummaryProps {
   totalSalesValue: number;
   totalCostValue: number;
   totalProfit: number;
+  totalDiscardedValue?: number;
+  totalDiscardedQuantity?: number;
   calculateTotalSalesPerProduct: (productId: string) => {
     totalQuantitySold: number;
+    totalQuantityDiscarded: number;
     totalProfit: number;
     totalSalesValue: number;
     totalCostValue: number;
+    totalDiscardedValue: number;
   };
 }
 
@@ -30,6 +34,8 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
   totalSalesValue,
   totalCostValue, 
   totalProfit,
+  totalDiscardedValue = 0,
+  totalDiscardedQuantity = 0,
   calculateTotalSalesPerProduct
 }) => {
   const { t } = useLanguage();
@@ -54,6 +60,9 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
                 <p className="text-xs font-medium text-blue-700 mt-1">
                   {t.salesQty}: {totals.totalQuantitySold}
                 </p>
+                <p className="text-xs font-medium text-red-600 mt-1">
+                  {t.discardedQty}: {totals.totalQuantityDiscarded}
+                </p>
               </div>
               <div className="text-right ml-auto md:ml-0">
                 <div className="flex flex-col space-y-1">
@@ -66,12 +75,12 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
                     <span className="font-medium">{t.currency}{totals.totalCostValue.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between gap-4">
-                    <span className="text-sm">{t.dailyProfit}:</span>
-                    <span className="font-bold text-blue-600">{t.currency}{calc.dailyProfit.toFixed(2)}</span>
+                    <span className="text-sm">{t.discardedValue}:</span>
+                    <span className="font-medium text-red-600">{t.currency}{totals.totalDiscardedValue.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between gap-4">
-                    <span className="text-sm">{t.totalProfit}:</span>
-                    <span className="font-bold text-blue-700">{t.currency}{totals.totalProfit.toFixed(2)}</span>
+                    <span className="text-sm">{t.dailyProfit}:</span>
+                    <span className="font-bold text-blue-700">{t.currency}{calc.dailyProfit.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -92,6 +101,18 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
           <div className="flex justify-between md:justify-start md:flex-col text-lg text-blue-800">
             <span>{t.totalProfit}:</span>
             <span className="ml-2 md:ml-0">{t.currency}{totalProfit.toFixed(2)}</span>
+          </div>
+        </div>
+        
+        {/* Add discarded totals */}
+        <div className="grid grid-cols-2 gap-2 p-3 bg-red-50 rounded-lg mt-2">
+          <div className="flex justify-between md:justify-start md:flex-col">
+            <span className="text-red-700">{t.totalDiscardedQty}:</span>
+            <span className="ml-2 md:ml-0 text-red-700">{totalDiscardedQuantity}</span>
+          </div>
+          <div className="flex justify-between md:justify-start md:flex-col">
+            <span className="text-red-700">{t.totalDiscardedValue}:</span>
+            <span className="ml-2 md:ml-0 text-red-700">{t.currency}{totalDiscardedValue.toFixed(2)}</span>
           </div>
         </div>
       </CardContent>

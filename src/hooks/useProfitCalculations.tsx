@@ -85,13 +85,12 @@ export function useProfitCalculations() {
     const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
     const discardedQty = typeof quantityDiscarded === 'number' ? quantityDiscarded : 0;
     
-    if (soldQty + discardedQty > selectedProduct.quantityBought) {
-      toast({
-        title: "Error",
-        description: "Total quantity cannot exceed quantity bought",
-        variant: "destructive",
-      });
-      return;
+    // Check if sold quantity exceeds stock
+    const stockRemaining = selectedProduct.quantityBought - (selectedProduct.quantitySold + selectedProduct.quantityDiscarded);
+    if (soldQty > stockRemaining) {
+      if (!window.confirm(t.confirmNegativeStock)) {
+        return;
+      }
     }
     
     // Save updated values
@@ -115,10 +114,10 @@ export function useProfitCalculations() {
   // Calculate total remaining stock value
   const totalStockValue = products.reduce((sum, product) => {
     const calc = calculateProduct(product);
-    return sum + (calc.stockRemaining * calc.sellingPrice);
+    return sum + (calc.stockRemaining * product.sellingPrice);
   }, 0);
   
-  // Calculate total sales value
+  // Calculate total sales value - Fix calculation
   const totalSalesValue = products.reduce((sum, product) => {
     return sum + (product.quantitySold * product.sellingPrice);
   }, 0);
@@ -129,21 +128,35 @@ export function useProfitCalculations() {
     return sum + (product.quantitySold * calc.costPerUnit);
   }, 0);
   
+  // Calculate total discarded value
+  const totalDiscardedValue = products.reduce((sum, product) => {
+    return sum + (product.quantityDiscarded * product.sellingPrice);
+  }, 0);
+  
+  // Calculate total discarded quantity
+  const totalDiscardedQuantity = products.reduce((sum, product) => {
+    return sum + (product.quantityDiscarded || 0);
+  }, 0);
+  
   // Calculate total sales per product across all history
   const calculateTotalSalesPerProduct = (productId: string) => {
     let totalQuantitySold = 0;
+    let totalQuantityDiscarded = 0;
     let totalProfit = 0;
     let totalSalesValue = 0;
     let totalCostValue = 0;
+    let totalDiscardedValue = 0;
     
     // Calculate from current products
     const product = products.find(p => p.id === productId);
     if (product) {
       const calc = calculateProduct(product);
       totalQuantitySold += product.quantitySold || 0;
+      totalQuantityDiscarded += product.quantityDiscarded || 0;
       totalProfit += calc.dailyProfit;
       totalSalesValue += product.quantitySold * product.sellingPrice;
       totalCostValue += product.quantitySold * calc.costPerUnit;
+      totalDiscardedValue += product.quantityDiscarded * product.sellingPrice;
     }
     
     // Add from history too if available
@@ -152,13 +165,22 @@ export function useProfitCalculations() {
       if (historyProduct) {
         const calc = calculateProduct(historyProduct);
         totalQuantitySold += historyProduct.quantitySold || 0;
+        totalQuantityDiscarded += historyProduct.quantityDiscarded || 0;
         totalProfit += calc.dailyProfit;
         totalSalesValue += historyProduct.quantitySold * historyProduct.sellingPrice;
         totalCostValue += historyProduct.quantitySold * calc.costPerUnit;
+        totalDiscardedValue += historyProduct.quantityDiscarded * historyProduct.sellingPrice;
       }
     });
     
-    return { totalQuantitySold, totalProfit, totalSalesValue, totalCostValue };
+    return { 
+      totalQuantitySold, 
+      totalQuantityDiscarded, 
+      totalProfit, 
+      totalSalesValue, 
+      totalCostValue, 
+      totalDiscardedValue 
+    };
   };
   
   return {
@@ -173,6 +195,8 @@ export function useProfitCalculations() {
     totalSalesValue,
     totalCostValue,
     totalStockValue,
+    totalDiscardedValue,
+    totalDiscardedQuantity,
     handleSelectProduct,
     handleQuantitySoldChange,
     handleQuantityDiscardedChange,
