@@ -1,14 +1,15 @@
 
-import { Toaster as Sonner, toast } from "sonner"
+import React from "react"
+import { Toaster as SonnerComponent } from "sonner"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof SonnerComponent>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Default to "light" theme instead of using useTheme() which requires ThemeProvider
-  const theme = "light"
+  // Use a fixed theme instead of relying on theme context
+  const theme = "light" 
 
   return (
-    <Sonner
+    <SonnerComponent
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       toastOptions={{
@@ -27,4 +28,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
+// Re-export the toast function from sonner
+import { toast } from "sonner"
 export { Toaster, toast }
+
+// Default export for easier imports
+export default Toaster

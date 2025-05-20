@@ -1,5 +1,5 @@
 
 // This file is just a re-export from our actual implementation
-import { useToast, toast } from "@/hooks/use-toast";
+import { useToast, toast, ToastProvider } from "@/hooks/use-toast";
 
-export { useToast, toast };
+export { useToast, toast, ToastProvider };

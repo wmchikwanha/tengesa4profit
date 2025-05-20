@@ -126,8 +126,78 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
-const listeners: Array<(state: State) => void> = []
+// Create a separate context for toast state management
+const ToastContext = React.createContext<{
+  state: State
+  toast: (props: Omit<ToasterToast, "id">) => void
+  dismiss: (toastId?: string) => void
+}>({
+  state: { toasts: [] },
+  toast: () => {},
+  dismiss: () => {},
+})
 
+// Create a provider component
+export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ 
+  children 
+}) => {
+  const [state, setState] = React.useState<State>({ toasts: [] })
+  
+  React.useEffect(() => {
+    const listener = (newState: State) => {
+      setState(newState)
+    }
+    
+    listeners.push(listener)
+    return () => {
+      const index = listeners.indexOf(listener)
+      if (index > -1) {
+        listeners.splice(index, 1)
+      }
+    }
+  }, [])
+
+  const toast = React.useCallback((props: Omit<ToasterToast, "id">) => {
+    const id = genId()
+    const newToast: ToasterToast = {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) {
+          dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
+        }
+      },
+    }
+    
+    dispatch({
+      type: actionTypes.ADD_TOAST,
+      toast: newToast,
+    })
+    
+    return {
+      id,
+      dismiss: () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id }),
+      update: (props: ToasterToast) => dispatch({
+        type: actionTypes.UPDATE_TOAST,
+        toast: { ...props, id },
+      }),
+    }
+  }, [])
+  
+  const dismiss = React.useCallback((toastId?: string) => {
+    dispatch({ type: actionTypes.DISMISS_TOAST, toastId })
+  }, [])
+
+  return (
+    <ToastContext.Provider value={{ state, toast, dismiss }}>
+      {children}
+    </ToastContext.Provider>
+  )
+}
+
+// Global state for toast management outside of React context
+const listeners: Array<(state: State) => void> = []
 let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
@@ -137,18 +207,54 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+// Export useToast hook for components
+export const useToast = () => {
+  const context = React.useContext(ToastContext)
+  
+  if (!context) {
+    // Fallback for when context is not available
+    return {
+      toast: (props: Omit<ToasterToast, "id">) => {
+        const id = genId()
+        
+        dispatch({
+          type: actionTypes.ADD_TOAST,
+          toast: {
+            ...props,
+            id,
+            open: true,
+            onOpenChange: (open) => {
+              if (!open) {
+                dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
+              }
+            },
+          },
+        })
+        
+        return {
+          id,
+          dismiss: () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id }),
+          update: (props: Partial<ToasterToast>) => dispatch({
+            type: actionTypes.UPDATE_TOAST,
+            toast: { ...props, id },
+          }),
+        }
+      },
+      dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
+      toasts: memoryState.toasts,
+    }
+  }
+  
+  return {
+    ...context,
+    toasts: context.state.toasts,
+  }
+}
 
-function toast({ ...props }: Toast) {
+// Standalone toast function
+export const toast = (props: Omit<ToasterToast, "id">) => {
   const id = genId()
-
-  const update = (props: ToasterToast) =>
-    dispatch({
-      type: actionTypes.UPDATE_TOAST,
-      toast: { ...props, id },
-    })
-  const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
-
+  
   dispatch({
     type: actionTypes.ADD_TOAST,
     toast: {
@@ -157,37 +263,18 @@ function toast({ ...props }: Toast) {
       open: true,
       onOpenChange: (open) => {
         if (!open) {
-          dismiss()
+          dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
         }
       },
     },
   })
-
+  
   return {
     id,
-    dismiss,
-    update,
+    dismiss: () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id }),
+    update: (props: Partial<ToasterToast>) => dispatch({
+      type: actionTypes.UPDATE_TOAST,
+      toast: { ...props, id },
+    }),
   }
 }
-
-function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
-
-  React.useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      const index = listeners.indexOf(setState)
-      if (index > -1) {
-        listeners.splice(index, 1)
-      }
-    }
-  }, [state])
-
-  return {
-    ...state,
-    toast,
-    dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
-  }
-}
-
-export { toast, useToast }

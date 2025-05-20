@@ -1,5 +1,5 @@
 
-import { useToast } from "@/hooks/use-toast"
+import React from "react"
 import {
   Toast,
   ToastClose,
@@ -8,6 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+import { useToast, ToastProvider as ToastContextProvider } from "@/hooks/use-toast"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -30,5 +31,14 @@ export function Toaster() {
       })}
       <ToastViewport />
     </ToastProvider>
+  )
+}
+
+// Wrap the Toaster with the context provider
+export default function ToasterWithProvider() {
+  return (
+    <ToastContextProvider>
+      <Toaster />
+    </ToastContextProvider>
   )
 }
