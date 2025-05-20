@@ -9,13 +9,14 @@ import { AppDataProvider } from "./contexts/AppDataContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
+// Create the query client
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <AppDataProvider>
-        <LanguageProvider>
+      <LanguageProvider>
+        <AppDataProvider>
           <TooltipProvider>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -25,8 +26,8 @@ const App = () => (
             <Toaster />
             <Sonner />
           </TooltipProvider>
-        </LanguageProvider>
-      </AppDataProvider>
+        </AppDataProvider>
+      </LanguageProvider>
     </BrowserRouter>
   </QueryClientProvider>
 );

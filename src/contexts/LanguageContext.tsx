@@ -17,11 +17,10 @@ const LanguageContext = createContext<LanguageContextType>({
 export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
-    // Try to get the language from localStorage
-    const savedLanguage = localStorage.getItem('language') as Language | null;
-    return savedLanguage || defaultLanguage;
-  });
+  // Initialize state with a direct value, not using useState in a callback
+  const [language, setLanguage] = useState<Language>(
+    localStorage.getItem('language') as Language || defaultLanguage
+  );
 
   useEffect(() => {
     // Save the language preference to localStorage
