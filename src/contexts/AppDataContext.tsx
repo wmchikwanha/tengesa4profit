@@ -1,7 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product } from '@/lib/types';
-import { useToast } from '@/components/ui/use-toast';
 
 export interface SalesRecord {
   date: string;
@@ -34,7 +33,6 @@ const AppDataContext = createContext<AppDataContextType>({
 export const useAppData = () => useContext(AppDataContext);
 
 export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>(() => {
     try {
       const savedProducts = localStorage.getItem('products');
@@ -60,26 +58,18 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
       localStorage.setItem('products', JSON.stringify(products));
     } catch (error) {
       console.error('Failed to save products to localStorage:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save your data",
-        variant: "destructive",
-      });
+      // Don't use toast here since it's causing circular dependency
     }
-  }, [products, toast]);
+  }, [products]);
 
   useEffect(() => {
     try {
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
     } catch (error) {
       console.error('Failed to save sales history to localStorage:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save your history data",
-        variant: "destructive",
-      });
+      // Don't use toast here since it's causing circular dependency
     }
-  }, [salesHistory, toast]);
+  }, [salesHistory]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
@@ -128,10 +118,8 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     
     setSalesHistory(prev => [...prev, newRecord]);
     
-    toast({
-      title: "History Saved",
-      description: "Today's sales have been added to history",
-    });
+    // We'll use console.log instead of toast for now
+    console.log("History Saved: Today's sales have been added to history");
   };
 
   const clearAllData = () => {
