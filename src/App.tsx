@@ -8,7 +8,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { AppDataProvider } from "./contexts/AppDataContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { ToastProvider } from "./hooks/use-toast";
+import { ToastProvider } from "@/hooks/use-toast";
 
 // Create the query client
 const queryClient = new QueryClient();
