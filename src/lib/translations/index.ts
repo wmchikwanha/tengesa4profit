@@ -1,14 +1,14 @@
 
 export * from './types';
 import { Language, TranslationDictionary } from './types';
-import { enTranslations } from './en';
-import { snTranslations } from './sn';
-import { ndTranslations } from './nd';
+import { en } from './en';
+import { sn } from './sn';
+import { nd } from './nd';
 
 export const translations: Record<Language, TranslationDictionary> = {
-  en: enTranslations,
-  sn: snTranslations,
-  nd: ndTranslations
+  en: en,
+  sn: sn,
+  nd: nd
 };
 
 export const defaultLanguage: Language = 'en';

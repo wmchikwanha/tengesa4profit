@@ -1,3 +1,4 @@
+
 import { TranslationDictionary } from './types';
 
 export const en: TranslationDictionary = {
