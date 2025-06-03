@@ -67,7 +67,7 @@ export const MainReport: React.FC<MainReportProps> = ({
             onCalculate={onCalculate}
           />
           
-          <CalculationResults calculation={calculation} />
+          <CalculationResults calculation={calculation} product={selectedProduct} />
         </div>
       )}
     </>

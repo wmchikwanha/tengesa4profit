@@ -28,14 +28,19 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
 }) => {
   const { t } = useLanguage();
 
+  const unit = selectedProduct.unitOfMeasurement;
+
   return (
     <Card className="bg-white border border-blue-200">
       <CardContent className="pt-6 space-y-4">
         <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
+        <p className="text-sm text-gray-600">
+          Available: {selectedProduct.quantityBought - (selectedProduct.quantitySold + selectedProduct.quantityDiscarded)} {unit}
+        </p>
         
         <div>
           <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="quantitySold" className="trader-label">{t.quantitySold}</label>
+            <label htmlFor="quantitySold" className="trader-label">{t.quantitySold} ({unit})</label>
             <span className="text-red-500">*</span>
             {invalidFields.has('quantitySold') && (
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -54,7 +59,7 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
         
         <div>
           <label htmlFor="quantityDiscarded" className="trader-label">
-            {t.quantityDiscarded} <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.quantityDiscarded} ({unit}) <span className="text-sm text-trader-neutral">({t.optional})</span>
           </label>
           <Input
             id="quantityDiscarded"

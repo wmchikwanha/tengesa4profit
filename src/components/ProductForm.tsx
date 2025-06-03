@@ -27,7 +27,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Product } from '@/lib/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Product, UnitOfMeasurement } from '@/lib/types';
 import { Info, Calendar, Save, Plus, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { 
@@ -42,6 +49,7 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
   supplier: '',
   quantityBought: 0,
+  unitOfMeasurement: 'each',
   buyingPrice: 0,
   transportCost: 0,
   stallFee: 0,
@@ -50,6 +58,19 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   quantitySold: 0,
   quantityDiscarded: 0
 };
+
+const unitOptions: { value: UnitOfMeasurement; label: string }[] = [
+  { value: 'each', label: 'Each' },
+  { value: 'grams', label: 'Grams' },
+  { value: 'kg', label: 'KGs' },
+  { value: 'tons', label: 'Tons' },
+  { value: 'litres', label: 'Litres' },
+  { value: 'metres', label: 'Metres' },
+  { value: 'cm', label: 'CMs' },
+  { value: 'cups', label: 'Cup(s)' },
+  { value: 'pints', label: 'Pint(s)' },
+  { value: 'gallons', label: 'Gallon(s)' }
+];
 
 const ProductForm: React.FC = () => {
   const { t } = useLanguage();
@@ -83,6 +104,13 @@ const ProductForm: React.FC = () => {
         return updated;
       });
     }
+  };
+
+  const handleUnitChange = (value: UnitOfMeasurement) => {
+    setFormData(prev => ({
+      ...prev,
+      unitOfMeasurement: value
+    }));
   };
 
   const handleMarkupChange = (value: number[]) => {
@@ -257,6 +285,17 @@ const ProductForm: React.FC = () => {
   const calculatedSellingPrice = formData.sellingPrice || 
     costPerUnit * (1 + formData.markupPercentage / 100);
 
+  // Format prices with currency conversion for display in USD amounts but convert for ZWL
+  const formatInputPrice = (usdPrice: number): string => {
+    return convertPrice(usdPrice).toFixed(2);
+  };
+
+  const parseInputPrice = (displayValue: string): number => {
+    const numValue = Number(displayValue);
+    // Convert back to USD for storage
+    return getCurrencySymbol() === 'ZWL' ? numValue / (convertPrice(1)) : numValue;
+  };
+
   return (
     <div className="space-y-6">
       {/* Date Display and Currency Selector */}
@@ -298,6 +337,7 @@ const ProductForm: React.FC = () => {
                   <div>
                     <span className="font-medium">{product.name}</span>
                     <p className="text-sm text-gray-600">Supplier: {product.supplier}</p>
+                    <p className="text-sm text-gray-500">{product.quantityBought} {product.unitOfMeasurement}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button 
@@ -369,29 +409,50 @@ const ProductForm: React.FC = () => {
           />
         </div>
         
-        <div>
-          <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="quantityBought" className="trader-label">{t.quantityBought}</label>
-            <span className="text-red-500">*</span>
-            {invalidFields.has('quantityBought') && (
-              <AlertCircle className="h-4 w-4 text-red-500" />
-            )}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <div className="flex items-center gap-1 mb-1">
+              <label htmlFor="quantityBought" className="trader-label">{t.quantityBought}</label>
+              <span className="text-red-500">*</span>
+              {invalidFields.has('quantityBought') && (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              )}
+            </div>
+            <Input
+              id="quantityBought"
+              name="quantityBought"
+              value={formData.quantityBought || ''}
+              onChange={handleChange}
+              type="number"
+              min="1"
+              className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantityBought') ? 'border-red-500' : ''}`}
+              placeholder="e.g. 100"
+            />
           </div>
-          <Input
-            id="quantityBought"
-            name="quantityBought"
-            value={formData.quantityBought || ''}
-            onChange={handleChange}
-            type="number"
-            min="1"
-            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantityBought') ? 'border-red-500' : ''}`}
-            placeholder="e.g. 100"
-          />
+          
+          <div>
+            <label htmlFor="unitOfMeasurement" className="trader-label">Unit</label>
+            <Select
+              value={formData.unitOfMeasurement}
+              onValueChange={handleUnitChange}
+            >
+              <SelectTrigger className="trader-input border-blue-200 focus:border-blue-400">
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                {unitOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
         <div>
           <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="buyingPrice" className="trader-label">{t.buyingPrice} ({getCurrencySymbol()})</label>
+            <label htmlFor="buyingPrice" className="trader-label">Unit Price ({getCurrencySymbol()})</label>
             <span className="text-red-500">*</span>
             {invalidFields.has('buyingPrice') && (
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -400,8 +461,11 @@ const ProductForm: React.FC = () => {
           <Input
             id="buyingPrice"
             name="buyingPrice"
-            value={formData.buyingPrice || ''}
-            onChange={handleChange}
+            value={formData.buyingPrice ? formatInputPrice(formData.buyingPrice) : ''}
+            onChange={(e) => {
+              const usdValue = parseInputPrice(e.target.value);
+              setFormData(prev => ({ ...prev, buyingPrice: usdValue }));
+            }}
             type="number"
             min="0.01"
             step="0.01"
@@ -417,8 +481,11 @@ const ProductForm: React.FC = () => {
           <Input
             id="transportCost"
             name="transportCost"
-            value={formData.transportCost || ''}
-            onChange={handleChange}
+            value={formData.transportCost ? formatInputPrice(formData.transportCost) : ''}
+            onChange={(e) => {
+              const usdValue = parseInputPrice(e.target.value);
+              setFormData(prev => ({ ...prev, transportCost: usdValue }));
+            }}
             type="number"
             min="0"
             step="0.01"
@@ -429,13 +496,16 @@ const ProductForm: React.FC = () => {
         
         <div>
           <label htmlFor="stallFee" className="trader-label">
-            {t.otherFees} ({getCurrencySymbol()}) <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.otherFees} ({getCurrencySymbol()}) <span className="text-sm text-trader-neutral">({t.optional}) e.g. stall, rates, parking</span>
           </label>
           <Input
             id="stallFee"
             name="stallFee"
-            value={formData.stallFee || ''}
-            onChange={handleChange}
+            value={formData.stallFee ? formatInputPrice(formData.stallFee) : ''}
+            onChange={(e) => {
+              const usdValue = parseInputPrice(e.target.value);
+              setFormData(prev => ({ ...prev, stallFee: usdValue }));
+            }}
             type="number"
             min="0"
             step="0.01"
@@ -448,7 +518,7 @@ const ProductForm: React.FC = () => {
         <Card className="bg-blue-50 border border-blue-200">
           <CardContent className="pt-6">
             <div className="mb-4">
-              <p className="font-semibold">{t.costPerUnit}: {formatPrice(costPerUnit)}</p>
+              <p className="font-semibold">{t.costPerUnit}: {formatPrice(costPerUnit)} per {formData.unitOfMeasurement}</p>
             </div>
             
             <div className="mb-4">
@@ -469,13 +539,16 @@ const ProductForm: React.FC = () => {
             
             <div>
               <label htmlFor="sellingPrice" className="trader-label">
-                {t.desiredSellingPrice} ({getCurrencySymbol()})
+                {t.desiredSellingPrice} ({getCurrencySymbol()}) per {formData.unitOfMeasurement}
               </label>
               <Input
                 id="sellingPrice"
                 name="sellingPrice"
-                value={formData.sellingPrice || ''}
-                onChange={handleSellingPriceChange}
+                value={formData.sellingPrice ? formatInputPrice(formData.sellingPrice) : ''}
+                onChange={(e) => {
+                  const usdValue = parseInputPrice(e.target.value);
+                  setFormData(prev => ({ ...prev, sellingPrice: usdValue }));
+                }}
                 type="number"
                 min="0.01"
                 step="0.01"
@@ -484,7 +557,7 @@ const ProductForm: React.FC = () => {
               />
               <p className="text-sm text-trader-neutral mt-1">
                 {formData.sellingPrice ? `${t.markupPercentage}: ${(((formData.sellingPrice / costPerUnit) - 1) * 100).toFixed(0)}%` : 
-                  `${t.sellingPrice}: ${formatPrice(calculatedSellingPrice)}`}
+                  `${t.sellingPrice}: ${formatPrice(calculatedSellingPrice)} per ${formData.unitOfMeasurement}`}
               </p>
             </div>
           </CardContent>

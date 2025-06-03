@@ -1,4 +1,3 @@
-
 export type Language = 'en' | 'sn' | 'nd';
 
 export interface TranslationDictionary {
@@ -14,6 +13,7 @@ export interface TranslationDictionary {
   supplier: string;
   quantityBought: string;
   buyingPrice: string;
+  unitPrice?: string;
   transportCost: string;
   stallFee: string;
   otherFees?: string;
@@ -109,4 +109,69 @@ export interface TranslationDictionary {
   applyFilter: string;
   resetFilter: string;
   salesHistory: string;
+
+  // Authentication
+  login: string;
+  signUp: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  enterEmail: string;
+  enterPassword: string;
+  phoneExample: string;
+  loading: string;
+  
+  // Terms and Conditions
+  termsAndConditions: string;
+  agreeToTerms: string;
+  acceptanceOfTerms: string;
+  acceptanceText: string;
+  trialPeriod: string;
+  trialText: string;
+  subscriptionTerms: string;
+  subscriptionText: string;
+  paymentTerms: string;
+  paymentText: string;
+  privacyPolicy: string;
+  privacyText: string;
+  termination: string;
+  terminationText: string;
+  
+  // Trial Status
+  freeTrial: string;
+  daysLeft: string;
+  gracePeriod: string;
+  gracePeriodMessage: string;
+  trialExpired: string;
+  trialMessage: string;
+  upgradeNow: string;
+  upgradeToBasic: string;
+  month: string;
+  
+  // Payment
+  selectPaymentMethod: string;
+  pay: string;
+  processing: string;
+  cardNumber: string;
+  expiryDate: string;
+  cardholderName: string;
+  enterCardholderName: string;
+  ecocashNumber: string;
+  ecocashInstructions: string;
+  mobileNumber: string;
+  paynowInstructions: string;
+  paypalEmail: string;
+  paypalInstructions: string;
+  
+  // Success Messages
+  welcomeMessage: string;
+  paymentSuccess: string;
+  subscriptionActive: string;
+  continueToApp: string;
+  upgradeAccount: string;
+  upgradeMessage: string;
+  
+  // Auth Flow
+  noAccount: string;
+  haveAccount: string;
 }

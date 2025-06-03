@@ -3,18 +3,22 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { ProductCalculation } from '@/lib/types';
+import { Product } from '@/lib/types';
 import { AlertCircle as AlertIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface CalculationResultsProps {
   calculation: ProductCalculation | null;
+  product?: Product;
 }
 
-export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculation }) => {
+export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculation, product }) => {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
 
   if (!calculation) return null;
+
+  const unit = product?.unitOfMeasurement || 'each';
 
   return (
     <Card className={calculation.lowMargin ? "bg-red-50 border border-red-200" : "bg-green-50 border border-green-200"}>
@@ -29,22 +33,22 @@ export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculat
         <div className="space-y-3">
           <div className="flex justify-between">
             <span className="font-semibold">{t.costPerUnit}:</span>
-            <span>{formatPrice(calculation.costPerUnit)}</span>
+            <span>{formatPrice(calculation.costPerUnit)} per {unit}</span>
           </div>
           
           <div className="flex justify-between">
             <span className="font-semibold">{t.sellingPrice}:</span>
-            <span>{formatPrice(calculation.sellingPrice)}</span>
+            <span>{formatPrice(calculation.sellingPrice)} per {unit}</span>
           </div>
           
           <div className="flex justify-between">
             <span className="font-semibold">{t.profitPerUnit}:</span>
-            <span>{formatPrice(calculation.profitPerUnit)}</span>
+            <span>{formatPrice(calculation.profitPerUnit)} per {unit}</span>
           </div>
           
           <div className="flex justify-between">
             <span className="font-semibold">{t.stockRemaining}:</span>
-            <span>{calculation.stockRemaining}</span>
+            <span>{calculation.stockRemaining} {unit}</span>
           </div>
           
           <div className="flex justify-between font-bold text-lg">

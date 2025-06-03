@@ -1,9 +1,11 @@
+export type UnitOfMeasurement = 'each' | 'grams' | 'kg' | 'tons' | 'litres' | 'metres' | 'cm' | 'cups' | 'pints' | 'gallons';
 
 export interface Product {
   id: string;
   name: string;
   supplier: string;
   quantityBought: number;
+  unitOfMeasurement: UnitOfMeasurement;
   buyingPrice: number;
   transportCost: number;
   stallFee: number;

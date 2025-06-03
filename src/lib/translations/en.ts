@@ -1,4 +1,3 @@
-
 import { TranslationDictionary } from './types';
 
 export const en: TranslationDictionary = {
@@ -10,6 +9,7 @@ export const en: TranslationDictionary = {
   supplier: "Supplier",
   quantityBought: "Quantity Bought",
   buyingPrice: "Buying Price",
+  unitPrice: "Unit Price",
   transportCost: "Transport Cost",
   stallFee: "Stall Fee",
   markupPercentage: "Markup Percentage",
@@ -74,5 +74,70 @@ export const en: TranslationDictionary = {
   shareTally: "Share Report",
   downloadReport: "Download Report",
   totalStockRemaining: "Total Stock Value",
-  lowProfitWarning: "Low Profit Margin Warning"
+  lowProfitWarning: "Low Profit Margin Warning",
+
+  // Authentication
+  login: "Login",
+  signUp: "Sign Up",
+  email: "Email",
+  phoneNumber: "Phone Number",
+  password: "Password",
+  enterEmail: "Enter your email",
+  enterPassword: "Enter your password",
+  phoneExample: "Example: 0712345678 (10 digits starting with 07)",
+  loading: "Loading...",
+  
+  // Terms and Conditions
+  termsAndConditions: "Terms and Conditions",
+  agreeToTerms: "I agree to the",
+  acceptanceOfTerms: "Acceptance of Terms",
+  acceptanceText: "By using this application, you agree to be bound by these terms and conditions.",
+  trialPeriod: "Trial Period",
+  trialText: "New users receive a 30-day free trial with full access to all features. After the trial period, a 3-day grace period is provided before subscription is required.",
+  subscriptionTerms: "Subscription Terms",
+  subscriptionText: "Basic subscription costs $1.99 per month and provides continued access to all application features.",
+  paymentTerms: "Payment Terms",
+  paymentText: "Payments are processed securely through our payment partners including EcoCash, PayNow, Visa, MasterCard, and PayPal.",
+  privacyPolicy: "Privacy Policy",
+  privacyText: "We protect your personal information and will never share it with third parties without your consent.",
+  termination: "Termination",
+  terminationText: "You may cancel your subscription at any time. Your access will continue until the end of your current billing period.",
+  
+  // Trial Status
+  freeTrial: "Free Trial",
+  daysLeft: "days left",
+  gracePeriod: "Grace Period",
+  gracePeriodMessage: "Your trial has ended. Complete your subscription to continue using the app.",
+  trialExpired: "Trial Expired",
+  trialMessage: "Enjoy full access to all features during your trial period.",
+  upgradeNow: "Upgrade Now",
+  upgradeToBasic: "Upgrade to Basic",
+  month: "month",
+  
+  // Payment
+  selectPaymentMethod: "Select Payment Method",
+  pay: "Pay",
+  processing: "Processing...",
+  cardNumber: "Card Number",
+  expiryDate: "Expiry Date",
+  cardholderName: "Cardholder Name",
+  enterCardholderName: "Enter cardholder name",
+  ecocashNumber: "EcoCash Number",
+  ecocashInstructions: "You will receive a prompt on your phone to complete the payment.",
+  mobileNumber: "Mobile Number",
+  paynowInstructions: "You will receive a PayNow prompt on your registered device.",
+  paypalEmail: "PayPal Email",
+  paypalInstructions: "You will be redirected to PayPal to complete your payment.",
+  
+  // Success Messages
+  welcomeMessage: "Welcome!",
+  paymentSuccess: "Payment Successful!",
+  subscriptionActive: "Your subscription is now active. Thank you for upgrading!",
+  continueToApp: "Continue to App",
+  upgradeAccount: "Upgrade Account",
+  upgradeMessage: "Choose your preferred payment method to continue.",
+  
+  // Auth Flow
+  noAccount: "Don't have an account?",
+  haveAccount: "Already have an account?"
 };
