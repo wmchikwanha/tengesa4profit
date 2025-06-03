@@ -1,4 +1,3 @@
-
 import { TranslationDictionary } from './types';
 
 export const sn: TranslationDictionary = {
@@ -10,6 +9,7 @@ export const sn: TranslationDictionary = {
   supplier: "Mutengesi",
   quantityBought: "Huwandu Hwatengwa",
   buyingPrice: "Mutengo Wokutenga",
+  unitPrice: "Mutengo paUnit",
   transportCost: "Mari Yekufambisa",
   stallFee: "Muripo weStall",
   markupPercentage: "Purofiti muzana",
@@ -73,5 +73,70 @@ export const sn: TranslationDictionary = {
   shareTally: "Govera Ripoti",
   downloadReport: "Dhaunirodha Ripoti",
   totalStockRemaining: "Huwandu Hwestock Hwese",
-  lowProfitWarning: "Yambiro Yepurofiti Ishoma"
+  lowProfitWarning: "Yambiro Yepurofiti Ishoma",
+
+  // Authentication
+  login: "Pinda",
+  signUp: "Zvinyorere",
+  email: "Email",
+  phoneNumber: "Nhamba Yefoni",
+  password: "Password",
+  enterEmail: "Isa email yako",
+  enterPassword: "Isa password yako",
+  phoneExample: "Semuenzaniso: 0712345678 (nhamba 10 inotanga ne07)",
+  loading: "Zviri kuroda...",
+  
+  // Terms and Conditions
+  termsAndConditions: "Mamiriro Ekushandisa",
+  agreeToTerms: "Ndinotenda",
+  acceptanceOfTerms: "Kutenda Mamiriro",
+  acceptanceText: "Nekushandisa application iyi, iwe unotenda kuzvisunga nemamiriro aya.",
+  trialPeriod: "Nguva Yekuedza",
+  trialText: "Vashandisi vatsva vanowana mazuva 30 ekuedza mahara nekuwana zvese. Mushure menguva yekuedza, mazuva 3 ekupa rubatsiro anopihwa.",
+  subscriptionTerms: "Mamiriro Ekubhadhara",
+  subscriptionText: "Kubhadhara kweBasic kunodihwa $1.99 pamwedzi uye kunopa mukana wekuendererazve.",
+  paymentTerms: "Mamiriro Ekubhadhara",
+  paymentText: "Kubhadhara kunoitwa zvakachengeteka kuburikidza nevabatsiri vedu EcoCash, PayNow, Visa, MasterCard, uye PayPal.",
+  privacyPolicy: "Mutemo Wekuvanzika",
+  privacyText: "Tinochengetedza ruzivo rwako uye hatizozvigove nevamwe vasina mvumo yako.",
+  termination: "Kumisa",
+  terminationText: "Unogona kumisa subscription yako chero nguva. Mukana wako uchapfuurira kusvika pakupera kwenguva yako.",
+  
+  // Trial Status
+  freeTrial: "Edzo Mahara",
+  daysLeft: "mazuva asara",
+  gracePeriod: "Nguva Yekupa Rubatsiro",
+  gracePeriodMessage: "Edzo rako rapera. Pedzisa subscription yako kuti uendererzewo kushandisa app.",
+  trialExpired: "Edzo Rapera",
+  trialMessage: "Nakidzwa nekuwana zvese panguva yako yekuedza.",
+  upgradeNow: "Simudza Zvino",
+  upgradeToBasic: "Simudza kuBasic",
+  month: "mwedzi",
+  
+  // Payment
+  selectPaymentMethod: "Sarudza Nzira Yekubhadhara",
+  pay: "Bhadhara",
+  processing: "Zviri kugadzirwa...",
+  cardNumber: "Nhamba YeCard",
+  expiryDate: "Zuva Rekupera",
+  cardholderName: "Zita ReMuridzi WeCard",
+  enterCardholderName: "Isa zita remuridzi wecard",
+  ecocashNumber: "Nhamba YeEcoCash",
+  ecocashInstructions: "Uchawana chirevo pafoni yako kuti upedzise kubhadhara.",
+  mobileNumber: "Nhamba Yefoni",
+  paynowInstructions: "Uchawana chirevo chePayNow pamudziyo wako.",
+  paypalEmail: "PayPal Email",
+  paypalInstructions: "Uchaendeswa kuPayPal kuti upedzise kubhadhara kwako.",
+  
+  // Success Messages
+  welcomeMessage: "Tigamuchire!",
+  paymentSuccess: "Kubhadhara Kwabudirira!",
+  subscriptionActive: "Subscription yako yava kushanda. Tinokutenda nekusimudza!",
+  continueToApp: "Enderera kuApp",
+  upgradeAccount: "Simudza Account",
+  upgradeMessage: "Sarudza nzira yako yekubhadhara kuti uenderere.",
+  
+  // Auth Flow
+  noAccount: "Hauna account?",
+  haveAccount: "Unetova account?"
 };

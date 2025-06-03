@@ -1,4 +1,3 @@
-
 import { TranslationDictionary } from './types';
 
 export const nd: TranslationDictionary = {
@@ -10,6 +9,7 @@ export const nd: TranslationDictionary = {
   supplier: "Umthengisi",
   quantityBought: "Inani Elithengiweyo",
   buyingPrice: "Intengo Yokuthenga",
+  unitPrice: "Intengo Ngenyutha",
   transportCost: "Izindleko Zokuthutha",
   stallFee: "Imali Yesitolo",
   markupPercentage: "Iphesenti Yenzuzo",
@@ -73,5 +73,70 @@ export const nd: TranslationDictionary = {
   shareTally: "Yabelana Ngombiko",
   downloadReport: "Landa Umbiko",
   totalStockRemaining: "Inani Lesitoko Lilonke",
-  lowProfitWarning: "Isexwayiso Senzuzo Encane"
+  lowProfitWarning: "Isexwayiso Senzuzo Encane",
+
+  // Authentication
+  login: "Ngena",
+  signUp: "Bhalisa",
+  email: "I-email",
+  phoneNumber: "Inombolo Yocingo",
+  password: "Iphasiwedi",
+  enterEmail: "Faka i-email yakho",
+  enterPassword: "Faka iphasiwedi yakho",
+  phoneExample: "Isibonelo: 0712345678 (izinombolo ezingu-10 eziqala ngo-07)",
+  loading: "Kulayishwa...",
+  
+  // Terms and Conditions
+  termsAndConditions: "Imigomo Nemibandela",
+  agreeToTerms: "Ngiyavuma",
+  acceptanceOfTerms: "Ukwamukela Imigomo",
+  acceptanceText: "Ngokusebenzisa lolu hlelo, uyavuma ukuboshwa yile migomo nemibandela.",
+  trialPeriod: "Isikhathi Sokuhlola",
+  trialText: "Abasebenzisi abasha bathola izinsuku ezingu-30 zokuhlola mahhala ngokufinyelela okugcwele ezinsizeni zonke.",
+  subscriptionTerms: "Imigomo Yokubhalisela",
+  subscriptionText: "Ukubhalisela kwe-Basic kubiza u-$1.99 ngenyanga futhi kunikeza ukufinyelela okuqhubekayo ezinsizeni zonke.",
+  paymentTerms: "Imigomo Yokukhokha",
+  paymentText: "Iinkokhelo zizenziwa ngokuphepha ngezitolo zethu ezihlanganisa i-EcoCash, PayNow, Visa, MasterCard, ne-PayPal.",
+  privacyPolicy: "Inqubomgomo Yobumfihlo",
+  privacyText: "Sivikela ulwazi lwakho lomuntu siqu futhi asisoze silwabelane nabanye ngaphandle kwemvume yakho.",
+  termination: "Ukuqeda",
+  terminationText: "Ungakwazi ukukhansela ukubhalisela kwakho nganoma yisiphi isikhathi. Ukufinyelela kwakho kuzoqhubeka kuze kube sekupheleni kwesikhathi sakho samanje.",
+  
+  // Trial Status
+  freeTrial: "Ukuhlola Mahhala",
+  daysLeft: "izinsuku ezisele",
+  gracePeriod: "Isikhathi Somusa",
+  gracePeriodMessage: "Isikhathi sakho sokuhlola siphelile. Qedela ukubhalisela kwakho ukuze uqhubeke usebenzisa uhlelo.",
+  trialExpired: "Ukuhlola Kuphelile",
+  trialMessage: "Jabulela ukufinyelela okugcwele ezinsizeni zonke ngesikhathi sakho sokuhlola.",
+  upgradeNow: "Thuthukisa Manje",
+  upgradeToBasic: "Thuthukisa ku-Basic",
+  month: "inyanga",
+  
+  // Payment
+  selectPaymentMethod: "Khetha Indlela Yokukhokha",
+  pay: "Khokha",
+  processing: "Kuyacutshungulwa...",
+  cardNumber: "Inombolo Yekhadi",
+  expiryDate: "Usuku Lokuphela",
+  cardholderName: "Igama Lomnikazi Wekhadi",
+  enterCardholderName: "Faka igama lomnikazi wekhadi",
+  ecocashNumber: "Inombolo Ye-EcoCash",
+  ecocashInstructions: "Uzothola isixwayiso ocingweni lwakho ukuze uqedele inkokhelo.",
+  mobileNumber: "Inombolo Yeselula",
+  paynowInstructions: "Uzothola isixwayiso se-PayNow kudivayisi yakho ebhaliselwe.",
+  paypalEmail: "I-email ye-PayPal",
+  paypalInstructions: "Uzokuqondiswa ku-PayPal ukuze uqedele inkokhelo yakho.",
+  
+  // Success Messages
+  welcomeMessage: "Siyakwamukela!",
+  paymentSuccess: "Inkokhelo Iphumelele!",
+  subscriptionActive: "Ukubhalisela kwakho manje kusebenza. Siyabonga ngokuthuthukisa!",
+  continueToApp: "Qhubeka Nohlelo",
+  upgradeAccount: "Thuthukisa I-akhawunti",
+  upgradeMessage: "Khetha indlela yakho yokukhetha yokukhokha ukuze uqhubeke.",
+  
+  // Auth Flow
+  noAccount: "Awuna-akhawunti?",
+  haveAccount: "Usunayo i-akhawunti?"
 };
