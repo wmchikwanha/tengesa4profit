@@ -1,4 +1,3 @@
-
 export type Language = 'en' | 'sn' | 'nd';
 
 export interface TranslationDictionary {
@@ -92,4 +91,11 @@ export interface TranslationDictionary {
   reset: string;
   apply: string;
   noMatchingHistory: string;
+  
+  // Supplier and product selection
+  supplier: string;
+  selectProduct: string;
+  currency: string;
+  exchangeRate: string;
+  enterExchangeRate: string;
 }
