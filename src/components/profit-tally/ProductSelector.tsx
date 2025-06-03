@@ -2,16 +2,14 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Product } from '@/lib/types';
-import { Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ProductSelectorProps {
   products: Product[];
@@ -29,34 +27,26 @@ export const ProductSelector: React.FC<ProductSelectorProps> = ({
   return (
     <Card className="bg-white border border-blue-200">
       <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-2">
-          <label htmlFor="product-select" className="trader-label">{t.productName}</label>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
-                  <Info className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="bg-blue-50 border border-blue-200 max-w-[250px]">
-                <p>{t.tallyInstructions}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="space-y-2">
+          <label htmlFor="productSelect" className="trader-label">
+            {t.selectProduct}
+          </label>
+          <Select value={selectedProductId || ''} onValueChange={onSelectProduct}>
+            <SelectTrigger id="productSelect" className="trader-input border-blue-200 focus:border-blue-400">
+              <SelectValue placeholder={t.selectProduct} />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-blue-200 shadow-lg">
+              {products.map((product) => (
+                <SelectItem key={product.id} value={product.id} className="hover:bg-blue-50">
+                  <div className="flex flex-col">
+                    <span className="font-medium">{product.name}</span>
+                    <span className="text-sm text-gray-600">Supplier: {product.supplier}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        
-        <Select value={selectedProductId || ''} onValueChange={onSelectProduct}>
-          <SelectTrigger className="border-blue-200 focus:border-blue-400">
-            <SelectValue placeholder="Select a product" />
-          </SelectTrigger>
-          <SelectContent>
-            {products.map(product => (
-              <SelectItem key={product.id} value={product.id}>
-                {product.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </CardContent>
     </Card>
   );

@@ -2,6 +2,7 @@
 export interface Product {
   id: string;
   name: string;
+  supplier: string;
   quantityBought: number;
   buyingPrice: number;
   transportCost: number;
@@ -19,6 +20,13 @@ export interface ProductCalculation {
   stockRemaining: number;
   dailyProfit: number;
   lowMargin: boolean;
+}
+
+export type Currency = 'USD' | 'ZWL';
+
+export interface CurrencySettings {
+  currentCurrency: Currency;
+  exchangeRate: number; // ZWL per 1 USD
 }
 
 export const calculateProduct = (product: Product): ProductCalculation => {

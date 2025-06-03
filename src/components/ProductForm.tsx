@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -36,9 +36,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import CurrencySelector from './CurrencySelector';
 
 const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
+  supplier: '',
   quantityBought: 0,
   buyingPrice: 0,
   transportCost: 0,
@@ -52,6 +54,7 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
 const ProductForm: React.FC = () => {
   const { t } = useLanguage();
   const { products, addProduct, getProduct, deleteProduct, updateProduct } = useAppData();
+  const { formatPrice, getCurrencySymbol, convertPrice } = useCurrency();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
@@ -69,7 +72,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'name' ? value : value === '' ? '' : Number(value)
+      [name]: (name === 'name' || name === 'supplier') ? value : value === '' ? '' : Number(value)
     }));
     
     // Clear validation error when field is filled
@@ -133,6 +136,10 @@ const ProductForm: React.FC = () => {
     
     if (!formData.name) {
       newInvalidFields.add('name');
+    }
+    
+    if (!formData.supplier) {
+      newInvalidFields.add('supplier');
     }
     
     if (!formData.quantityBought || formData.quantityBought <= 0) {
@@ -236,7 +243,7 @@ const ProductForm: React.FC = () => {
   };
 
   const calculateCostPerUnit = (): number => {
-    const quantityBought = Number(formData.quantityBought) || 1; // Prevent division by zero
+    const quantityBought = Number(formData.quantityBought) || 1;
     const buyingPrice = Number(formData.buyingPrice) || 0;
     const transportCost = Number(formData.transportCost) || 0;
     const stallFee = Number(formData.stallFee) || 0;
@@ -252,7 +259,7 @@ const ProductForm: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Date Display */}
+      {/* Date Display and Currency Selector */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-blue-700">{t.addProduct}</h2>
         <div className="flex items-center gap-2 text-blue-600">
@@ -260,6 +267,8 @@ const ProductForm: React.FC = () => {
           <span>{format(today, 'PPP')}</span>
         </div>
       </div>
+      
+      <CurrencySelector />
       
       {/* Products List */}
       <Card className="bg-white border border-blue-200">
@@ -286,7 +295,10 @@ const ProductForm: React.FC = () => {
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {products.map((product) => (
                 <div key={product.id} className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
-                  <span className="font-medium">{product.name}</span>
+                  <div>
+                    <span className="font-medium">{product.name}</span>
+                    <p className="text-sm text-gray-600">Supplier: {product.supplier}</p>
+                  </div>
                   <div className="flex gap-2">
                     <Button 
                       variant="outline" 
@@ -338,6 +350,24 @@ const ProductForm: React.FC = () => {
             placeholder="e.g. Tomatoes"
           />
         </div>
+
+        <div>
+          <div className="flex items-center gap-1 mb-1">
+            <label htmlFor="supplier" className="trader-label">Supplier</label>
+            <span className="text-red-500">*</span>
+            {invalidFields.has('supplier') && (
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            )}
+          </div>
+          <Input
+            id="supplier"
+            name="supplier"
+            value={formData.supplier}
+            onChange={handleChange}
+            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('supplier') ? 'border-red-500' : ''}`}
+            placeholder="e.g. ABC Farm"
+          />
+        </div>
         
         <div>
           <div className="flex items-center gap-1 mb-1">
@@ -361,7 +391,7 @@ const ProductForm: React.FC = () => {
         
         <div>
           <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="buyingPrice" className="trader-label">{t.buyingPrice} ({t.currency})</label>
+            <label htmlFor="buyingPrice" className="trader-label">{t.buyingPrice} ({getCurrencySymbol()})</label>
             <span className="text-red-500">*</span>
             {invalidFields.has('buyingPrice') && (
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -382,7 +412,7 @@ const ProductForm: React.FC = () => {
         
         <div>
           <label htmlFor="transportCost" className="trader-label">
-            {t.transportCost} ({t.currency}) <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.transportCost} ({getCurrencySymbol()}) <span className="text-sm text-trader-neutral">({t.optional})</span>
           </label>
           <Input
             id="transportCost"
@@ -399,7 +429,7 @@ const ProductForm: React.FC = () => {
         
         <div>
           <label htmlFor="stallFee" className="trader-label">
-            {t.otherFees} ({t.currency}) <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.otherFees} ({getCurrencySymbol()}) <span className="text-sm text-trader-neutral">({t.optional})</span>
           </label>
           <Input
             id="stallFee"
@@ -418,7 +448,7 @@ const ProductForm: React.FC = () => {
         <Card className="bg-blue-50 border border-blue-200">
           <CardContent className="pt-6">
             <div className="mb-4">
-              <p className="font-semibold">{t.costPerUnit}: {t.currency}{costPerUnit.toFixed(2)}</p>
+              <p className="font-semibold">{t.costPerUnit}: {formatPrice(costPerUnit)}</p>
             </div>
             
             <div className="mb-4">
@@ -439,7 +469,7 @@ const ProductForm: React.FC = () => {
             
             <div>
               <label htmlFor="sellingPrice" className="trader-label">
-                {t.desiredSellingPrice} ({t.currency})
+                {t.desiredSellingPrice} ({getCurrencySymbol()})
               </label>
               <Input
                 id="sellingPrice"
@@ -450,11 +480,11 @@ const ProductForm: React.FC = () => {
                 min="0.01"
                 step="0.01"
                 className="trader-input border-blue-200 focus:border-blue-400"
-                placeholder={calculatedSellingPrice.toFixed(2)}
+                placeholder={formatPrice(calculatedSellingPrice)}
               />
               <p className="text-sm text-trader-neutral mt-1">
                 {formData.sellingPrice ? `${t.markupPercentage}: ${(((formData.sellingPrice / costPerUnit) - 1) * 100).toFixed(0)}%` : 
-                  `${t.sellingPrice}: ${t.currency}${calculatedSellingPrice.toFixed(2)}`}
+                  `${t.sellingPrice}: ${formatPrice(calculatedSellingPrice)}`}
               </p>
             </div>
           </CardContent>

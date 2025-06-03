@@ -10,6 +10,7 @@ export const enTranslations: TranslationDictionary = {
   
   // Product entry
   productName: 'Product Name',
+  supplier: 'Supplier',
   quantityBought: 'Quantity Bought',
   buyingPrice: 'Buying Price (per unit)',
   transportCost: 'Transport Cost',
@@ -21,6 +22,7 @@ export const enTranslations: TranslationDictionary = {
   update: 'Update',
   clearForm: 'Clear Form',
   newProduct: 'Add New Product',
+  selectProduct: 'Select Product',
   
   // Daily tally
   quantitySold: 'Quantity Sold',

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { ProductCalculation } from '@/lib/types';
 import { AlertCircle as AlertIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +12,7 @@ interface CalculationResultsProps {
 
 export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculation }) => {
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
 
   if (!calculation) return null;
 
@@ -27,17 +29,17 @@ export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculat
         <div className="space-y-3">
           <div className="flex justify-between">
             <span className="font-semibold">{t.costPerUnit}:</span>
-            <span>{t.currency}{calculation.costPerUnit.toFixed(2)}</span>
+            <span>{formatPrice(calculation.costPerUnit)}</span>
           </div>
           
           <div className="flex justify-between">
             <span className="font-semibold">{t.sellingPrice}:</span>
-            <span>{t.currency}{calculation.sellingPrice.toFixed(2)}</span>
+            <span>{formatPrice(calculation.sellingPrice)}</span>
           </div>
           
           <div className="flex justify-between">
             <span className="font-semibold">{t.profitPerUnit}:</span>
-            <span>{t.currency}{calculation.profitPerUnit.toFixed(2)}</span>
+            <span>{formatPrice(calculation.profitPerUnit)}</span>
           </div>
           
           <div className="flex justify-between">
@@ -47,7 +49,7 @@ export const CalculationResults: React.FC<CalculationResultsProps> = ({ calculat
           
           <div className="flex justify-between font-bold text-lg">
             <span>{t.dailyProfit}:</span>
-            <span>{t.currency}{calculation.dailyProfit.toFixed(2)}</span>
+            <span>{formatPrice(calculation.dailyProfit)}</span>
           </div>
         </div>
       </CardContent>
