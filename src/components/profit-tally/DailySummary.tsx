@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Share, Download, History, Save } from 'lucide-react';
@@ -29,6 +30,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   onClearAllData,
 }) => {
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
 
   return (
     <Card className="bg-blue-100 border border-blue-300">
@@ -38,22 +40,22 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
       <CardContent className="space-y-4">
         <div className="flex justify-between font-bold text-xl">
           <span>{t.totalProfit}:</span>
-          <span>{t.currency}{totalProfit.toFixed(2)}</span>
+          <span>{formatPrice(totalProfit)}</span>
         </div>
         
         <div className="flex justify-between text-lg">
           <span>{t.totalSalesValue}:</span>
-          <span>{t.currency}{totalSalesValue.toFixed(2)}</span>
+          <span>{formatPrice(totalSalesValue)}</span>
         </div>
 
         <div className="flex justify-between text-lg">
           <span>{t.totalCostValue}:</span>
-          <span>{t.currency}{totalCostValue.toFixed(2)}</span>
+          <span>{formatPrice(totalCostValue)}</span>
         </div>
         
         <div className="flex justify-between text-lg">
           <span>{t.totalStockRemaining}:</span>
-          <span>{t.currency}{totalStockValue.toFixed(2)}</span>
+          <span>{formatPrice(totalStockValue)}</span>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
