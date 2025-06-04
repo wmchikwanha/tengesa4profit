@@ -1,4 +1,4 @@
-export type UnitOfMeasurement = 'each' | 'grams' | 'kg' | 'tons' | 'litres' | 'metres' | 'cm' | 'cups' | 'pints' | 'gallons';
+export type UnitOfMeasurement = 'each' | 'gram' | 'kg' | 'ton' | 'cm' | 'mm' | 'metre' | 'inch' | 'litre' | 'pint' | 'gallon' | 'cup' | 'bucket';
 
 export interface Product {
   id: string;

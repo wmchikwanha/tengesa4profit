@@ -1,134 +1,75 @@
 
-import React, { useState } from 'react';
-import { useCurrency } from '@/contexts/CurrencyContext';
-import { Currency } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { DollarSign, TrendingUp } from 'lucide-react';
+} from "@/components/ui/select";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { Currency } from '@/lib/types';
 
 const CurrencySelector: React.FC = () => {
+  const { t } = useLanguage();
   const { settings, setCurrency, setExchangeRate } = useCurrency();
-  const [isExchangeRateDialogOpen, setIsExchangeRateDialogOpen] = useState(false);
-  const [tempExchangeRate, setTempExchangeRate] = useState(settings.exchangeRate.toString());
 
-  const handleCurrencyChange = (currency: Currency) => {
-    if (currency === 'ZWL' && settings.currentCurrency === 'USD') {
-      setIsExchangeRateDialogOpen(true);
-    } else {
-      setCurrency(currency);
+  const handleCurrencyChange = (value: Currency) => {
+    setCurrency(value);
+    if (value === 'USD') {
+      setExchangeRate(1);
     }
   };
 
-  const handleExchangeRateSubmit = () => {
-    const rate = Number(tempExchangeRate);
-    if (rate > 0) {
-      setExchangeRate(rate);
-      setCurrency('ZWL');
-      setIsExchangeRateDialogOpen(false);
-    }
-  };
-
-  const handleUpdateExchangeRate = () => {
-    setTempExchangeRate(settings.exchangeRate.toString());
-    setIsExchangeRateDialogOpen(true);
+  const handleExchangeRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rate = parseFloat(e.target.value) || 1;
+    setExchangeRate(rate);
   };
 
   return (
-    <>
-      <Card className="bg-white border border-blue-200">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-blue-600" />
-              <span className="font-medium">Currency:</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Select value={settings.currentCurrency} onValueChange={handleCurrencyChange}>
-                <SelectTrigger className="w-24">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="ZWL">ZWL</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              {settings.currentCurrency === 'ZWL' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleUpdateExchangeRate}
-                  className="flex items-center gap-1"
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Rate: {settings.exchangeRate}
-                </Button>
-              )}
-            </div>
+    <Card className="bg-yellow-50 border border-yellow-200">
+      <CardContent className="pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="currency" className="trader-label">{t.currency}</Label>
+            <Select
+              value={settings.currentCurrency}
+              onValueChange={handleCurrencyChange}
+            >
+              <SelectTrigger className="trader-input border-yellow-300 focus:border-yellow-400">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                <SelectItem value="USD">USD</SelectItem>
+                <SelectItem value="ZWL">ZWL</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isExchangeRateDialogOpen} onOpenChange={setIsExchangeRateDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Set Exchange Rate</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label htmlFor="exchangeRate" className="text-sm font-medium">
-                ZWL per 1 USD
-              </label>
+          
+          {settings.currentCurrency === 'ZWL' && (
+            <div>
+              <Label htmlFor="exchangeRate" className="trader-label">
+                {t.exchangeRate}
+              </Label>
               <Input
                 id="exchangeRate"
-                value={tempExchangeRate}
-                onChange={(e) => setTempExchangeRate(e.target.value)}
                 type="number"
-                min="0.01"
+                min="1"
                 step="0.01"
-                placeholder="e.g. 4500.00"
-                className="border-blue-200 focus:border-blue-400"
+                value={settings.exchangeRate}
+                onChange={handleExchangeRateChange}
+                className="trader-input border-yellow-300 focus:border-yellow-400"
+                placeholder={t.enterExchangeRate}
               />
-              <p className="text-xs text-gray-600">
-                Enter how many ZWL equals 1 USD
-              </p>
             </div>
-          </div>
-          <DialogFooter className="flex justify-between sm:justify-between">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setIsExchangeRateDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="button" 
-              className="bg-blue-600 hover:bg-blue-700"
-              onClick={handleExchangeRateSubmit}
-            >
-              Set Rate
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

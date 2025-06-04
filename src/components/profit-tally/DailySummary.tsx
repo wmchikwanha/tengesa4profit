@@ -30,12 +30,19 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   onClearAllData,
 }) => {
   const { t } = useLanguage();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, settings } = useCurrency();
+
+  const displayRate = settings.currentCurrency === 'USD' ? 1 : settings.exchangeRate;
 
   return (
     <Card className="bg-blue-100 border border-blue-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
+          <div className="text-blue-800 font-semibold">
+            Rate: {displayRate.toFixed(2)}
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex justify-between font-bold text-xl">

@@ -61,15 +61,18 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
 
 const unitOptions: { value: UnitOfMeasurement; label: string }[] = [
   { value: 'each', label: 'Each' },
-  { value: 'grams', label: 'Grams' },
-  { value: 'kg', label: 'KGs' },
-  { value: 'tons', label: 'Tons' },
-  { value: 'litres', label: 'Litres' },
-  { value: 'metres', label: 'Metres' },
-  { value: 'cm', label: 'CMs' },
-  { value: 'cups', label: 'Cup(s)' },
-  { value: 'pints', label: 'Pint(s)' },
-  { value: 'gallons', label: 'Gallon(s)' }
+  { value: 'gram', label: 'Gram' },
+  { value: 'kg', label: 'KG' },
+  { value: 'ton', label: 'Ton' },
+  { value: 'cm', label: 'CM' },
+  { value: 'mm', label: 'MM' },
+  { value: 'metre', label: 'Metre' },
+  { value: 'inch', label: 'Inch' },
+  { value: 'litre', label: 'Litre' },
+  { value: 'pint', label: 'Pint' },
+  { value: 'gallon', label: 'Gallon' },
+  { value: 'cup', label: 'Cup' },
+  { value: 'bucket', label: 'Bucket' }
 ];
 
 const ProductForm: React.FC = () => {
