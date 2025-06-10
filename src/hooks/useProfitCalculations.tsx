@@ -1,4 +1,5 @@
 
+import * as React from 'react';
 import { useProductForm } from '@/hooks/useProductForm';
 import { useProductCalculations } from '@/hooks/useProductCalculations';
 import { useAppData } from '@/contexts/AppDataContext';
