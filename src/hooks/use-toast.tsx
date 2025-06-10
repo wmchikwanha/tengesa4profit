@@ -1,5 +1,5 @@
 
-import * as React from "react"
+import React from "react"
 import { ToastContext, createToast } from "./toast/toast-context"
 
 export const useToast = () => {

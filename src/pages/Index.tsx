@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React from 'react';
 import AppLayout from '@/components/AppLayout';
 import ProductForm from '@/components/ProductForm';
 import TallyProfit from '@/components/TallyProfit';
