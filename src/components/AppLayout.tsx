@@ -1,15 +1,14 @@
 
 import * as React from 'react';
-import { ReactNode, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface AppLayoutProps {
-  children?: ReactNode;
-  addProductContent: ReactNode;
-  tallyProfitContent: ReactNode;
-  languageSettingsContent: ReactNode;
+  children?: React.ReactNode;
+  addProductContent: React.ReactNode;
+  tallyProfitContent: React.ReactNode;
+  languageSettingsContent: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
@@ -18,7 +17,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   languageSettingsContent,
 }) => {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState('addProduct');
+  const [activeTab, setActiveTab] = React.useState('addProduct');
 
   return (
     <div className="trader-container min-h-screen">
