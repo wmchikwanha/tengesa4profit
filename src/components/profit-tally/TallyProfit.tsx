@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { ReportHeader } from './ReportHeader';
 import { ReportContent } from './ReportContent';
 import { useProfitCalculations } from '@/hooks/useProfitCalculations';
