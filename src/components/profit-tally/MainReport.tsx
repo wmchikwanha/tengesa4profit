@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductSelector } from './ProductSelector';

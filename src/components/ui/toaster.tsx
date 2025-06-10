@@ -1,5 +1,5 @@
 
-import React from "react"
+import * as React from "react"
 import {
   Toast,
   ToastClose,
@@ -8,7 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { useToast, ToastProvider as ToastContextProvider } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -34,14 +34,9 @@ export function Toaster() {
   )
 }
 
-// Wrap the Toaster with the context provider
+// Simplified provider that doesn't conflict with Radix UI
 export function ToasterWithProvider() {
-  return (
-    <ToastContextProvider>
-      <Toaster />
-    </ToastContextProvider>
-  )
+  return <Toaster />
 }
 
-// Also export as default for flexibility
 export default ToasterWithProvider

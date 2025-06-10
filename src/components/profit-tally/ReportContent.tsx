@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { SalesRecord } from '@/contexts/AppDataContext';
 import { Product, ProductCalculation } from '@/lib/types';
 import { MainReport } from './MainReport';
