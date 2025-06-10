@@ -25,19 +25,19 @@ export const ProductSelector: React.FC<ProductSelectorProps> = ({
   const { t } = useLanguage();
 
   return (
-    <Card className="bg-white border border-blue-200">
+    <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardContent className="pt-6">
         <div className="space-y-2">
           <label htmlFor="productSelect" className="trader-label">
             {t.selectProduct}
           </label>
           <Select value={selectedProductId || ''} onValueChange={onSelectProduct}>
-            <SelectTrigger id="productSelect" className="trader-input border-blue-200 focus:border-blue-400">
+            <SelectTrigger id="productSelect" className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen">
               <SelectValue placeholder={t.selectProduct} />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-blue-200 shadow-lg">
+            <SelectContent className="bg-white border border-zimbabwe-green shadow-lg">
               {products.map((product) => (
-                <SelectItem key={product.id} value={product.id} className="hover:bg-blue-50">
+                <SelectItem key={product.id} value={product.id} className="hover:bg-zimbabwe-lightGreen">
                   <div className="flex flex-col">
                     <span className="font-medium">{product.name}</span>
                     <span className="text-sm text-gray-600">Supplier: {product.supplier}</span>

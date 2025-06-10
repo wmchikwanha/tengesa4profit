@@ -57,10 +57,10 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
   if (!viewingHistory) return null;
 
   return (
-    <Card className="bg-white border border-blue-200">
+    <Card className="bg-white border border-zimbabwe-green">
       <CardHeader className="pb-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <CardTitle className="text-lg font-bold text-blue-800">{t.history}</CardTitle>
+          <CardTitle className="text-lg font-bold text-zimbabwe-darkGreen">{t.history}</CardTitle>
           <div className="flex space-x-2">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onApplyDateFilter)} className="flex space-x-2">
@@ -68,7 +68,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-auto border-blue-300 justify-start text-left font-normal"
+                      className="w-auto border-zimbabwe-green justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {form.watch('startDate') && form.watch('endDate') ? (
@@ -137,12 +137,12 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
           <p className="text-gray-500">{t.noHistory}</p>
         ) : (
           salesHistory.map((record, index) => (
-            <div key={index} className="border border-blue-100 rounded-lg p-4 bg-blue-50">
+            <div key={index} className="border border-zimbabwe-green rounded-lg p-4 bg-zimbabwe-lightGreen">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-bold">
                   {format(parseISO(record.date), 'PPP')}
                 </h3>
-                <span className="font-bold text-blue-700">
+                <span className="font-bold text-zimbabwe-darkGreen">
                   {t.currency}{record.totalProfit.toFixed(2)}
                 </span>
               </div>

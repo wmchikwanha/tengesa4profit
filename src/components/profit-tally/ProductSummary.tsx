@@ -43,9 +43,9 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
   const { formatPrice } = useCurrency();
 
   return (
-    <Card className="bg-white border border-blue-200">
+    <Card className="bg-white border border-zimbabwe-green">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold text-blue-800">{t.productSummary}</CardTitle>
+        <CardTitle className="text-lg font-bold text-zimbabwe-darkGreen">{t.productSummary}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {products.map(product => {
@@ -53,14 +53,14 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
           const totals = calculateTotalSalesPerProduct(product.id);
           
           return (
-            <div key={product.id} className="flex flex-col md:flex-row md:justify-between items-start md:items-center p-3 bg-blue-50 rounded-lg">
+            <div key={product.id} className="flex flex-col md:flex-row md:justify-between items-start md:items-center p-3 bg-zimbabwe-lightGreen rounded-lg">
               <div className="mb-2 md:mb-0">
                 <p className="font-semibold">{product.name}</p>
                 <p className="text-sm text-gray-600">Supplier: {product.supplier}</p>
                 <p className="text-sm text-gray-600">
                   {t.sold}: {product.quantitySold} | {t.remaining}: {calc.stockRemaining}
                 </p>
-                <p className="text-xs font-medium text-blue-700 mt-1">
+                <p className="text-xs font-medium text-zimbabwe-darkGreen mt-1">
                   {t.salesQty}: {totals.totalQuantitySold}
                 </p>
                 <p className="text-xs font-medium text-red-600 mt-1">
@@ -83,7 +83,7 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
                   </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-sm">{t.dailyProfit}:</span>
-                    <span className="font-bold text-blue-700">{formatPrice(calc.dailyProfit)}</span>
+                    <span className="font-bold text-zimbabwe-darkGreen">{formatPrice(calc.dailyProfit)}</span>
                   </div>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
         })}
         
         {/* Display grand total at the bottom */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-blue-100 rounded-lg font-bold mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-zimbabwe-lightGreen rounded-lg font-bold mt-2">
           <div className="flex justify-between md:justify-start md:flex-col">
             <span>{t.totalSalesValue}:</span>
             <span className="ml-2 md:ml-0">{formatPrice(totalSalesValue)}</span>
@@ -101,7 +101,7 @@ export const ProductSummary: React.FC<ProductSummaryProps> = ({
             <span>{t.totalCostValue}:</span>
             <span className="ml-2 md:ml-0">{formatPrice(totalCostValue)}</span>
           </div>
-          <div className="flex justify-between md:justify-start md:flex-col text-lg text-blue-800">
+          <div className="flex justify-between md:justify-start md:flex-col text-lg text-zimbabwe-darkGreen">
             <span>{t.totalProfit}:</span>
             <span className="ml-2 md:ml-0">{formatPrice(totalProfit)}</span>
           </div>

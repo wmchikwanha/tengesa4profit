@@ -127,4 +127,19 @@
   .trader-tab-active {
     @apply text-green-600 border-b-2 border-green-600;
   }
+
+  .app-title {
+    background: linear-gradient(135deg, 
+      #006B28 0%,      /* Dark green */
+      #FFD700 35%,     /* Gold */
+      #DC143C 70%,     /* Red */
+      #006B28 100%     /* Dark green */
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }

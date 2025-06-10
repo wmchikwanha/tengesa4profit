@@ -39,7 +39,7 @@ export const MainReport: React.FC<MainReportProps> = ({
   
   if (products.length === 0) {
     return (
-      <Card className="bg-white border border-blue-200">
+      <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardContent className="pt-6">
           <p>{t.noProducts}</p>
         </CardContent>

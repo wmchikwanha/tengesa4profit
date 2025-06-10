@@ -31,7 +31,7 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
   const unit = selectedProduct.unitOfMeasurement;
 
   return (
-    <Card className="bg-white border border-blue-200">
+    <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardContent className="pt-6 space-y-4">
         <h3 className="text-xl font-semibold">{selectedProduct.name}</h3>
         <p className="text-sm text-gray-600">
@@ -53,7 +53,7 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
             type="number"
             min="0"
             max={selectedProduct.quantityBought}
-            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantitySold') ? 'border-red-500' : ''}`}
+            className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('quantitySold') ? 'border-red-500' : ''}`}
           />
         </div>
         
@@ -68,13 +68,13 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
             type="number"
             min="0"
             max={selectedProduct.quantityBought - (typeof quantitySold === 'number' ? quantitySold : 0)}
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
           />
         </div>
         
         <Button 
           onClick={onCalculate}
-          className="trader-btn-accent w-full bg-blue-600 hover:bg-blue-700"
+          className="trader-btn-accent w-full bg-zimbabwe-darkGreen hover:bg-zimbabwe-green text-white"
         >
           {t.calculate}
         </Button>

@@ -22,7 +22,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="trader-container min-h-screen">
       <header className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-trader-primary">{t.appTitle}</h1>
+        <h1 className="text-3xl app-title">Tengesa4Profit</h1>
       </header>
       
       <LanguageToggle />
