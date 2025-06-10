@@ -31,7 +31,7 @@ const CurrencySelector: React.FC = () => {
   };
 
   return (
-    <Card className="bg-yellow-50 border border-yellow-200">
+    <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -40,7 +40,7 @@ const CurrencySelector: React.FC = () => {
               value={settings.currentCurrency}
               onValueChange={handleCurrencyChange}
             >
-              <SelectTrigger className="trader-input border-yellow-300 focus:border-yellow-400">
+              <SelectTrigger className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
@@ -62,7 +62,7 @@ const CurrencySelector: React.FC = () => {
                 step="0.01"
                 value={settings.exchangeRate}
                 onChange={handleExchangeRateChange}
-                className="trader-input border-yellow-300 focus:border-yellow-400"
+                className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
                 placeholder={t.enterExchangeRate}
               />
             </div>

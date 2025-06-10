@@ -35,11 +35,11 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   const displayRate = settings.currentCurrency === 'USD' ? 1 : settings.exchangeRate;
 
   return (
-    <Card className="bg-blue-100 border border-blue-300">
+    <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-bold text-blue-800">{t.dailySummary}</CardTitle>
-          <div className="text-blue-800 font-semibold">
+          <CardTitle className="text-xl font-bold text-zimbabwe-darkGreen">{t.dailySummary}</CardTitle>
+          <div className="text-zimbabwe-darkGreen font-semibold">
             Rate: {displayRate.toFixed(2)}
           </div>
         </div>
@@ -69,7 +69,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <Button 
             onClick={onSharePDF}
             variant="outline"
-            className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
           >
             <Share className="h-5 w-5" />
             {t.shareTally}
@@ -77,7 +77,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <Button 
             onClick={onDownloadPDF}
             variant="outline"
-            className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
           >
             <Download className="h-5 w-5" />
             {t.downloadReport}
@@ -85,7 +85,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <Button 
             onClick={onToggleHistory}
             variant="outline"
-            className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50 flex items-center justify-center gap-2"
+            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
           >
             <History className="h-5 w-5" />
             {viewingHistory ? t.hideHistory : t.viewHistory}
@@ -93,7 +93,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <Button 
             onClick={onClearAllData}
             variant="destructive"
-            className="flex items-center justify-center gap-2"
+            className="bg-zimbabwe-red hover:bg-red-700 flex items-center justify-center gap-2"
           >
             <Save className="h-5 w-5" />
             {t.clearAllData}
