@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product } from '@/lib/types';
 
@@ -33,25 +32,33 @@ const AppDataContext = createContext<AppDataContextType>({
 export const useAppData = () => useContext(AppDataContext);
 
 export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(() => {
+  // Initialize with empty arrays, then load from localStorage in useEffect
+  const [products, setProducts] = useState<Product[]>([]);
+  const [salesHistory, setSalesHistory] = useState<SalesRecord[]>([]);
+
+  useEffect(() => {
+    // Load products from localStorage after component mounts
     try {
       const savedProducts = localStorage.getItem('products');
-      return savedProducts ? JSON.parse(savedProducts) : [];
+      if (savedProducts) {
+        setProducts(JSON.parse(savedProducts));
+      }
     } catch (error) {
       console.error('Failed to load products from localStorage:', error);
-      return [];
     }
-  });
+  }, []);
 
-  const [salesHistory, setSalesHistory] = useState<SalesRecord[]>(() => {
+  useEffect(() => {
+    // Load sales history from localStorage after component mounts
     try {
       const savedHistory = localStorage.getItem('salesHistory');
-      return savedHistory ? JSON.parse(savedHistory) : [];
+      if (savedHistory) {
+        setSalesHistory(JSON.parse(savedHistory));
+      }
     } catch (error) {
       console.error('Failed to load sales history from localStorage:', error);
-      return [];
     }
-  });
+  }, []);
 
   useEffect(() => {
     try {
@@ -147,3 +154,5 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
     </AppDataContext.Provider>
   );
 };
+
+export default AppDataProvider;
