@@ -23,15 +23,21 @@ const CurrencyContext = createContext<CurrencyContextType>({
 export const useCurrency = () => useContext(CurrencyContext);
 
 export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<CurrencySettings>(() => {
+  // Initialize with default values first, then update from localStorage in useEffect
+  const [settings, setSettings] = useState<CurrencySettings>({ currentCurrency: 'USD', exchangeRate: 1 });
+
+  useEffect(() => {
+    // Load currency settings from localStorage after component mounts
     try {
       const saved = localStorage.getItem('currencySettings');
-      return saved ? JSON.parse(saved) : { currentCurrency: 'USD', exchangeRate: 1 };
+      if (saved) {
+        const parsedSettings = JSON.parse(saved);
+        setSettings(parsedSettings);
+      }
     } catch (error) {
       console.error('Failed to load currency settings:', error);
-      return { currentCurrency: 'USD', exchangeRate: 1 };
     }
-  });
+  }, []);
 
   useEffect(() => {
     try {
