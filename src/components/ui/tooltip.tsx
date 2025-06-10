@@ -5,17 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 import { cn } from "@/lib/utils"
 
-const TooltipProvider = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Provider>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider>
->(({ children, ...props }, ref) => {
-  return (
-    <TooltipPrimitive.Provider ref={ref} {...props}>
-      {children}
-    </TooltipPrimitive.Provider>
-  )
-})
-TooltipProvider.displayName = "TooltipProvider"
+const TooltipProvider = TooltipPrimitive.Provider
 
 // Create a custom Tooltip component that handles mobile differently
 const Tooltip = React.forwardRef<

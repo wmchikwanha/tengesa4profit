@@ -1,5 +1,5 @@
 
-import * as React from "react"
+import React from "react"
 import { Action, actionTypes, State, ToasterToast } from "./types"
 import { genId } from "./utils"
 import { reducer } from "./reducer"
