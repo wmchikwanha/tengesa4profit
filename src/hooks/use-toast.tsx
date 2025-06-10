@@ -29,6 +29,5 @@ export const toast = (props: any) => {
   return createToast(props);
 };
 
-// Re-export the ToastProvider
-export { ToastProvider } from "./toast/toast-context";
+// Re-export types
 export type { ToasterToast } from "./toast/types";

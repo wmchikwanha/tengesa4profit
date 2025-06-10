@@ -6,7 +6,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { AppDataProvider } from '@/contexts/AppDataContext';
-import { ToastProvider } from '@/hooks/toast/toast-context';
 import App from './App.tsx';
 import './index.css';
 
@@ -16,9 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <LanguageProvider>
         <CurrencyProvider>
           <AppDataProvider>
-            <ToastProvider>
-              <App />
-            </ToastProvider>
+            <App />
           </AppDataProvider>
         </CurrencyProvider>
       </LanguageProvider>

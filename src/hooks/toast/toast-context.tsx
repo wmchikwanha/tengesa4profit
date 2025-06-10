@@ -10,11 +10,7 @@ interface ToastContextValue {
   dismiss: (toastId?: string) => void
 }
 
-export const ToastContext = React.createContext<ToastContextValue>({
-  state: { toasts: [] },
-  toast: () => ({ id: "", dismiss: () => {}, update: () => {} }),
-  dismiss: () => {},
-})
+export const ToastContext = React.createContext<ToastContextValue | null>(null)
 
 // Global state for toast management outside of React context
 const listeners: Array<(state: State) => void> = []
@@ -83,8 +79,14 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     dispatch({ type: actionTypes.DISMISS_TOAST, toastId })
   }, [])
 
+  const contextValue = React.useMemo(() => ({
+    state,
+    toast,
+    dismiss
+  }), [state, toast, dismiss])
+
   return (
-    <ToastContext.Provider value={{ state, toast, dismiss }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
     </ToastContext.Provider>
   )
