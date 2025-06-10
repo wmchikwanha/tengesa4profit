@@ -1,11 +1,11 @@
 
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { AppDataProvider } from '@/contexts/AppDataContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
-import { ToastProvider } from '@/hooks/toast/toast-context';
+import { AppDataProvider } from '@/contexts/AppDataContext';
 import App from './App.tsx';
 import './index.css';
 
@@ -15,12 +15,11 @@ createRoot(document.getElementById('root')!).render(
       <LanguageProvider>
         <CurrencyProvider>
           <AppDataProvider>
-            <ToastProvider>
-              <App />
-            </ToastProvider>
+            <App />
           </AppDataProvider>
         </CurrencyProvider>
       </LanguageProvider>
     </BrowserRouter>
   </StrictMode>,
 );
+
