@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
