@@ -35,10 +35,13 @@ export function Toaster() {
 }
 
 // Wrap the Toaster with the context provider
-export default function ToasterWithProvider() {
+export function ToasterWithProvider() {
   return (
     <ToastContextProvider>
       <Toaster />
     </ToastContextProvider>
   )
 }
+
+// Also export as default for flexibility
+export default ToasterWithProvider
