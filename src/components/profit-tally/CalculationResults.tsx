@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { ProductCalculation } from '@/lib/types';
