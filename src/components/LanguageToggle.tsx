@@ -9,12 +9,12 @@ const LanguageToggle: React.FC = () => {
 
   return (
     <div className="flex justify-center mb-6">
-      <div className="inline-flex rounded-lg bg-blue-100 p-1">
+      <div className="inline-flex rounded-lg bg-zimbabwe-lightGreen p-1">
         <Button
           variant="ghost"
           className={cn(
             "rounded-md px-3 py-1.5 text-sm font-medium",
-            language === 'en' ? "bg-white shadow text-blue-700" : "hover:bg-white/50 text-blue-600"
+            language === 'en' ? "bg-white shadow text-zimbabwe-darkGreen" : "hover:bg-white/50 text-zimbabwe-darkGreen"
           )}
           onClick={() => changeLanguage('en')}
         >
@@ -24,7 +24,7 @@ const LanguageToggle: React.FC = () => {
           variant="ghost"
           className={cn(
             "rounded-md px-3 py-1.5 text-sm font-medium",
-            language === 'sn' ? "bg-white shadow text-blue-700" : "hover:bg-white/50 text-blue-600"
+            language === 'sn' ? "bg-white shadow text-zimbabwe-darkGreen" : "hover:bg-white/50 text-zimbabwe-darkGreen"
           )}
           onClick={() => changeLanguage('sn')}
         >
@@ -34,7 +34,7 @@ const LanguageToggle: React.FC = () => {
           variant="ghost"
           className={cn(
             "rounded-md px-3 py-1.5 text-sm font-medium",
-            language === 'nd' ? "bg-white shadow text-blue-700" : "hover:bg-white/50 text-blue-600"
+            language === 'nd' ? "bg-white shadow text-zimbabwe-darkGreen" : "hover:bg-white/50 text-zimbabwe-darkGreen"
           )}
           onClick={() => changeLanguage('nd')}
         >
