@@ -29,14 +29,23 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       
       <main>
         <Tabs defaultValue="addProduct" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full mb-6 grid grid-cols-3">
-            <TabsTrigger value="addProduct" className="text-base">
+          <TabsList className="w-full mb-6 grid grid-cols-3 bg-zimbabwe-lightGreen border border-zimbabwe-green">
+            <TabsTrigger 
+              value="addProduct" 
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+            >
               {t.addProduct}
             </TabsTrigger>
-            <TabsTrigger value="tallyProfit" className="text-base">
+            <TabsTrigger 
+              value="tallyProfit" 
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+            >
               {t.tallyProfit}
             </TabsTrigger>
-            <TabsTrigger value="language" className="text-base">
+            <TabsTrigger 
+              value="language" 
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+            >
               {t.language}
             </TabsTrigger>
           </TabsList>

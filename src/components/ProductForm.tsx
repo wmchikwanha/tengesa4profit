@@ -303,8 +303,8 @@ const ProductForm: React.FC = () => {
     <div className="space-y-6">
       {/* Date Display and Currency Selector */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-blue-700">{t.addProduct}</h2>
-        <div className="flex items-center gap-2 text-blue-600">
+        <h2 className="text-xl font-bold text-zimbabwe-darkGreen">{t.addProduct}</h2>
+        <div className="flex items-center gap-2 text-zimbabwe-darkGreen">
           <Calendar className="h-5 w-5" />
           <span>{format(today, 'PPP')}</span>
         </div>
@@ -313,18 +313,18 @@ const ProductForm: React.FC = () => {
       <CurrencySelector />
       
       {/* Products List */}
-      <Card className="bg-white border border-blue-200">
+      <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-bold">{t.productsList}</h2>
+            <h2 className="text-xl font-bold text-zimbabwe-darkGreen">{t.productsList}</h2>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-zimbabwe-darkGreen">
                     <Info className="h-5 w-5" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-blue-50 border border-blue-200 max-w-[250px]">
+                <TooltipContent className="bg-zimbabwe-lightGreen border border-zimbabwe-green max-w-[250px]">
                   <p>{t.productInstructions}</p>
                 </TooltipContent>
               </Tooltip>
@@ -332,13 +332,13 @@ const ProductForm: React.FC = () => {
           </div>
           
           {products.length === 0 ? (
-            <p className="text-trader-neutral">{t.noProducts}</p>
+            <p className="text-gray-600">{t.noProducts}</p>
           ) : (
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {products.map((product) => (
-                <div key={product.id} className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
+                <div key={product.id} className="flex justify-between items-center bg-white p-3 rounded-lg border border-zimbabwe-green">
                   <div>
-                    <span className="font-medium">{product.name}</span>
+                    <span className="font-medium text-zimbabwe-darkGreen">{product.name}</span>
                     <p className="text-sm text-gray-600">Supplier: {product.supplier}</p>
                     <p className="text-sm text-gray-500">{product.quantityBought} {product.unitOfMeasurement}</p>
                   </div>
@@ -347,7 +347,7 @@ const ProductForm: React.FC = () => {
                       variant="outline" 
                       size="sm"
                       onClick={() => openAddStockDialog(product.id)}
-                      className="border-green-300 hover:bg-green-100"
+                      className="border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
                     >
                       {t.addDelivery}
                     </Button>
@@ -355,7 +355,7 @@ const ProductForm: React.FC = () => {
                       variant="outline" 
                       size="sm"
                       onClick={() => handleSelectProduct(product.id)}
-                      className="border-blue-300 hover:bg-blue-100"
+                      className="border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
                     >
                       {t.loadProduct}
                     </Button>
@@ -389,7 +389,7 @@ const ProductForm: React.FC = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('name') ? 'border-red-500' : ''}`}
+            className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('name') ? 'border-red-500' : ''}`}
             placeholder="e.g. Tomatoes"
           />
         </div>
@@ -407,7 +407,7 @@ const ProductForm: React.FC = () => {
             name="supplier"
             value={formData.supplier}
             onChange={handleChange}
-            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('supplier') ? 'border-red-500' : ''}`}
+            className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('supplier') ? 'border-red-500' : ''}`}
             placeholder="e.g. ABC Farm"
           />
         </div>
@@ -428,7 +428,7 @@ const ProductForm: React.FC = () => {
               onChange={handleChange}
               type="number"
               min="1"
-              className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('quantityBought') ? 'border-red-500' : ''}`}
+              className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('quantityBought') ? 'border-red-500' : ''}`}
               placeholder="e.g. 100"
             />
           </div>
@@ -439,7 +439,7 @@ const ProductForm: React.FC = () => {
               value={formData.unitOfMeasurement}
               onValueChange={handleUnitChange}
             >
-              <SelectTrigger className="trader-input border-blue-200 focus:border-blue-400">
+              <SelectTrigger className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen">
                 <SelectValue placeholder="Select unit" />
               </SelectTrigger>
               <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
@@ -472,7 +472,7 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0.01"
             step="0.01"
-            className={`trader-input border-blue-200 focus:border-blue-400 ${invalidFields.has('buyingPrice') ? 'border-red-500' : ''}`}
+            className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('buyingPrice') ? 'border-red-500' : ''}`}
             placeholder="e.g. 0.50"
           />
         </div>
@@ -492,7 +492,7 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0"
             step="0.01"
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
             placeholder="e.g. 5.00"
           />
         </div>
@@ -512,16 +512,16 @@ const ProductForm: React.FC = () => {
             type="number"
             min="0"
             step="0.01"
-            className="trader-input border-blue-200 focus:border-blue-400"
+            className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
             placeholder="e.g. 3.00"
           />
         </div>
         
         {/* Cost calculations display */}
-        <Card className="bg-blue-50 border border-blue-200">
+        <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
           <CardContent className="pt-6">
             <div className="mb-4">
-              <p className="font-semibold">{t.costPerUnit}: {formatPrice(costPerUnit)} per {formData.unitOfMeasurement}</p>
+              <p className="font-semibold text-zimbabwe-darkGreen">{t.costPerUnit}: {formatPrice(costPerUnit)} per {formData.unitOfMeasurement}</p>
             </div>
             
             <div className="mb-4">
@@ -555,10 +555,10 @@ const ProductForm: React.FC = () => {
                 type="number"
                 min="0.01"
                 step="0.01"
-                className="trader-input border-blue-200 focus:border-blue-400"
+                className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
                 placeholder={formatPrice(calculatedSellingPrice)}
               />
-              <p className="text-sm text-trader-neutral mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 {formData.sellingPrice ? `${t.markupPercentage}: ${(((formData.sellingPrice / costPerUnit) - 1) * 100).toFixed(0)}%` : 
                   `${t.sellingPrice}: ${formatPrice(calculatedSellingPrice)} per ${formData.unitOfMeasurement}`}
               </p>
@@ -570,14 +570,14 @@ const ProductForm: React.FC = () => {
           <Button
             type="button"
             variant="outline"
-            className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+            className="flex-1 border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen"
             onClick={resetForm}
           >
             {activeProductId ? t.clearForm : t.clearForm}
           </Button>
           <Button
             type="submit"
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+            className="flex-1 bg-zimbabwe-darkGreen hover:bg-zimbabwe-green text-white"
           >
             {activeProductId ? t.update : t.save}
           </Button>
@@ -613,7 +613,7 @@ const ProductForm: React.FC = () => {
                 onChange={(e) => setStockQuantityToAdd(e.target.value)}
                 type="number"
                 min="1"
-                className="trader-input border-blue-200 focus:border-blue-400"
+                className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
               />
             </div>
           </div>
