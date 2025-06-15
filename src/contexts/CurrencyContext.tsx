@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { Currency, CurrencySettings } from '@/lib/types';
 
 interface CurrencyContextType {

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { Language, TranslationDictionary, translations, defaultLanguage } from '@/lib/translations';
 
 interface LanguageContextType {
