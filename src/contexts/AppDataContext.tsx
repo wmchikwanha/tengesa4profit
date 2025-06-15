@@ -66,7 +66,6 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       localStorage.setItem('products', JSON.stringify(products));
     } catch (error) {
       console.error('Failed to save products to localStorage:', error);
-      // Don't use toast here since it's causing circular dependency
     }
   }, [products]);
 
@@ -75,7 +74,6 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
     } catch (error) {
       console.error('Failed to save sales history to localStorage:', error);
-      // Don't use toast here since it's causing circular dependency
     }
   }, [salesHistory]);
 
@@ -126,7 +124,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     
     setSalesHistory(prev => [...prev, newRecord]);
     
-    // We'll use console.log instead of toast for now
+    // Use console.log instead of toast to avoid circular dependency
     console.log("History Saved: Today's sales have been added to history");
   };
 
