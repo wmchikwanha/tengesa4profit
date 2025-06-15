@@ -1,7 +1,9 @@
 
+
 import React from "react"
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ToastProvider } from "@/hooks/toast/toast-context";
+import { ToastProvider as RadixToastProvider } from "@/components/ui/toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,16 +16,19 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ToastProvider>
-      <TooltipProvider>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-      </TooltipProvider>
+      <RadixToastProvider>
+        <TooltipProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
+        </TooltipProvider>
+      </RadixToastProvider>
     </ToastProvider>
   </QueryClientProvider>
 );
 
 export default App;
+
