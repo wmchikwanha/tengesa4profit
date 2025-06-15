@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -82,14 +83,14 @@ const ProductForm: React.FC = () => {
   const { formatPrice, getCurrencySymbol, convertPrice } = useCurrency();
   const { toast } = useToast();
   
-  const [formData, setFormData] = useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
-  const [activeProductId, setActiveProductId] = useState<string | null>(null);
-  const [isAddStockDialogOpen, setIsAddStockDialogOpen] = useState(false);
-  const [stockQuantityToAdd, setStockQuantityToAdd] = useState<string>('');
-  const [targetProductId, setTargetProductId] = useState<string | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<string | null>(null);
-  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+  const [formData, setFormData] = React.useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
+  const [activeProductId, setActiveProductId] = React.useState<string | null>(null);
+  const [isAddStockDialogOpen, setIsAddStockDialogOpen] = React.useState(false);
+  const [stockQuantityToAdd, setStockQuantityToAdd] = React.useState<string>('');
+  const [targetProductId, setTargetProductId] = React.useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [productToDelete, setProductToDelete] = React.useState<string | null>(null);
+  const [invalidFields, setInvalidFields] = React.useState<Set<string>>(new Set());
   
   const today = new Date();
 
