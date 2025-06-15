@@ -40,7 +40,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               value="tallyProfit" 
               className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
             >
-              {t.tallyProfit}
+              Sales & Profit
             </TabsTrigger>
             <TabsTrigger 
               value="language" 

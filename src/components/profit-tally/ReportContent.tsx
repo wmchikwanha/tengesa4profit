@@ -6,6 +6,7 @@ import { MainReport } from './MainReport';
 import { DailySummary } from './DailySummary';
 import { HistorySection } from './HistorySection';
 import { ProductSummary } from './ProductSummary';
+import ProductsTable from '../ProductsTable';
 
 interface ReportContentProps {
   reportRef: React.RefObject<HTMLDivElement>;
@@ -79,8 +80,29 @@ export const ReportContent: React.FC<ReportContentProps> = ({
   resetDateFilter,
   calculateTotalSalesPerProduct
 }) => {
+  const handleEditProduct = (id: string) => {
+    // For now, this will just select the product for calculation
+    handleSelectProduct(id);
+  };
+
+  const handleDeleteProduct = (id: string) => {
+    // This functionality would need to be connected to the actual delete function
+    // For now, we'll just show an alert
+    alert('Delete functionality would be connected here');
+  };
+
   return (
     <div id="report-content" ref={reportRef}>
+      {/* Products Overview Table */}
+      <div className="mb-6">
+        <ProductsTable
+          products={products}
+          onEditProduct={handleEditProduct}
+          onDeleteProduct={handleDeleteProduct}
+          showTitle={true}
+        />
+      </div>
+
       <MainReport
         products={products}
         selectedProduct={selectedProduct}

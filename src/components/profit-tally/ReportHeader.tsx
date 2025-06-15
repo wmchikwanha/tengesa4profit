@@ -10,7 +10,7 @@ export const ReportHeader: React.FC = () => {
 
   return (
     <div className="flex items-center justify-between">
-      <h2 className="text-xl font-bold text-zimbabwe-darkGreen">{t.tallyProfit}</h2>
+      <h2 className="text-xl font-bold text-zimbabwe-darkGreen">Sales & Profit</h2>
       <div className="flex items-center gap-2 text-zimbabwe-darkGreen">
         <CalendarIcon className="h-5 w-5" />
         <span>{format(today, 'PPP')}</span>

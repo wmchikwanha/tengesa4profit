@@ -44,6 +44,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import CurrencySelector from './CurrencySelector';
+import ProductsTable from './ProductsTable';
 
 const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
@@ -312,67 +313,12 @@ const ProductForm: React.FC = () => {
       
       <CurrencySelector />
       
-      {/* Products List */}
-      <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-bold text-zimbabwe-darkGreen">{t.productsList}</h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-zimbabwe-darkGreen">
-                    <Info className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-zimbabwe-lightGreen border border-zimbabwe-green max-w-[250px]">
-                  <p>{t.productInstructions}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          
-          {products.length === 0 ? (
-            <p className="text-gray-600">{t.noProducts}</p>
-          ) : (
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {products.map((product) => (
-                <div key={product.id} className="flex justify-between items-center bg-white p-3 rounded-lg border border-zimbabwe-green">
-                  <div>
-                    <span className="font-medium text-zimbabwe-darkGreen">{product.name}</span>
-                    <p className="text-sm text-gray-600">Supplier: {product.supplier}</p>
-                    <p className="text-sm text-gray-500">{product.quantityBought} {product.unitOfMeasurement}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => openAddStockDialog(product.id)}
-                      className="border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
-                    >
-                      {t.addDelivery}
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleSelectProduct(product.id)}
-                      className="border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
-                    >
-                      {t.loadProduct}
-                    </Button>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => confirmDelete(product.id)}
-                    >
-                      {t.deleteProduct}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Products Table */}
+      <ProductsTable
+        products={products}
+        onEditProduct={handleSelectProduct}
+        onDeleteProduct={confirmDelete}
+      />
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
