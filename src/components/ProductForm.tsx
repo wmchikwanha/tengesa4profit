@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -313,13 +312,6 @@ const ProductForm: React.FC = () => {
       </div>
       
       <CurrencySelector />
-      
-      {/* Products Table */}
-      <ProductsTable
-        products={products}
-        onEditProduct={handleSelectProduct}
-        onDeleteProduct={confirmDelete}
-      />
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -542,6 +534,13 @@ const ProductForm: React.FC = () => {
           </Button>
         )}
       </form>
+
+      {/* Products Table - moved to bottom */}
+      <ProductsTable
+        products={products}
+        onEditProduct={handleSelectProduct}
+        onDeleteProduct={confirmDelete}
+      />
 
       {/* Add Stock Dialog */}
       <Dialog open={isAddStockDialogOpen} onOpenChange={setIsAddStockDialogOpen}>

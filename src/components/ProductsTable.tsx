@@ -81,7 +81,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             <TableBody>
               {products.map((product) => {
                 const calc = calculateProduct(product);
-                const stockValue = calc.stockRemaining * product.sellingPrice;
+                // Use the calculated selling price if no selling price is set
+                const effectiveSellingPrice = product.sellingPrice || calc.sellingPrice;
+                const stockValue = calc.stockRemaining * effectiveSellingPrice;
                 
                 return (
                   <TableRow key={product.id} className="hover:bg-zimbabwe-lightGreen/30">
@@ -104,7 +106,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                       {formatPrice(calc.costPerUnit)}
                     </TableCell>
                     <TableCell className="text-right text-sm">
-                      {formatPrice(product.sellingPrice)}
+                      {formatPrice(effectiveSellingPrice)}
                     </TableCell>
                     <TableCell className="text-right text-sm font-medium">
                       {formatPrice(stockValue)}
