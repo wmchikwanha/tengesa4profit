@@ -11,9 +11,11 @@ interface DailySummaryProps {
   totalSalesValue: number;
   totalCostValue: number;
   totalStockValue: number;
+  totalDiscardedValue: number;
+  totalDiscardedQuantity: number;
   viewingHistory: boolean;
   onSharePDF: () => void;
-  onDownloadPDF: () => void;
+  onDownloadPDF: () => void;  
   onToggleHistory: () => void;
   onClearAllData: () => void;
 }
@@ -23,6 +25,8 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   totalSalesValue,
   totalCostValue,
   totalStockValue,
+  totalDiscardedValue,
+  totalDiscardedQuantity,
   viewingHistory,
   onSharePDF,
   onDownloadPDF,
@@ -63,6 +67,16 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         <div className="flex justify-between text-lg">
           <span>{t.totalStockRemaining}:</span>
           <span>{formatPrice(totalStockValue)}</span>
+        </div>
+
+        <div className="flex justify-between text-lg">
+          <span>Total Discarded Value:</span>
+          <span>{formatPrice(totalDiscardedValue)}</span>
+        </div>
+
+        <div className="flex justify-between text-lg">
+          <span>Total Discarded Quantity:</span>
+          <span>{totalDiscardedQuantity}</span>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
