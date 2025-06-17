@@ -1,18 +1,30 @@
 
 import * as React from 'react';
-import { SalesRecord } from '@/contexts/AppDataContext';
-import { Product, ProductCalculation } from '@/lib/types';
 import { MainReport } from './MainReport';
 import { DailySummary } from './DailySummary';
-import { HistorySection } from './HistorySection';
 import { ProductSummary } from './ProductSummary';
+import { HistorySection } from './HistorySection';
 import ProductsTable from '../ProductsTable';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Product, ProductCalculation } from '@/lib/types';
+
+interface SalesHistoryRecord {
+  date: string;
+  totalProfit: number;
+  products: Product[];
+}
+
+interface DateFilterForm {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}
 
 interface ReportContentProps {
   reportRef: React.RefObject<HTMLDivElement>;
   products: Product[];
-  salesHistory: SalesRecord[];
-  filteredHistory: SalesRecord[];
+  salesHistory: SalesHistoryRecord[];
+  filteredHistory: SalesHistoryRecord[];
   selectedProduct: Product | null;
   selectedProductId: string | null;
   quantitySold: number | '';
@@ -27,7 +39,7 @@ interface ReportContentProps {
   totalDiscardedQuantity: number;
   viewingHistory: boolean;
   isDateFilterOpen: boolean;
-  setIsDateFilterOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDateFilterOpen: (isOpen: boolean) => void;
   handleSelectProduct: (id: string) => void;
   handleQuantitySoldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleQuantityDiscardedChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -36,7 +48,7 @@ interface ReportContentProps {
   handleDownloadPDF: () => void;
   handleToggleHistory: () => void;
   handleClearAllData: () => void;
-  applyDateFilter: (data: { startDate: Date | undefined; endDate: Date | undefined }) => void;
+  applyDateFilter: (data: DateFilterForm) => void;
   resetDateFilter: () => void;
   calculateTotalSalesPerProduct: (productId: string) => {
     totalQuantitySold: number;
@@ -48,105 +60,68 @@ interface ReportContentProps {
   };
 }
 
-export const ReportContent: React.FC<ReportContentProps> = ({
-  reportRef,
-  products,
-  salesHistory,
-  filteredHistory,
-  selectedProduct,
-  selectedProductId,
-  quantitySold,
-  quantityDiscarded,
-  invalidFields,
-  calculation,
-  totalProfit,
-  totalSalesValue,
-  totalCostValue,
-  totalStockValue,
-  totalDiscardedValue,
-  totalDiscardedQuantity,
-  viewingHistory,
-  isDateFilterOpen,
-  setIsDateFilterOpen,
-  handleSelectProduct,
-  handleQuantitySoldChange,
-  handleQuantityDiscardedChange,
-  handleCalculate,
-  handleSharePDF,
-  handleDownloadPDF,
-  handleToggleHistory,
-  handleClearAllData,
-  applyDateFilter,
-  resetDateFilter,
-  calculateTotalSalesPerProduct
-}) => {
-  const handleEditProduct = (id: string) => {
-    // For now, this will just select the product for calculation
-    handleSelectProduct(id);
-  };
-
-  const handleDeleteProduct = (id: string) => {
-    // This functionality would need to be connected to the actual delete function
-    // For now, we'll just show an alert
-    alert('Delete functionality would be connected here');
-  };
-
+export const ReportContent: React.FC<ReportContentProps> = (props) => {
+  const { t } = useLanguage();
+  
   return (
-    <div id="report-content" ref={reportRef}>
-      {/* Products Overview Table */}
-      <div className="mb-6">
-        <ProductsTable
-          products={products}
-          onEditProduct={handleEditProduct}
-          onDeleteProduct={handleDeleteProduct}
-          showTitle={true}
-        />
-      </div>
-
+    <div ref={props.reportRef} className="space-y-6">
       <MainReport
-        products={products}
-        selectedProduct={selectedProduct}
-        selectedProductId={selectedProductId}
-        quantitySold={quantitySold}
-        quantityDiscarded={quantityDiscarded}
-        invalidFields={invalidFields}
-        calculation={calculation}
-        onSelectProduct={handleSelectProduct}
-        onQuantitySoldChange={handleQuantitySoldChange}
-        onQuantityDiscardedChange={handleQuantityDiscardedChange}
-        onCalculate={handleCalculate}
+        products={props.products}
+        selectedProduct={props.selectedProduct}
+        selectedProductId={props.selectedProductId}
+        quantitySold={props.quantitySold}
+        quantityDiscarded={props.quantityDiscarded}
+        invalidFields={props.invalidFields}
+        calculation={props.calculation}
+        onSelectProduct={props.handleSelectProduct}
+        onQuantitySoldChange={props.handleQuantitySoldChange}
+        onQuantityDiscardedChange={props.handleQuantityDiscardedChange}
+        onCalculate={props.handleCalculate}
       />
       
       <DailySummary
-        totalProfit={totalProfit}
-        totalSalesValue={totalSalesValue}
-        totalCostValue={totalCostValue}
-        totalStockValue={totalStockValue}
-        viewingHistory={viewingHistory}
-        onSharePDF={handleSharePDF}
-        onDownloadPDF={handleDownloadPDF}
-        onToggleHistory={handleToggleHistory}
-        onClearAllData={handleClearAllData}
-      />
-      
-      <HistorySection 
-        viewingHistory={viewingHistory}
-        salesHistory={filteredHistory}
-        isDateFilterOpen={isDateFilterOpen}
-        setIsDateFilterOpen={setIsDateFilterOpen}
-        onApplyDateFilter={applyDateFilter}
-        onResetDateFilter={resetDateFilter}
+        totalProfit={props.totalProfit}
+        totalSalesValue={props.totalSalesValue}
+        totalCostValue={props.totalCostValue}
+        totalStockValue={props.totalStockValue}
+        totalDiscardedValue={props.totalDiscardedValue}
+        totalDiscardedQuantity={props.totalDiscardedQuantity}
+        onSharePDF={props.handleSharePDF}
+        onDownloadPDF={props.handleDownloadPDF}
+        onToggleHistory={props.handleToggleHistory}
+        onClearAllData={props.handleClearAllData}
+        viewingHistory={props.viewingHistory}
       />
       
       <ProductSummary
-        products={products}
-        salesHistory={salesHistory}
-        totalSalesValue={totalSalesValue}
-        totalCostValue={totalCostValue}
-        totalProfit={totalProfit}
-        totalDiscardedValue={totalDiscardedValue}
-        totalDiscardedQuantity={totalDiscardedQuantity}
-        calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}
+        products={props.products}
+        salesHistory={props.salesHistory}
+        totalSalesValue={props.totalSalesValue}
+        totalCostValue={props.totalCostValue}
+        totalProfit={props.totalProfit}
+        totalDiscardedValue={props.totalDiscardedValue}
+        totalDiscardedQuantity={props.totalDiscardedQuantity}
+        calculateTotalSalesPerProduct={props.calculateTotalSalesPerProduct}
+      />
+      
+      {/* Read-only Products List for Sales Page */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-bold text-zimbabwe-darkGreen">{t.productsList}</h3>
+        <ProductsTable
+          products={props.products}
+          onEditProduct={() => {}} // No-op for read-only
+          onDeleteProduct={() => {}} // No-op for read-only
+          showTitle={false}
+        />
+      </div>
+      
+      <HistorySection
+        viewingHistory={props.viewingHistory}
+        salesHistory={props.filteredHistory}
+        isDateFilterOpen={props.isDateFilterOpen}
+        setIsDateFilterOpen={props.setIsDateFilterOpen}
+        onApplyDateFilter={props.applyDateFilter}
+        onResetDateFilter={props.resetDateFilter}
       />
     </div>
   );

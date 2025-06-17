@@ -20,16 +20,21 @@ interface ProductsTableProps {
   onEditProduct: (id: string) => void;
   onDeleteProduct: (id: string) => void;
   showTitle?: boolean;
+  readOnly?: boolean;
 }
 
 const ProductsTable: React.FC<ProductsTableProps> = ({
   products,
   onEditProduct,
   onDeleteProduct,
-  showTitle = true
+  showTitle = true,
+  readOnly = false
 }) => {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+
+  // Check if it's read-only by seeing if handlers are no-ops
+  const isReadOnly = readOnly || (onEditProduct.toString().includes('{}') && onDeleteProduct.toString().includes('{}'));
 
   if (products.length === 0) {
     return (
@@ -73,9 +78,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
                   Stock Value
                 </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
-                  Actions
-                </TableHead>
+                {!isReadOnly && (
+                  <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
+                    Actions
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -111,26 +118,28 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                     <TableCell className="text-right text-sm font-medium">
                       {formatPrice(stockValue)}
                     </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex gap-1 justify-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onEditProduct(product.id)}
-                          className="h-8 w-8 p-0 border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => onDeleteProduct(product.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {!isReadOnly && (
+                      <TableCell className="text-center">
+                        <div className="flex gap-1 justify-center">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onEditProduct(product.id)}
+                            className="h-8 w-8 p-0 border-zimbabwe-green hover:bg-zimbabwe-lightGreen text-zimbabwe-darkGreen"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => onDeleteProduct(product.id)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}

@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -70,16 +71,25 @@ const unitOptions: { value: UnitOfMeasurement; label: string }[] = [
   { value: 'metre', label: 'Metre' },
   { value: 'inch', label: 'Inch' },
   { value: 'litre', label: 'Litre' },
+  { value: 'ml', label: 'ML' },
   { value: 'pint', label: 'Pint' },
   { value: 'gallon', label: 'Gallon' },
   { value: 'cup', label: 'Cup' },
-  { value: 'bucket', label: 'Bucket' }
+  { value: 'bucket', label: 'Bucket' },
+  { value: 'bunch', label: 'Bunch' },
+  { value: 'pack', label: 'Pack' },
+  { value: 'packet', label: 'Packet' },
+  { value: 'piece', label: 'Piece' },
+  { value: 'length', label: 'Length' },
+  { value: 'mg', label: 'MG' },
+  { value: 'pair', label: 'Pair' },
+  { value: 'container', label: 'Container' }
 ];
 
 const ProductForm: React.FC = () => {
   const { t } = useLanguage();
   const { products, addProduct, getProduct, deleteProduct, updateProduct } = useAppData();
-  const { formatPrice, getCurrencySymbol, convertPrice } = useCurrency();
+  const { formatPrice, getCurrencySymbol } = useCurrency();
   const { toast } = useToast();
   
   const [formData, setFormData] = React.useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
@@ -97,7 +107,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: (name === 'name' || name === 'supplier') ? value : value === '' ? '' : Number(value)
+      [name]: (name === 'name' || name === 'supplier') ? value : value === '' ? 0 : Number(value)
     }));
     
     // Clear validation error when field is filled
@@ -121,14 +131,6 @@ const ProductForm: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       markupPercentage: value[0]
-    }));
-  };
-
-  const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      sellingPrice: value === '' ? 0 : Number(value)
     }));
   };
 
@@ -289,17 +291,6 @@ const ProductForm: React.FC = () => {
   const calculatedSellingPrice = formData.sellingPrice || 
     costPerUnit * (1 + formData.markupPercentage / 100);
 
-  // Format prices with currency conversion for display in USD amounts but convert for ZWL
-  const formatInputPrice = (usdPrice: number): string => {
-    return convertPrice(usdPrice).toFixed(2);
-  };
-
-  const parseInputPrice = (displayValue: string): number => {
-    const numValue = Number(displayValue);
-    // Convert back to USD for storage
-    return getCurrencySymbol() === 'ZWL' ? numValue / (convertPrice(1)) : numValue;
-  };
-
   return (
     <div className="space-y-6">
       {/* Date Display and Currency Selector */}
@@ -403,13 +394,10 @@ const ProductForm: React.FC = () => {
           <Input
             id="buyingPrice"
             name="buyingPrice"
-            value={formData.buyingPrice ? formatInputPrice(formData.buyingPrice) : ''}
-            onChange={(e) => {
-              const usdValue = parseInputPrice(e.target.value);
-              setFormData(prev => ({ ...prev, buyingPrice: usdValue }));
-            }}
+            value={formData.buyingPrice || ''}
+            onChange={handleChange}
             type="number"
-            min="0.01"
+            min="0"
             step="0.01"
             className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('buyingPrice') ? 'border-red-500' : ''}`}
             placeholder="e.g. 0.50"
@@ -423,11 +411,8 @@ const ProductForm: React.FC = () => {
           <Input
             id="transportCost"
             name="transportCost"
-            value={formData.transportCost ? formatInputPrice(formData.transportCost) : ''}
-            onChange={(e) => {
-              const usdValue = parseInputPrice(e.target.value);
-              setFormData(prev => ({ ...prev, transportCost: usdValue }));
-            }}
+            value={formData.transportCost || ''}
+            onChange={handleChange}
             type="number"
             min="0"
             step="0.01"
@@ -443,11 +428,8 @@ const ProductForm: React.FC = () => {
           <Input
             id="stallFee"
             name="stallFee"
-            value={formData.stallFee ? formatInputPrice(formData.stallFee) : ''}
-            onChange={(e) => {
-              const usdValue = parseInputPrice(e.target.value);
-              setFormData(prev => ({ ...prev, stallFee: usdValue }));
-            }}
+            value={formData.stallFee || ''}
+            onChange={handleChange}
             type="number"
             min="0"
             step="0.01"
@@ -486,13 +468,10 @@ const ProductForm: React.FC = () => {
               <Input
                 id="sellingPrice"
                 name="sellingPrice"
-                value={formData.sellingPrice ? formatInputPrice(formData.sellingPrice) : ''}
-                onChange={(e) => {
-                  const usdValue = parseInputPrice(e.target.value);
-                  setFormData(prev => ({ ...prev, sellingPrice: usdValue }));
-                }}
+                value={formData.sellingPrice || ''}
+                onChange={handleChange}
                 type="number"
-                min="0.01"
+                min="0"
                 step="0.01"
                 className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
                 placeholder={formatPrice(calculatedSellingPrice)}
