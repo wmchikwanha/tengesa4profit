@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Product } from '@/lib/types';
 
@@ -16,6 +15,7 @@ interface AppDataContextType {
   deleteProduct: (id: string) => void;
   getProduct: (id: string) => Product | undefined;
   clearAllData: () => void;
+  clearSalesData: () => void;
   addToHistory: () => void;
 }
 
@@ -27,6 +27,7 @@ const AppDataContext = React.createContext<AppDataContextType>({
   deleteProduct: () => {},
   getProduct: () => undefined,
   clearAllData: () => {},
+  clearSalesData: () => {},
   addToHistory: () => {},
 });
 
@@ -129,11 +130,21 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const clearAllData = () => {
+    // Clear everything including products
+    setProducts([]);
+    setSalesHistory([]);
+  };
+
+  const clearSalesData = () => {
     // Add current state to history before clearing
     addToHistory();
     
-    // Clear current products
-    setProducts([]);
+    // Only clear sales data, preserve products but reset their sales quantities
+    setProducts(prev => prev.map(product => ({
+      ...product,
+      quantitySold: 0,
+      quantityDiscarded: 0
+    })));
   };
 
   return (
@@ -146,6 +157,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         deleteProduct,
         getProduct,
         clearAllData,
+        clearSalesData,
         addToHistory,
       }}
     >

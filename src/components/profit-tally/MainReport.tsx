@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { ProductSelector } from './ProductSelector';
 import { ProductCalculationForm } from './ProductCalculationForm';
 import { CalculationResults } from './CalculationResults';
@@ -36,6 +37,7 @@ export const MainReport: React.FC<MainReportProps> = ({
   onCalculate,
 }) => {
   const { t } = useLanguage();
+  const [saleDate, setSaleDate] = React.useState(new Date().toISOString().split('T')[0]);
   
   if (products.length === 0) {
     return (
@@ -49,6 +51,21 @@ export const MainReport: React.FC<MainReportProps> = ({
   
   return (
     <>
+      <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
+        <CardContent className="pt-6">
+          <div className="mb-4">
+            <label htmlFor="saleDate" className="trader-label">Date of Sale</label>
+            <Input
+              id="saleDate"
+              value={saleDate}
+              onChange={(e) => setSaleDate(e.target.value)}
+              type="date"
+              className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       <ProductSelector
         products={products}
         selectedProductId={selectedProductId}

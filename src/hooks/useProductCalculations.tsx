@@ -16,12 +16,13 @@ export function useProductCalculations() {
   // Calculate total remaining stock value
   const totalStockValue = products.reduce((sum, product) => {
     const calc = calculateProduct(product);
-    return sum + (calc.stockRemaining * product.sellingPrice);
+    return sum + (calc.stockRemaining * calc.sellingPrice);
   }, 0);
   
   // Calculate total sales value
   const totalSalesValue = products.reduce((sum, product) => {
-    return sum + (product.quantitySold * product.sellingPrice);
+    const calc = calculateProduct(product);
+    return sum + (product.quantitySold * calc.sellingPrice);
   }, 0);
   
   // Calculate total cost value
@@ -32,7 +33,8 @@ export function useProductCalculations() {
   
   // Calculate total discarded value
   const totalDiscardedValue = products.reduce((sum, product) => {
-    return sum + (product.quantityDiscarded * product.sellingPrice);
+    const calc = calculateProduct(product);
+    return sum + (product.quantityDiscarded * calc.sellingPrice);
   }, 0);
   
   // Calculate total discarded quantity
@@ -56,9 +58,9 @@ export function useProductCalculations() {
       totalQuantitySold += product.quantitySold || 0;
       totalQuantityDiscarded += product.quantityDiscarded || 0;
       totalProfit += calc.dailyProfit;
-      totalSalesValue += product.quantitySold * product.sellingPrice;
+      totalSalesValue += product.quantitySold * calc.sellingPrice;
       totalCostValue += product.quantitySold * calc.costPerUnit;
-      totalDiscardedValue += product.quantityDiscarded * product.sellingPrice;
+      totalDiscardedValue += product.quantityDiscarded * calc.sellingPrice;
     }
     
     // Add from history too if available
@@ -69,9 +71,9 @@ export function useProductCalculations() {
         totalQuantitySold += historyProduct.quantitySold || 0;
         totalQuantityDiscarded += historyProduct.quantityDiscarded || 0;
         totalProfit += calc.dailyProfit;
-        totalSalesValue += historyProduct.quantitySold * historyProduct.sellingPrice;
+        totalSalesValue += historyProduct.quantitySold * calc.sellingPrice;
         totalCostValue += historyProduct.quantitySold * calc.costPerUnit;
-        totalDiscardedValue += historyProduct.quantityDiscarded * historyProduct.sellingPrice;
+        totalDiscardedValue += historyProduct.quantityDiscarded * calc.sellingPrice;
       }
     });
     

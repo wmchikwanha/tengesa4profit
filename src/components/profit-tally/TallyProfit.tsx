@@ -8,7 +8,7 @@ import { useHistoryManagement } from '@/hooks/useHistoryManagement';
 import { useAppData } from '@/contexts/AppDataContext';
 
 const TallyProfit: React.FC = () => {
-  const { salesHistory, clearAllData } = useAppData();
+  const { salesHistory, clearSalesData } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   
   const {
@@ -44,7 +44,7 @@ const TallyProfit: React.FC = () => {
   } = useHistoryManagement(salesHistory);
   
   const handleClearData = () => {
-    triggerClearAllData(clearAllData);
+    triggerClearAllData(clearSalesData);
   };
   
   return (

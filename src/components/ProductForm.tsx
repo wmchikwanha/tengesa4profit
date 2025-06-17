@@ -50,6 +50,8 @@ import ProductsTable from './ProductsTable';
 const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
   supplier: '',
+  purchaseDate: new Date().toISOString().split('T')[0],
+  saleDate: '',
   quantityBought: 0,
   unitOfMeasurement: 'each',
   buyingPrice: 0,
@@ -107,7 +109,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: (name === 'name' || name === 'supplier') ? value : value === '' ? 0 : Number(value)
+      [name]: (name === 'name' || name === 'supplier' || name === 'purchaseDate' || name === 'saleDate') ? value : value === '' ? 0 : Number(value)
     }));
     
     // Clear validation error when field is filled
@@ -306,6 +308,18 @@ const ProductForm: React.FC = () => {
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="purchaseDate" className="trader-label">Date of Purchase</label>
+          <Input
+            id="purchaseDate"
+            name="purchaseDate"
+            value={formData.purchaseDate || ''}
+            onChange={handleChange}
+            type="date"
+            className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
+          />
+        </div>
+
         <div>
           <div className="flex items-center gap-1 mb-1">
             <label htmlFor="name" className="trader-label">{t.productName}</label>

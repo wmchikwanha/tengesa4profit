@@ -5,6 +5,8 @@ export interface Product {
   id: string;
   name: string;
   supplier: string;
+  purchaseDate?: string;
+  saleDate?: string;
   quantityBought: number;
   unitOfMeasurement: UnitOfMeasurement;
   buyingPrice: number;
