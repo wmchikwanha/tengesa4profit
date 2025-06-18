@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { SupplierProfile } from '@/lib/marketplace-types';
+import type { SupplierProfile } from '@/lib/marketplace-types';
 
 export const SupplierProfile: React.FC = () => {
   const { supplierProfile, setSupplierProfile } = useMarketplace();
