@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { AppDataProvider } from '@/contexts/AppDataContext';
+import { MarketplaceProvider } from '@/contexts/MarketplaceContext';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -20,18 +21,20 @@ const App = () => (
     <LanguageProvider>
       <CurrencyProvider>
         <AppDataProvider>
-          <ToastProvider>
-            <RadixToastProvider>
-              <TooltipProvider>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster />
-              </TooltipProvider>
-            </RadixToastProvider>
-          </ToastProvider>
+          <MarketplaceProvider>
+            <ToastProvider>
+              <RadixToastProvider>
+                <TooltipProvider>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  <Toaster />
+                </TooltipProvider>
+              </RadixToastProvider>
+            </ToastProvider>
+          </MarketplaceProvider>
         </AppDataProvider>
       </CurrencyProvider>
     </LanguageProvider>

@@ -8,13 +8,13 @@ interface AppLayoutProps {
   children?: React.ReactNode;
   addProductContent: React.ReactNode;
   tallyProfitContent: React.ReactNode;
-  languageSettingsContent: React.ReactNode;
+  marketplaceContent: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   addProductContent,
   tallyProfitContent,
-  languageSettingsContent,
+  marketplaceContent,
 }) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = React.useState('addProduct');
@@ -43,10 +43,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               Sales & Profit
             </TabsTrigger>
             <TabsTrigger 
-              value="language" 
+              value="marketplace" 
               className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
             >
-              {t.language}
+              Marketplace
             </TabsTrigger>
           </TabsList>
           
@@ -58,8 +58,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             {tallyProfitContent}
           </TabsContent>
           
-          <TabsContent value="language">
-            {languageSettingsContent}
+          <TabsContent value="marketplace">
+            {marketplaceContent}
           </TabsContent>
         </Tabs>
       </main>
