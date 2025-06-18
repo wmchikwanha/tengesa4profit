@@ -38,6 +38,30 @@ export interface MarketplaceProduct {
   updatedAt: string;
 }
 
+export interface ProductInquiry {
+  id: string;
+  productId: string;
+  traderId: string;
+  traderName: string;
+  traderEmail: string;
+  supplierId: string;
+  message: string;
+  quantity?: number;
+  status: 'pending' | 'responded' | 'closed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InquiryResponse {
+  id: string;
+  inquiryId: string;
+  supplierId: string;
+  message: string;
+  priceQuote?: number;
+  availabilityNotes?: string;
+  createdAt: string;
+}
+
 export type ProductCategory = 
   | 'fresh-produce'
   | 'grains-cereals'
