@@ -22,8 +22,8 @@ export function useProductForm() {
   const calculation = selectedProduct && typeof quantitySold === 'number' && typeof quantityDiscarded === 'number'
     ? calculateProduct({
         ...selectedProduct,
-        quantitySold,
-        quantityDiscarded
+        quantitySold: selectedProduct.quantitySold + quantitySold,
+        quantityDiscarded: selectedProduct.quantityDiscarded + quantityDiscarded
       })
     : null;
   
@@ -31,8 +31,9 @@ export function useProductForm() {
     const product = products.find(p => p.id === id);
     if (product) {
       setSelectedProductId(id);
-      setQuantitySold(product.quantitySold || 0);
-      setQuantityDiscarded(product.quantityDiscarded || 0);
+      // Reset the form inputs to 0 for new sales entry
+      setQuantitySold(0);
+      setQuantityDiscarded(0);
       setInvalidFields(new Set());
     }
   };
@@ -85,23 +86,29 @@ export function useProductForm() {
     const soldQty = typeof quantitySold === 'number' ? quantitySold : 0;
     const discardedQty = typeof quantityDiscarded === 'number' ? quantityDiscarded : 0;
     
-    // Check if sold quantity exceeds stock
-    const stockRemaining = selectedProduct.quantityBought - (selectedProduct.quantitySold + selectedProduct.quantityDiscarded);
-    if (soldQty > stockRemaining) {
+    // Check if new sale quantity exceeds remaining stock
+    const currentStock = selectedProduct.quantityBought - (selectedProduct.quantitySold + selectedProduct.quantityDiscarded);
+    const totalNewQuantity = soldQty + discardedQty;
+    
+    if (totalNewQuantity > currentStock) {
       if (!window.confirm(t.confirmNegativeStock)) {
         return;
       }
     }
     
-    // Save updated values
+    // Add to existing quantities instead of replacing
     updateProduct(selectedProductId!, {
-      quantitySold: soldQty,
-      quantityDiscarded: discardedQty
+      quantitySold: selectedProduct.quantitySold + soldQty,
+      quantityDiscarded: selectedProduct.quantityDiscarded + discardedQty
     });
+    
+    // Reset form inputs after successful calculation
+    setQuantitySold(0);
+    setQuantityDiscarded(0);
     
     toast({
       title: "Success",
-      description: "Calculation complete",
+      description: "Sale recorded successfully",
     });
   };
   

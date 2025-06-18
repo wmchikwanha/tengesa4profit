@@ -48,7 +48,7 @@ export const calculateProduct = (product: Product): ProductCalculation => {
   
   const profitPerUnit = sellingPrice - costPerUnit;
   
-  // Fix stock calculation issue - don't reset stock when selling remaining items
+  // Stock calculation should use the actual stored quantities from the product
   const stockRemaining = product.quantityBought - (product.quantitySold + product.quantityDiscarded);
   
   const dailyProfit = product.quantitySold * profitPerUnit;
