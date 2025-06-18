@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { SupplierProfile } from '@/lib/marketplace-types';
 
-export const SupplierProfile: React.FC = () => {
+export const SupplierProfileForm: React.FC = () => {
   const { supplierProfile, setSupplierProfile } = useMarketplace();
   
   const [formData, setFormData] = React.useState<Partial<SupplierProfile>>(

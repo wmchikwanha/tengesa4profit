@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { SupplierProfile } from './SupplierProfile';
+import { SupplierProfileForm } from './SupplierProfile';
 import { SupplierProducts } from './SupplierProducts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -30,7 +30,7 @@ export const SupplierDashboard: React.FC = () => {
           </TabsList>
           
           <TabsContent value="profile" className="mt-6">
-            <SupplierProfile />
+            <SupplierProfileForm />
           </TabsContent>
           
           <TabsContent value="products" className="mt-6">
