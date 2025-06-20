@@ -5,6 +5,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
+import ProductForm from '@/components/ProductForm';
+import TallyProfit from '@/components/profit-tally/TallyProfit';
+import Marketplace from '@/components/marketplace/Marketplace';
 
 export default function Index() {
   const { user, loading, signOut } = useAuth();
@@ -51,7 +54,11 @@ export default function Index() {
           <SubscriptionStatus />
         </div>
         
-        <AppLayout />
+        <AppLayout 
+          addProductContent={<ProductForm />}
+          tallyProfitContent={<TallyProfit />}
+          marketplaceContent={<Marketplace />}
+        />
       </div>
     </div>
   );
