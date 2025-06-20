@@ -1,9 +1,10 @@
+
 import { TranslationDictionary } from './types';
 
 export const en: TranslationDictionary = {
   appTitle: "Trader's Profit Tally",
   addProduct: "Add Product",
-  tallyProfit: "Tally Profit",
+  tallyProfit: "Sales & Profit",
   language: "Language",
   productName: "Product Name",
   supplier: "Supplier",
@@ -139,5 +140,22 @@ export const en: TranslationDictionary = {
   
   // Auth Flow
   noAccount: "Don't have an account?",
-  haveAccount: "Already have an account?"
+  haveAccount: "Already have an account?",
+  
+  // Marketplace
+  marketplace: "Marketplace",
+  selectYourRole: "Select Your Role",
+  traderRoleDesc: "Sell your products & find suppliers",
+  supplierRoleDesc: "List your products",
+  bothRoleDesc: "Sell, list & find products",
+  traderRole: "Trader",
+  supplierRole: "Supplier",
+  bothRole: "Both",
+  supplierDashboard: "Supplier Dashboard",
+  myProducts: "My Products",
+  profileSettings: "Profile & Settings",
+  findProducts: "Find Products",
+  emailSent: "Email sent to",
+  checkEmailInbox: "Please check your email inbox",
+  profileUpdated: "Supplier Dashboard profile has been updated"
 };

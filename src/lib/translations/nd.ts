@@ -1,3 +1,4 @@
+
 import { TranslationDictionary } from './types';
 
 export const nd: TranslationDictionary = {
@@ -138,5 +139,22 @@ export const nd: TranslationDictionary = {
   
   // Auth Flow
   noAccount: "Awuna-akhawunti?",
-  haveAccount: "Usunayo i-akhawunti?"
+  haveAccount: "Usunayo i-akhawunti?",
+  
+  // Marketplace
+  marketplace: "Indawo Yokuthengisa",
+  selectYourRole: "Khetha Indima Yakho",
+  traderRoleDesc: "Thengisa imikhiqizo yakho & thola abahlinzeki",
+  supplierRoleDesc: "Beka imikhiqizo yakho",
+  bothRoleDesc: "Thengisa, beka & thola imikhiqizo",
+  traderRole: "Umthengisi",
+  supplierRole: "Umhlinzeki",
+  bothRole: "Kokubili",
+  supplierDashboard: "I-Dashboard Yomhlinzeki",
+  myProducts: "Imikhiqizo Yami",
+  profileSettings: "Iphrofayili Nezilungiselelo",
+  findProducts: "Thola Imikhiqizo",
+  emailSent: "I-email ithunyelwe ku",
+  checkEmailInbox: "Hlola ibhokisi le-email yakho",
+  profileUpdated: "Iphrofayili ye-Dashboard yomhlinzeki isibuyekezwe"
 };

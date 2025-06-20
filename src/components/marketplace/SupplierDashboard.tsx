@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SupplierProfileForm } from './SupplierProfile';
@@ -9,11 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const SupplierDashboard: React.FC = () => {
   const { supplierProfile } = useMarketplace();
+  const { t } = useLanguage();
 
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardHeader>
-        <CardTitle>Supplier Dashboard</CardTitle>
+        <CardTitle>{t.supplierDashboard}</CardTitle>
         {!supplierProfile && (
           <p className="text-sm text-zimbabwe-darkGreen opacity-80">
             Complete your profile to start listing products
@@ -23,9 +25,9 @@ export const SupplierDashboard: React.FC = () => {
       <CardContent>
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="profile">Profile & Settings</TabsTrigger>
+            <TabsTrigger value="profile">{t.profileSettings}</TabsTrigger>
             <TabsTrigger value="products" disabled={!supplierProfile}>
-              My Products
+              {t.myProducts}
             </TabsTrigger>
           </TabsList>
           
@@ -35,7 +37,9 @@ export const SupplierDashboard: React.FC = () => {
           
           <TabsContent value="products" className="mt-6">
             {supplierProfile ? (
-              <SupplierProducts />
+              <div className="max-h-96 overflow-y-auto">
+                <SupplierProducts />
+              </div>
             ) : (
               <p className="text-center text-zimbabwe-darkGreen">
                 Please complete your profile first

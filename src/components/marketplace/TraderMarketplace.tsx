@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +13,7 @@ import { ContactSupplierModal } from './ContactSupplierModal';
 
 export const TraderMarketplace: React.FC = () => {
   const { marketplaceProducts } = useMarketplace();
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
@@ -45,7 +47,7 @@ export const TraderMarketplace: React.FC = () => {
     <>
       <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardHeader>
-          <CardTitle>Marketplace - Find Products</CardTitle>
+          <CardTitle>{t.marketplace} - {t.findProducts}</CardTitle>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -69,7 +71,7 @@ export const TraderMarketplace: React.FC = () => {
             </Select>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-96 overflow-y-auto">
           {!hasActiveSearch ? (
             <div className="text-center py-8">
               <p className="text-zimbabwe-darkGreen">

@@ -93,26 +93,30 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         viewingHistory={props.viewingHistory}
       />
       
-      <ProductSummary
-        products={props.products}
-        salesHistory={props.salesHistory}
-        totalSalesValue={props.totalSalesValue}
-        totalCostValue={props.totalCostValue}
-        totalProfit={props.totalProfit}
-        totalDiscardedValue={props.totalDiscardedValue}
-        totalDiscardedQuantity={props.totalDiscardedQuantity}
-        calculateTotalSalesPerProduct={props.calculateTotalSalesPerProduct}
-      />
+      <div className="max-h-96 overflow-y-auto">
+        <ProductSummary
+          products={props.products}
+          salesHistory={props.salesHistory}
+          totalSalesValue={props.totalSalesValue}
+          totalCostValue={props.totalCostValue}
+          totalProfit={props.totalProfit}
+          totalDiscardedValue={props.totalDiscardedValue}
+          totalDiscardedQuantity={props.totalDiscardedQuantity}
+          calculateTotalSalesPerProduct={props.calculateTotalSalesPerProduct}
+        />
+      </div>
       
       {/* Read-only Products List for Sales Page */}
       <div className="space-y-2">
         <h3 className="text-lg font-bold text-zimbabwe-darkGreen">{t.productsList}</h3>
-        <ProductsTable
-          products={props.products}
-          onEditProduct={() => {}} // No-op for read-only
-          onDeleteProduct={() => {}} // No-op for read-only
-          showTitle={false}
-        />
+        <div className="max-h-96 overflow-y-auto">
+          <ProductsTable
+            products={props.products}
+            onEditProduct={() => {}} // No-op for read-only
+            onDeleteProduct={() => {}} // No-op for read-only
+            showTitle={false}
+          />
+        </div>
       </div>
       
       <HistorySection

@@ -1,23 +1,25 @@
 
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { UserRole } from '@/lib/marketplace-types';
 
 export const RoleSelector: React.FC = () => {
   const { userRole, setUserRole } = useMarketplace();
+  const { t } = useLanguage();
 
   const roles = [
-    { value: 'trader' as UserRole, label: 'Trader', description: 'Buy products from suppliers' },
-    { value: 'supplier' as UserRole, label: 'Supplier', description: 'Sell products to traders' },
-    { value: 'both' as UserRole, label: 'Both', description: 'Buy and sell products' },
+    { value: 'trader' as UserRole, label: t.traderRole, description: t.traderRoleDesc },
+    { value: 'supplier' as UserRole, label: t.supplierRole, description: t.supplierRoleDesc },
+    { value: 'both' as UserRole, label: t.bothRole, description: t.bothRoleDesc },
   ];
 
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardHeader>
-        <CardTitle>Select Your Role</CardTitle>
+        <CardTitle>{t.selectYourRole}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

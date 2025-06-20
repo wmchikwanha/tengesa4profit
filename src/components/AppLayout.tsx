@@ -29,24 +29,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       
       <main>
         <Tabs defaultValue="addProduct" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full mb-6 grid grid-cols-3 bg-zimbabwe-lightGreen border border-zimbabwe-green">
+          <TabsList className="w-full mb-6 grid grid-cols-3 bg-zimbabwe-lightGreen border border-zimbabwe-green h-16">
             <TabsTrigger 
               value="addProduct" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
             >
               {t.addProduct}
             </TabsTrigger>
             <TabsTrigger 
               value="tallyProfit" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
             >
-              Sales & Profit
+              {t.tallyProfit}
             </TabsTrigger>
             <TabsTrigger 
               value="marketplace" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm"
+              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
             >
-              Marketplace
+              {t.marketplace}
             </TabsTrigger>
           </TabsList>
           

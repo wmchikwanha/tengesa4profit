@@ -1,9 +1,10 @@
+
 import { TranslationDictionary } from './types';
 
 export const sn: TranslationDictionary = {
   appTitle: "Trader's Friend",
   addProduct: "Wedzera Chigadzirwa",
-  tallyProfit: "Verenga Purofiti",
+  tallyProfit: "Kuverengera Purofiti",
   language: "Mutauro",
   productName: "Zita",
   supplier: "Mutengesi",
@@ -138,5 +139,22 @@ export const sn: TranslationDictionary = {
   
   // Auth Flow
   noAccount: "Hauna account?",
-  haveAccount: "Unetova account?"
+  haveAccount: "Unetova account?",
+  
+  // Marketplace
+  marketplace: "Musika",
+  selectYourRole: "Sarudza Basa Rako",
+  traderRoleDesc: "Tengesa zvinhu zvako & tsvaga vatengesi",
+  supplierRoleDesc: "Nyora zvinhu zvako",
+  bothRoleDesc: "Tengesa, nyora & tsvaga zvinhu",
+  traderRole: "Mutengesi",
+  supplierRole: "Mupi",
+  bothRole: "Zvese",
+  supplierDashboard: "Dashboard YaMupi",
+  myProducts: "Zvinhu Zvangu",
+  profileSettings: "Profile & Zvigadziriso",
+  findProducts: "Tsvaga Zvinhu",
+  emailSent: "Email rakatumirwa ku",
+  checkEmailInbox: "Tarisa email yako",
+  profileUpdated: "Profile yamupi yakagadziriswa"
 };
