@@ -19,9 +19,9 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Router>
-      <ToastProvider>
-        <RadixToastProvider>
+    <ToastProvider>
+      <RadixToastProvider>
+        <Router>
           <AuthProvider>
             <LanguageProvider>
               <CurrencyProvider>
@@ -40,9 +40,9 @@ const App = () => (
               </CurrencyProvider>
             </LanguageProvider>
           </AuthProvider>
-        </RadixToastProvider>
-      </ToastProvider>
-    </Router>
+        </Router>
+      </RadixToastProvider>
+    </ToastProvider>
   </QueryClientProvider>
 );
 

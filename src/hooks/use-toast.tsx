@@ -9,7 +9,7 @@ export const useToast = () => {
     // Fallback implementation when context is not available
     return {
       toast: (props: any) => {
-        console.log('Toast:', props);
+        console.warn('Toast context not available, using fallback');
         return { id: '', dismiss: () => {}, update: () => {} };
       },
       dismiss: () => {},
