@@ -20,13 +20,13 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <Router>
-      <AuthProvider>
-        <LanguageProvider>
-          <CurrencyProvider>
-            <AppDataProvider>
-              <MarketplaceProvider>
-                <ToastProvider>
-                  <RadixToastProvider>
+      <ToastProvider>
+        <RadixToastProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <CurrencyProvider>
+                <AppDataProvider>
+                  <MarketplaceProvider>
                     <TooltipProvider>
                       <Routes>
                         <Route path="/auth" element={<Auth />} />
@@ -35,13 +35,13 @@ const App = () => (
                       </Routes>
                       <Toaster />
                     </TooltipProvider>
-                  </RadixToastProvider>
-                </ToastProvider>
-              </MarketplaceProvider>
-            </AppDataProvider>
-          </CurrencyProvider>
-        </LanguageProvider>
-      </AuthProvider>
+                  </MarketplaceProvider>
+                </AppDataProvider>
+              </CurrencyProvider>
+            </LanguageProvider>
+          </AuthProvider>
+        </RadixToastProvider>
+      </ToastProvider>
     </Router>
   </QueryClientProvider>
 );
