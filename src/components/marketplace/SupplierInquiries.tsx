@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,7 +51,7 @@ export const SupplierInquiries: React.FC = () => {
       id: crypto.randomUUID(),
       inquiryId: selectedInquiry.id,
       supplierId: supplierProfile!.id,
-      message: responseForm.message,
+      supplierMessage: responseForm.message,
       priceQuote: responseForm.priceQuote ? parseFloat(responseForm.priceQuote) : undefined,
       availabilityNotes: responseForm.availabilityNotes || undefined,
       createdAt: new Date().toISOString(),
