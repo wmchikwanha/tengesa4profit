@@ -24,6 +24,7 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
   const [formData, setFormData] = React.useState({
     traderName: '',
     traderEmail: '',
+    traderPhone: '',
     message: '',
     quantity: '',
   });
@@ -34,9 +35,11 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
     const inquiry: ProductInquiry = {
       id: crypto.randomUUID(),
       productId: product.id,
+      productName: product.name,
       traderId: 'current-trader', // In real app, this would be from auth
       traderName: formData.traderName,
       traderEmail: formData.traderEmail,
+      traderPhone: formData.traderPhone,
       supplierId: product.supplierId,
       message: formData.message,
       quantity: formData.quantity ? parseInt(formData.quantity) : undefined,
@@ -51,6 +54,7 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
     setFormData({
       traderName: '',
       traderEmail: '',
+      traderPhone: '',
       message: '',
       quantity: '',
     });
@@ -123,6 +127,15 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, traderEmail: e.target.value }))}
                 className="trader-input"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="trader-label">Your Phone</label>
+              <Input
+                value={formData.traderPhone}
+                onChange={(e) => setFormData(prev => ({ ...prev, traderPhone: e.target.value }))}
+                className="trader-input"
               />
             </div>
 

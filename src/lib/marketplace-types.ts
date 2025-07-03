@@ -36,6 +36,7 @@ export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
 
 export interface SupplierProfile {
   id: string;
+  userId: string;
   businessName: string;
   contactPerson: string;
   email: string;
@@ -49,12 +50,16 @@ export interface SupplierProfile {
   showEmail: boolean;
   showPhoneNumber: boolean;
   showAddress: boolean;
+  isActive: boolean;
+  subscriptionStatus: string;
+  trialEndDate: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface MarketplaceProduct {
   id: string;
+  supplierId: string;
   name: string;
   description: string;
   category: ProductCategory;
@@ -64,6 +69,7 @@ export interface MarketplaceProduct {
   brand?: string;
   supplierProfile?: SupplierProfile;
   isPubliclyVisible: boolean;
+  dateOfListing: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -72,11 +78,13 @@ export interface ProductInquiry {
   id: string;
   productId: string;
   productName: string;
-  buyerName: string;
-  buyerEmail: string;
-  buyerPhone: string;
+  traderId: string;
+  traderName: string;
+  traderEmail: string;
+  traderPhone: string;
+  supplierId: string;
   message: string;
-  quantity: number;
+  quantity?: number;
   status: 'pending' | 'responded' | 'closed';
   createdAt: string;
   updatedAt: string;
@@ -85,9 +93,10 @@ export interface ProductInquiry {
 export interface InquiryResponse {
   id: string;
   inquiryId: string;
+  supplierId: string;
   supplierMessage: string;
-  price?: number;
-  availability: string;
+  priceQuote?: number;
+  availabilityNotes?: string;
   deliveryTerms?: string;
   createdAt: string;
 }
