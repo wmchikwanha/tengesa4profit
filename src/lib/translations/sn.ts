@@ -1,3 +1,4 @@
+
 import { TranslationDictionary } from './types';
 
 export const sn: TranslationDictionary = {
@@ -75,7 +76,7 @@ export const sn: TranslationDictionary = {
   totalStockRemaining: "Huwandu Hwestock Hwese",
   lowProfitWarning: "Yambiro Yepurofiti Ishoma",
 
-  // Authentication
+  // Authentication  
   login: "Pinda",
   signUp: "Zvinyorere",
   email: "Email",
@@ -83,7 +84,7 @@ export const sn: TranslationDictionary = {
   password: "Password",
   enterEmail: "Isa email yako",
   enterPassword: "Isa password yako",
-  phoneExample: "Semuenzaniso: 0712345678 (nhamba 10 inotanga ne07)",
+  phoneExample: "Semuenzaniso: 781111111 (nhamba 9 inotanga ne7)",
   loading: "Zviri kuroda...",
   
   // Terms and Conditions
@@ -172,10 +173,16 @@ export const sn: TranslationDictionary = {
   subscriptionStatus: "Mamiriro eSubscription",
   subscriptionPlan: "Subscription Plan",
   subscriptionExpired: "Subscription Yapera",
-  subscriptionActive: "Inoshanda",
   manageSubscription: "Bata Subscription",
   refreshSubscription: "Gadziridza",
   updatingStatus: "Zviri kugadziridza...",
   statusRefreshed: "Mamiriro Agadziriswa",
-  description: "Tsanangudzo"
+  description: "Tsanangudzo",
+  
+  // Additional translations
+  category: "Chikamu",
+  brand: "Brand",
+  makeProductVisible: "Ita kuti chinhu ichi chionekwe nevatengesi",
+  noProductsListed: "Hapana zvinhu zvanyorwa. Wedzera chinhu chako chekutanga!",
+  pleaseWaitUpdating: "Mira zvishoma tichigadziridza peji ino..."
 };

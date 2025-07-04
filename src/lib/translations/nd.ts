@@ -1,3 +1,4 @@
+
 import { TranslationDictionary } from './types';
 
 export const nd: TranslationDictionary = {
@@ -83,7 +84,7 @@ export const nd: TranslationDictionary = {
   password: "Iphasiwedi",
   enterEmail: "Faka i-email yakho",
   enterPassword: "Faka iphasiwedi yakho",
-  phoneExample: "Isibonelo: 0712345678 (izinombolo ezingu-10 eziqala ngo-07)",
+  phoneExample: "Isibonelo: 781111111 (izinombolo ezingu-9 eziqala ngo-7)",
   loading: "Kulayishwa...",
   
   // Terms and Conditions
@@ -172,10 +173,16 @@ export const nd: TranslationDictionary = {
   subscriptionStatus: "Isimo Sokubhalisela",
   subscriptionPlan: "Iphilani Yokubhalisela",
   subscriptionExpired: "Ukubhalisela Kuphelelwe",
-  subscriptionActive: "Kusebenza",
   manageSubscription: "Phatha Ukubhalisela",
   refreshSubscription: "Vuselela",
   updatingStatus: "Kuyabuyekezwa...",
   statusRefreshed: "Isimo Sivuselelwe",
-  description: "Incazelo"
+  description: "Incazelo",
+  
+  // Additional translations
+  category: "Isigaba",
+  brand: "Uhlobo",
+  makeProductVisible: "Yenza lo mkhiqizo ubonakale kubathengisi",
+  noProductsListed: "Ayikho imikhiqizo efakiwe. Engeza umkhiqizo wakho wokuqala ukuze uqale!",
+  pleaseWaitUpdating: "Sicela ulinde ngenkathi sibuyekeza leli khasi..."
 };

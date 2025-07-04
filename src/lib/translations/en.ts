@@ -85,7 +85,7 @@ export const en: TranslationDictionary = {
   password: "Password",
   enterEmail: "Enter your email",
   enterPassword: "Enter your password",
-  phoneExample: "Example: 0712345678 (10 digits starting with 07)",
+  phoneExample: "Example: 781111111 (9 digits starting with 7)",
   loading: "Loading...",
   
   // Terms and Conditions
@@ -174,9 +174,15 @@ export const en: TranslationDictionary = {
   subscriptionStatus: "Subscription Status",
   subscriptionPlan: "Subscription Plan",
   subscriptionExpired: "Subscription Expired",
-  subscriptionActive: "Active",
   manageSubscription: "Manage Subscription",
   refreshSubscription: "Refresh",
   updatingStatus: "Updating...",
-  statusRefreshed: "Status Refreshed"
+  statusRefreshed: "Status Refreshed",
+  
+  // Additional translations
+  category: "Category",
+  brand: "Brand",
+  makeProductVisible: "Make this product visible to traders",
+  noProductsListed: "No products listed yet. Add your first product to get started!",
+  pleaseWaitUpdating: "Please wait while we update this page..."
 };

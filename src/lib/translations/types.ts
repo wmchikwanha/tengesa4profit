@@ -212,4 +212,11 @@ export interface TranslationDictionary {
   refreshSubscription: string;
   updatingStatus: string;
   statusRefreshed: string;
+  
+  // Additional translations
+  category?: string;
+  brand?: string;
+  makeProductVisible?: string;
+  noProductsListed?: string;
+  pleaseWaitUpdating?: string;
 }

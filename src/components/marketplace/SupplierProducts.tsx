@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +22,8 @@ export const SupplierProducts: React.FC = () => {
     deleteMarketplaceProduct 
   } = useMarketplace();
   
-  const { currency, exchangeRate, convertCurrency } = useCurrency();
+  const { settings, convertPrice, getCurrencySymbol } = useCurrency();
+  const { t } = useLanguage();
 
   const [showForm, setShowForm] = React.useState(false);
   const [editingProduct, setEditingProduct] = React.useState<MarketplaceProduct | null>(null);
@@ -58,7 +60,7 @@ export const SupplierProducts: React.FC = () => {
     if (!supplierProfile) return;
 
     // Convert price to USD for storage
-    const priceInUSD = currency === 'USD' ? parseFloat(formData.price) : parseFloat(formData.price) / exchangeRate;
+    const priceInUSD = settings.currentCurrency === 'USD' ? parseFloat(formData.price) : parseFloat(formData.price) / settings.exchangeRate;
 
     const productData: MarketplaceProduct = {
       id: editingProduct?.id || crypto.randomUUID(),
@@ -87,7 +89,7 @@ export const SupplierProducts: React.FC = () => {
 
   const handleEdit = (product: MarketplaceProduct) => {
     // Convert price to display currency
-    const displayPrice = convertCurrency(product.price, 'USD', currency);
+    const displayPrice = convertPrice(product.price);
     
     setFormData({
       name: product.name,
@@ -103,7 +105,7 @@ export const SupplierProducts: React.FC = () => {
   };
 
   const handleDelete = (productId: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
+    if (confirm(t.deleteWarning || 'Are you sure you want to delete this product?')) {
       deleteMarketplaceProduct(productId);
     }
   };
@@ -111,26 +113,26 @@ export const SupplierProducts: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold break-words">My Products ({supplierProducts.length})</h3>
+        <h3 className="text-lg font-semibold break-words">{t.myProducts} ({supplierProducts.length})</h3>
         <Button 
           onClick={() => setShowForm(true)}
           className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen text-xs sm:text-sm px-2 sm:px-4"
         >
           <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-          <span className="break-words">Add Product</span>
+          <span className="break-words">{t.addProduct}</span>
         </Button>
       </div>
 
       {showForm && (
         <Card className="border-zimbabwe-green">
           <CardHeader>
-            <CardTitle className="break-words">{editingProduct ? 'Edit Product' : 'Add New Product'}</CardTitle>
+            <CardTitle className="break-words">{editingProduct ? t.update + ' ' + t.productName : t.addProduct}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="trader-label break-words">Product Name *</label>
+                  <label className="trader-label break-words">{t.productName} *</label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -140,7 +142,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label break-words">Category *</label>
+                  <label className="trader-label break-words">{t.category || 'Category'} *</label>
                   <Select 
                     value={formData.category} 
                     onValueChange={(value: ProductCategory) => setFormData(prev => ({ ...prev, category: value }))}
@@ -157,7 +159,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label break-words">Price ({currency}) *</label>
+                  <label className="trader-label break-words">{t.unitPrice} ({getCurrencySymbol()}) *</label>
                   <Input
                     type="number"
                     step="0.01"
@@ -166,15 +168,15 @@ export const SupplierProducts: React.FC = () => {
                     className="trader-input"
                     required
                   />
-                  {currency !== 'USD' && (
+                  {settings.currentCurrency !== 'USD' && (
                     <p className="text-xs text-gray-500 mt-1">
-                      ≈ ${currency === 'ZWL' ? (parseFloat(formData.price || '0') / exchangeRate).toFixed(2) : (parseFloat(formData.price || '0') * exchangeRate).toFixed(2)} USD
+                      ≈ ${settings.currentCurrency === 'ZWL' ? (parseFloat(formData.price || '0') / settings.exchangeRate).toFixed(2) : (parseFloat(formData.price || '0') * settings.exchangeRate).toFixed(2)} USD
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="trader-label break-words">Unit *</label>
+                  <label className="trader-label break-words">{t.unit} *</label>
                   <Input
                     value={formData.unit}
                     onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
@@ -185,7 +187,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label break-words">Brand</label>
+                  <label className="trader-label break-words">{t.brand || 'Brand'}</label>
                   <Input
                     value={formData.brand}
                     onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
@@ -195,7 +197,7 @@ export const SupplierProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="trader-label break-words">Description</label>
+                <label className="trader-label break-words">{t.businessDescription}</label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -209,15 +211,15 @@ export const SupplierProducts: React.FC = () => {
                   checked={formData.isPubliclyVisible}
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPubliclyVisible: !!checked }))}
                 />
-                <label className="text-sm break-words">Make this product visible to traders</label>
+                <label className="text-sm break-words">{t.makeProductVisible || 'Make this product visible to traders'}</label>
               </div>
 
               <div className="flex gap-2">
                 <Button type="submit" className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen">
-                  {editingProduct ? 'Update Product' : 'Add Product'}
+                  {editingProduct ? t.update + ' ' + t.productName : t.addProduct}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
-                  Cancel
+                  {t.cancel}
                 </Button>
               </div>
             </form>
@@ -229,7 +231,7 @@ export const SupplierProducts: React.FC = () => {
         {supplierProducts.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center">
-              <p className="text-zimbabwe-darkGreen break-words">No products listed yet. Add your first product to get started!</p>
+              <p className="text-zimbabwe-darkGreen break-words">{t.noProductsListed || 'No products listed yet. Add your first product to get started!'}</p>
             </CardContent>
           </Card>
         ) : (
@@ -247,7 +249,7 @@ export const SupplierProducts: React.FC = () => {
                     <p className="text-sm text-gray-600 mb-2 break-words">{product.description}</p>
                     <div className="flex flex-wrap gap-2 text-sm">
                       <span className="font-medium">
-                        {currency} {convertCurrency(product.price, 'USD', currency).toFixed(2)}/{product.unit}
+                        {getCurrencySymbol()} {convertPrice(product.price).toFixed(2)}/{product.unit}
                       </span>
                       <span className="text-gray-500">•</span>
                       <span className="break-words">{PRODUCT_CATEGORIES[product.category]}</span>
