@@ -1,4 +1,3 @@
-
 import { TranslationDictionary } from './types';
 
 export const nd: TranslationDictionary = {
@@ -156,5 +155,27 @@ export const nd: TranslationDictionary = {
   findProducts: "Thola Imikhiqizo",
   emailSent: "I-email ithunyelwe ku",
   checkEmailInbox: "Hlola ibhokisi le-email yakho",
-  profileUpdated: "Iphrofayili ye-Dashboard yomhlinzeki isibuyekezwe"
+  profileUpdated: "Iphrofayili ye-Dashboard yomhlinzeki isibuyekezwe",
+  
+  // New translations
+  dateOfPurchase: "Usuku Lokuthenga",
+  unit: "Iyunithi",
+  unitPriceDollar: "Intengo Ngeyunithi ($)",
+  yourProductsColumn: "Imikhiqizo Yakho",
+  businessName: "Igama Lebhizinisi",
+  contactPerson: "Umuntu Wokuxhumana",
+  address: "Ikheli",
+  businessDescription: "Incazelo Yebhizinisi",
+  saveProfile: "Gcina Iphrofayili",
+  searchProductsPlaceholder: "Sesha imikhiqizo, amabrand, noma abahlinzeki...",
+  searchInstruction: "Sebenzisa ibha yokusesha noma khetha isigaba ukuze uthole imikhiqizo evela kubahlinzeki.",
+  subscriptionStatus: "Isimo Sokubhalisela",
+  subscriptionPlan: "Iphilani Yokubhalisela",
+  subscriptionExpired: "Ukubhalisela Kuphelelwe",
+  subscriptionActive: "Kusebenza",
+  manageSubscription: "Phatha Ukubhalisela",
+  refreshSubscription: "Vuselela",
+  updatingStatus: "Kuyabuyekezwa...",
+  statusRefreshed: "Isimo Sivuselelwe",
+  description: "Incazelo"
 };

@@ -19,8 +19,19 @@ export const TraderMarketplace: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
 
-  // Filter products that are publicly visible
-  const publicProducts = marketplaceProducts.filter(product => product.isPubliclyVisible);
+  // Filter products that are publicly visible AND have at least one visible supplier profile field
+  const publicProducts = marketplaceProducts.filter(product => {
+    if (!product.isPubliclyVisible || !product.supplierProfile) return false;
+    
+    // Check if supplier has at least one visible field
+    const hasVisibleInfo = product.supplierProfile.showBusinessName ||
+                          product.supplierProfile.showContactPerson ||
+                          product.supplierProfile.showPhoneNumber ||
+                          product.supplierProfile.showEmail ||
+                          product.supplierProfile.showAddress;
+    
+    return hasVisibleInfo;
+  });
 
   // Only show products if there's an active search term or category filter
   const hasActiveSearch = searchTerm.trim() !== '' || selectedCategory !== 'all';
@@ -47,12 +58,12 @@ export const TraderMarketplace: React.FC = () => {
     <>
       <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardHeader>
-          <CardTitle>{t.marketplace} - {t.findProducts}</CardTitle>
+          <CardTitle className="text-base sm:text-lg break-words">{t.marketplace} - {t.findProducts}</CardTitle>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search products, brands, or suppliers..."
+                placeholder={t.searchProductsPlaceholder || "Search products, brands, or suppliers..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 trader-input"
@@ -74,8 +85,8 @@ export const TraderMarketplace: React.FC = () => {
         <CardContent className="max-h-96 overflow-y-auto">
           {!hasActiveSearch ? (
             <div className="text-center py-8">
-              <p className="text-zimbabwe-darkGreen">
-                Use the search bar or select a category to find products from suppliers.
+              <p className="text-zimbabwe-darkGreen text-sm break-words">
+                {t.searchInstruction || "Use the search bar or select a category to find products from suppliers."}
               </p>
             </div>
           ) : filteredProducts.length === 0 ? (

@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,8 @@ export const SupplierProducts: React.FC = () => {
     updateMarketplaceProduct, 
     deleteMarketplaceProduct 
   } = useMarketplace();
+  
+  const { currency, exchangeRate, convertCurrency } = useCurrency();
 
   const [showForm, setShowForm] = React.useState(false);
   const [editingProduct, setEditingProduct] = React.useState<MarketplaceProduct | null>(null);
@@ -54,13 +57,16 @@ export const SupplierProducts: React.FC = () => {
     e.preventDefault();
     if (!supplierProfile) return;
 
+    // Convert price to USD for storage
+    const priceInUSD = currency === 'USD' ? parseFloat(formData.price) : parseFloat(formData.price) / exchangeRate;
+
     const productData: MarketplaceProduct = {
       id: editingProduct?.id || crypto.randomUUID(),
       supplierId: supplierProfile.id,
       supplierProfile,
       name: formData.name,
       description: formData.description,
-      price: parseFloat(formData.price),
+      price: priceInUSD,
       unit: formData.unit,
       category: formData.category,
       brand: formData.brand || undefined,
@@ -80,10 +86,13 @@ export const SupplierProducts: React.FC = () => {
   };
 
   const handleEdit = (product: MarketplaceProduct) => {
+    // Convert price to display currency
+    const displayPrice = convertCurrency(product.price, 'USD', currency);
+    
     setFormData({
       name: product.name,
       description: product.description,
-      price: product.price.toString(),
+      price: displayPrice.toFixed(2),
       unit: product.unit,
       category: product.category,
       brand: product.brand || '',
@@ -102,26 +111,26 @@ export const SupplierProducts: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">My Products ({supplierProducts.length})</h3>
+        <h3 className="text-lg font-semibold break-words">My Products ({supplierProducts.length})</h3>
         <Button 
           onClick={() => setShowForm(true)}
-          className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
+          className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen text-xs sm:text-sm px-2 sm:px-4"
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
+          <Plus className="w-4 h-4 mr-1 sm:mr-2" />
+          <span className="break-words">Add Product</span>
         </Button>
       </div>
 
       {showForm && (
         <Card className="border-zimbabwe-green">
           <CardHeader>
-            <CardTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</CardTitle>
+            <CardTitle className="break-words">{editingProduct ? 'Edit Product' : 'Add New Product'}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="trader-label">Product Name *</label>
+                  <label className="trader-label break-words">Product Name *</label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -131,7 +140,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label">Category *</label>
+                  <label className="trader-label break-words">Category *</label>
                   <Select 
                     value={formData.category} 
                     onValueChange={(value: ProductCategory) => setFormData(prev => ({ ...prev, category: value }))}
@@ -148,7 +157,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label">Price *</label>
+                  <label className="trader-label break-words">Price ({currency}) *</label>
                   <Input
                     type="number"
                     step="0.01"
@@ -157,10 +166,15 @@ export const SupplierProducts: React.FC = () => {
                     className="trader-input"
                     required
                   />
+                  {currency !== 'USD' && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      ≈ ${currency === 'ZWL' ? (parseFloat(formData.price || '0') / exchangeRate).toFixed(2) : (parseFloat(formData.price || '0') * exchangeRate).toFixed(2)} USD
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="trader-label">Unit *</label>
+                  <label className="trader-label break-words">Unit *</label>
                   <Input
                     value={formData.unit}
                     onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
@@ -171,7 +185,7 @@ export const SupplierProducts: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="trader-label">Brand</label>
+                  <label className="trader-label break-words">Brand</label>
                   <Input
                     value={formData.brand}
                     onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
@@ -181,7 +195,7 @@ export const SupplierProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="trader-label">Description</label>
+                <label className="trader-label break-words">Description</label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -195,7 +209,7 @@ export const SupplierProducts: React.FC = () => {
                   checked={formData.isPubliclyVisible}
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPubliclyVisible: !!checked }))}
                 />
-                <label className="text-sm">Make this product visible to traders</label>
+                <label className="text-sm break-words">Make this product visible to traders</label>
               </div>
 
               <div className="flex gap-2">
@@ -215,7 +229,7 @@ export const SupplierProducts: React.FC = () => {
         {supplierProducts.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center">
-              <p className="text-zimbabwe-darkGreen">No products listed yet. Add your first product to get started!</p>
+              <p className="text-zimbabwe-darkGreen break-words">No products listed yet. Add your first product to get started!</p>
             </CardContent>
           </Card>
         ) : (
@@ -224,21 +238,23 @@ export const SupplierProducts: React.FC = () => {
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="font-semibold">{product.name}</h4>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <h4 className="font-semibold break-words">{product.name}</h4>
                       <Badge variant={product.isPubliclyVisible ? "default" : "secondary"}>
                         {product.isPubliclyVisible ? "Public" : "Private"}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{product.description}</p>
+                    <p className="text-sm text-gray-600 mb-2 break-words">{product.description}</p>
                     <div className="flex flex-wrap gap-2 text-sm">
-                      <span className="font-medium">${product.price}/{product.unit}</span>
+                      <span className="font-medium">
+                        {currency} {convertCurrency(product.price, 'USD', currency).toFixed(2)}/{product.unit}
+                      </span>
                       <span className="text-gray-500">•</span>
-                      <span>{PRODUCT_CATEGORIES[product.category]}</span>
+                      <span className="break-words">{PRODUCT_CATEGORIES[product.category]}</span>
                       {product.brand && (
                         <>
                           <span className="text-gray-500">•</span>
-                          <span>{product.brand}</span>
+                          <span className="break-words">{product.brand}</span>
                         </>
                       )}
                     </div>

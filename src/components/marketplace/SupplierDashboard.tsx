@@ -15,9 +15,9 @@ export const SupplierDashboard: React.FC = () => {
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardHeader>
-        <CardTitle>{t.supplierDashboard}</CardTitle>
+        <CardTitle className="break-words text-base sm:text-lg">{t.supplierDashboard}</CardTitle>
         {!supplierProfile && (
-          <p className="text-sm text-zimbabwe-darkGreen opacity-80">
+          <p className="text-sm text-zimbabwe-darkGreen opacity-80 break-words">
             Complete your profile to start listing products
           </p>
         )}
@@ -25,8 +25,10 @@ export const SupplierDashboard: React.FC = () => {
       <CardContent>
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="profile">{t.profileSettings}</TabsTrigger>
-            <TabsTrigger value="products" disabled={!supplierProfile}>
+            <TabsTrigger value="profile" className="text-xs sm:text-sm break-words">
+              {t.profileSettings}
+            </TabsTrigger>
+            <TabsTrigger value="products" disabled={!supplierProfile} className="text-xs sm:text-sm break-words">
               {t.myProducts}
             </TabsTrigger>
           </TabsList>
@@ -41,7 +43,7 @@ export const SupplierDashboard: React.FC = () => {
                 <SupplierProducts />
               </div>
             ) : (
-              <p className="text-center text-zimbabwe-darkGreen">
+              <p className="text-center text-zimbabwe-darkGreen break-words">
                 Please complete your profile first
               </p>
             )}

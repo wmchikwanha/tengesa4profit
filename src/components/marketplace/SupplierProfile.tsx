@@ -1,14 +1,18 @@
 
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
 import type { SupplierProfile } from '@/lib/marketplace-types';
 
 export const SupplierProfileForm: React.FC = () => {
   const { supplierProfile, setSupplierProfile } = useMarketplace();
+  const { t } = useLanguage();
+  const { toast } = useToast();
   
   const [formData, setFormData] = React.useState<Partial<SupplierProfile>>(
     supplierProfile || {
@@ -51,13 +55,18 @@ export const SupplierProfileForm: React.FC = () => {
     };
     
     setSupplierProfile(profile);
+    
+    toast({
+      title: "Success",
+      description: t.profileUpdated,
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="trader-label">Business Name *</label>
+          <label className="trader-label break-words">{t.businessName} *</label>
           <Input
             value={formData.businessName || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, businessName: e.target.value }))}
@@ -69,12 +78,12 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showBusinessName}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showBusinessName: !!checked }))}
             />
-            <label className="text-sm">Show to traders</label>
+            <label className="text-sm break-words">Show to traders</label>
           </div>
         </div>
 
         <div>
-          <label className="trader-label">Contact Person *</label>
+          <label className="trader-label break-words">{t.contactPerson} *</label>
           <Input
             value={formData.contactPerson || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, contactPerson: e.target.value }))}
@@ -86,12 +95,12 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showContactPerson}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showContactPerson: !!checked }))}
             />
-            <label className="text-sm">Show to traders</label>
+            <label className="text-sm break-words">Show to traders</label>
           </div>
         </div>
 
         <div>
-          <label className="trader-label">Phone Number *</label>
+          <label className="trader-label break-words">{t.phoneNumber} *</label>
           <Input
             value={formData.phoneNumber || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
@@ -103,12 +112,12 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showPhoneNumber}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showPhoneNumber: !!checked }))}
             />
-            <label className="text-sm">Show to traders</label>
+            <label className="text-sm break-words">Show to traders</label>
           </div>
         </div>
 
         <div>
-          <label className="trader-label">Email</label>
+          <label className="trader-label break-words">{t.email}</label>
           <Input
             type="email"
             value={formData.email || ''}
@@ -120,13 +129,13 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showEmail}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showEmail: !!checked }))}
             />
-            <label className="text-sm">Show to traders</label>
+            <label className="text-sm break-words">Show to traders</label>
           </div>
         </div>
       </div>
 
       <div>
-        <label className="trader-label">Address</label>
+        <label className="trader-label break-words">{t.address}</label>
         <Textarea
           value={formData.address || ''}
           onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
@@ -138,12 +147,12 @@ export const SupplierProfileForm: React.FC = () => {
             checked={formData.showAddress}
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showAddress: !!checked }))}
           />
-          <label className="text-sm">Show to traders</label>
+          <label className="text-sm break-words">Show to traders</label>
         </div>
       </div>
 
       <div>
-        <label className="trader-label">Business Description</label>
+        <label className="trader-label break-words">{t.businessDescription}</label>
         <Textarea
           value={formData.description || ''}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -154,7 +163,7 @@ export const SupplierProfileForm: React.FC = () => {
       </div>
 
       <Button type="submit" className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen">
-        Save Profile
+        {t.saveProfile}
       </Button>
     </form>
   );

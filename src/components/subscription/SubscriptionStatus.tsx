@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import { Loader2 } from 'lucide-react';
 
 export const SubscriptionStatus: React.FC = () => {
   const { user, subscriptionStatus, refreshSubscription } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
@@ -86,14 +88,14 @@ export const SubscriptionStatus: React.FC = () => {
     setRefreshing(true);
     toast({
       title: "Refreshing",
-      description: "Please wait while we update your subscription status...",
+      description: t.updatingStatus || "Please wait while we update your subscription status...",
     });
     
     try {
       await refreshSubscription();
       toast({
         title: "Updated",
-        description: "Subscription status has been refreshed.",
+        description: t.statusRefreshed || "Subscription status has been refreshed.",
       });
     } catch (error) {
       toast({
@@ -134,21 +136,22 @@ export const SubscriptionStatus: React.FC = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Subscription Status
+          <CardTitle className="flex items-center justify-between flex-wrap gap-2">
+            <span className="break-words">{t.subscriptionStatus}</span>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleRefresh}
               disabled={refreshing}
+              className="text-xs sm:text-sm"
             >
               {refreshing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Updating...
+                  <span className="break-words">{t.updatingStatus || "Updating..."}</span>
                 </>
               ) : (
-                'Refresh'
+                <span className="break-words">{t.refreshSubscription || "Refresh"}</span>
               )}
             </Button>
           </CardTitle>
@@ -156,11 +159,11 @@ export const SubscriptionStatus: React.FC = () => {
         <CardContent>
           {subscriptionStatus.subscribed ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="default" className="bg-green-500">Active</Badge>
-                <span className="font-medium">{subscriptionStatus.tier} Plan</span>
+                <span className="font-medium break-words">{subscriptionStatus.tier} Plan</span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 break-words">
                 {subscriptionDaysLeft > 0 
                   ? `${subscriptionDaysLeft} days remaining`
                   : 'Subscription expired'
@@ -170,28 +173,29 @@ export const SubscriptionStatus: React.FC = () => {
                 onClick={handleManageSubscription}
                 disabled={loading}
                 variant="outline"
+                className="text-xs sm:text-sm"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Opening...
+                    <span className="break-words">Opening...</span>
                   </>
                 ) : (
-                  'Manage Subscription'
+                  <span className="break-words">{t.manageSubscription}</span>
                 )}
               </Button>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="secondary">Trial</Badge>
-                <span className="font-medium">
+                <span className="font-medium break-words">
                   {trialDaysLeft > 0 ? `${trialDaysLeft} days left` : 'Trial expired'}
                 </span>
               </div>
               {trialDaysLeft <= 7 && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                  <p className="text-sm text-yellow-800">
+                  <p className="text-sm text-yellow-800 break-words">
                     Your trial expires soon! Upgrade to continue using premium features.
                   </p>
                 </div>
@@ -206,33 +210,33 @@ export const SubscriptionStatus: React.FC = () => {
           {plans.map((plan) => (
             <Card key={plan.tier} className="relative">
               <CardHeader>
-                <CardTitle className="text-lg">{plan.name}</CardTitle>
+                <CardTitle className="text-lg break-words">{plan.name}</CardTitle>
                 <div className="text-2xl font-bold">
                   ${(plan.price / 100).toFixed(2)}
-                  <span className="text-sm font-normal text-gray-600">/month</span>
+                  <span className="text-sm font-normal text-gray-600 break-words">/{t.month}</span>
                 </div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 mb-4">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="text-sm flex items-center">
-                      <span className="w-1 h-1 bg-zimbabwe-green rounded-full mr-2"></span>
-                      {feature}
+                    <li key={index} className="text-sm flex items-start">
+                      <span className="w-1 h-1 bg-zimbabwe-green rounded-full mr-2 mt-2 flex-shrink-0"></span>
+                      <span className="break-words">{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Button 
-                  className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
+                  className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen text-xs sm:text-sm"
                   onClick={() => handleCheckout(plan.tier, plan.price)}
                   disabled={loading}
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading...
+                      <span className="break-words">Loading...</span>
                     </>
                   ) : (
-                    'Subscribe'
+                    <span className="break-words">Subscribe</span>
                   )}
                 </Button>
               </CardContent>

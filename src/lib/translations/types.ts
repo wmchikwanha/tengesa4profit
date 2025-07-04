@@ -192,4 +192,24 @@ export interface TranslationDictionary {
   emailSent: string;
   checkEmailInbox: string;
   profileUpdated: string;
+  
+  // New multilingual fields
+  dateOfPurchase: string;
+  unit: string;
+  unitPriceDollar: string;
+  yourProductsColumn: string;
+  businessName: string;
+  contactPerson: string;
+  address: string;
+  businessDescription: string;
+  saveProfile: string;
+  searchProductsPlaceholder: string;
+  searchInstruction: string;
+  subscriptionStatus: string;
+  subscriptionPlan: string;
+  subscriptionExpired: string;
+  manageSubscription: string;
+  refreshSubscription: string;
+  updatingStatus: string;
+  statusRefreshed: string;
 }

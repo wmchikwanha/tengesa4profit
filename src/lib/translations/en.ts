@@ -157,5 +157,26 @@ export const en: TranslationDictionary = {
   findProducts: "Find Products",
   emailSent: "Email sent to",
   checkEmailInbox: "Please check your email inbox",
-  profileUpdated: "Supplier Dashboard profile has been updated"
+  profileUpdated: "Supplier Dashboard profile has been updated",
+  
+  // New translations for multilingual support
+  dateOfPurchase: "Date of Purchase",
+  unit: "Unit",
+  unitPriceDollar: "Unit Price ($)",
+  yourProductsColumn: "Your Products",
+  businessName: "Business Name",
+  contactPerson: "Contact Person",
+  address: "Address",
+  businessDescription: "Business Description",
+  saveProfile: "Save Profile",
+  searchProductsPlaceholder: "Search products, brands, or suppliers...",
+  searchInstruction: "Use the search bar or select a category to find products from suppliers.",
+  subscriptionStatus: "Subscription Status",
+  subscriptionPlan: "Subscription Plan",
+  subscriptionExpired: "Subscription Expired",
+  subscriptionActive: "Active",
+  manageSubscription: "Manage Subscription",
+  refreshSubscription: "Refresh",
+  updatingStatus: "Updating...",
+  statusRefreshed: "Status Refreshed"
 };

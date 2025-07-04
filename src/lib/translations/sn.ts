@@ -1,4 +1,3 @@
-
 import { TranslationDictionary } from './types';
 
 export const sn: TranslationDictionary = {
@@ -156,5 +155,27 @@ export const sn: TranslationDictionary = {
   findProducts: "Tsvaga Zvinhu",
   emailSent: "Email rakatumirwa ku",
   checkEmailInbox: "Tarisa email yako",
-  profileUpdated: "Profile yamupi yakagadziriswa"
+  profileUpdated: "Profile yamupi yakagadziriswa",
+  
+  // New translations
+  dateOfPurchase: "Zuva Rekutenga",
+  unit: "Chiyero",
+  unitPriceDollar: "Mutengo paChiyero ($)",
+  yourProductsColumn: "Zvinhu Zvako",
+  businessName: "Zita reBhizinesi",
+  contactPerson: "Munhu Wekubata",
+  address: "Kero",
+  businessDescription: "Tsanangudzo yeBhizinesi",
+  saveProfile: "Chengetedza Profile",
+  searchProductsPlaceholder: "Tsvaga zvinhu, mabrand, kana vatengesi...",
+  searchInstruction: "Shandisa search bar kana sarudza category kuti uwane zvinhu kubva kuvatengesi.",
+  subscriptionStatus: "Mamiriro eSubscription",
+  subscriptionPlan: "Subscription Plan",
+  subscriptionExpired: "Subscription Yapera",
+  subscriptionActive: "Inoshanda",
+  manageSubscription: "Bata Subscription",
+  refreshSubscription: "Gadziridza",
+  updatingStatus: "Zviri kugadziridza...",
+  statusRefreshed: "Mamiriro Agadziriswa",
+  description: "Tsanangudzo"
 };
