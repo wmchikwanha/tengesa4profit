@@ -1,0 +1,42 @@
+
+export interface UITranslations {
+  // Results and alerts
+  lowProfitWarning?: string;
+  productsList?: string;
+  noProducts?: string;
+  loadProduct?: string;
+  deleteProduct?: string;
+  addDelivery?: string;
+  addDeliveryPrompt?: string;
+  enterQuantity?: string;
+  confirmNegativeStock?: string;
+
+  // Delete confirmation
+  deleteConfirmation?: string;
+  deleteWarning?: string;
+  
+  // Summary and reports
+  dailySummary?: string;
+  productSummary?: string;
+  totalStockRemaining?: string;
+  shareTally?: string;
+  downloadReport?: string;
+  sold?: string;
+  remaining?: string;
+  history?: string;
+  noHistory?: string;
+  
+  // Date filtering
+  selectDateRange?: string;
+  startDate?: string;
+  endDate?: string;
+  reset?: string;
+  apply?: string;
+  noMatchingHistory?: string;
+  
+  // Additional UI fields
+  dateOfPurchase: string;
+  unit: string;
+  unitPriceDollar: string;
+  yourProductsColumn: string;
+}
