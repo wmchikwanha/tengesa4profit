@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 export const SubscriptionStatus: React.FC = () => {
   const { user, subscriptionStatus, refreshSubscription } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
 
   const calculateDaysLeft = (endDate: string | null) => {
@@ -36,9 +38,10 @@ export const SubscriptionStatus: React.FC = () => {
         window.open(data.url, '_blank');
       }
     } catch (error) {
+      console.error('Checkout error:', error);
       toast({
         title: "Error",
-        description: "Failed to create checkout session",
+        description: "Failed to create checkout session. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -51,21 +54,55 @@ export const SubscriptionStatus: React.FC = () => {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Customer portal error:', error);
+        throw new Error(error.message || 'Failed to open customer portal');
+      }
       
       if (data?.url) {
         window.open(data.url, '_blank');
+      } else {
+        throw new Error('No portal URL received');
       }
     } catch (error) {
+      console.error('Customer portal error:', error);
       toast({
         title: "Error",
-        description: "Failed to open customer portal",
+        description: error instanceof Error ? error.message : "Failed to open customer portal. Please try again.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    toast({
+      title: "Refreshing",
+      description: "Please wait while we update your subscription status...",
+    });
+    
+    try {
+      await refreshSubscription();
+      toast({
+        title: "Updated",
+        description: "Subscription status has been refreshed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to refresh subscription status.",
+        variant: "destructive",
+      });
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -102,10 +139,17 @@ export const SubscriptionStatus: React.FC = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={refreshSubscription}
-              disabled={loading}
+              onClick={handleRefresh}
+              disabled={refreshing}
             >
-              Refresh
+              {refreshing ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Refresh'
+              )}
             </Button>
           </CardTitle>
         </CardHeader>
@@ -127,7 +171,14 @@ export const SubscriptionStatus: React.FC = () => {
                 disabled={loading}
                 variant="outline"
               >
-                Manage Subscription
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Opening...
+                  </>
+                ) : (
+                  'Manage Subscription'
+                )}
               </Button>
             </div>
           ) : (
@@ -175,7 +226,14 @@ export const SubscriptionStatus: React.FC = () => {
                   onClick={() => handleCheckout(plan.tier, plan.price)}
                   disabled={loading}
                 >
-                  {loading ? 'Loading...' : 'Subscribe'}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    'Subscribe'
+                  )}
                 </Button>
               </CardContent>
             </Card>

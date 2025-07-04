@@ -9,7 +9,9 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
+  signUpWithPhone: (phone: string, password: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithPhone: (phone: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   subscriptionStatus: {
     subscribed: boolean;
@@ -44,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const cleanupAuthState = () => {
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      if (key.startsWith('supabase.auth.') || key.includes('sb-') || key.includes('marketplace-')) {
         localStorage.removeItem(key);
       }
     });
@@ -80,6 +82,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             refreshSubscription();
           }, 0);
         }
+        
+        if (event === 'SIGNED_OUT') {
+          // Clear marketplace data on sign out
+          cleanupAuthState();
+          setSubscriptionStatus({
+            subscribed: false,
+            tier: null,
+            trialEnd: null,
+            subscriptionEnd: null,
+          });
+        }
       }
     );
 
@@ -97,6 +110,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const formatPhoneNumber = (phone: string) => {
+    // Remove any non-digit characters
+    const digits = phone.replace(/\D/g, '');
+    
+    // If it's 9 digits, assume it's a local number and add +263
+    if (digits.length === 9) {
+      return `+263${digits}`;
+    }
+    
+    // If it already starts with country code, return as is
+    if (digits.startsWith('263') && digits.length === 12) {
+      return `+${digits}`;
+    }
+    
+    // Default case - return with +263 prefix
+    return `+263${digits.slice(-9)}`;
+  };
 
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/`;
@@ -119,6 +150,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const signUpWithPhone = async (phone: string, password: string) => {
+    const formattedPhone = formatPhoneNumber(phone);
+    
+    const { error } = await supabase.auth.signUp({
+      phone: formattedPhone,
+      password,
+    });
+    
+    if (!error) {
+      toast({
+        title: "Account created!",
+        description: "Please check your phone for a verification code.",
+      });
+    }
+    
+    return { error };
+  };
+
   const signIn = async (email: string, password: string) => {
     try {
       cleanupAuthState();
@@ -130,6 +179,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        window.location.href = '/';
+      }
+      
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const signInWithPhone = async (phone: string, password: string) => {
+    try {
+      cleanupAuthState();
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+      }
+      
+      const formattedPhone = formatPhoneNumber(phone);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        phone: formattedPhone,
         password,
       });
       
@@ -164,7 +241,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     signUp,
+    signUpWithPhone,
     signIn,
+    signInWithPhone,
     signOut,
     subscriptionStatus,
     refreshSubscription,
