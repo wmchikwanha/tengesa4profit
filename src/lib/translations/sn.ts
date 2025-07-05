@@ -1,5 +1,4 @@
-
-import { TranslationDictionary } from './types';
+import { TranslationDictionary } from './types/index';
 
 export const sn: TranslationDictionary = {
   appTitle: "Trader's Friend",

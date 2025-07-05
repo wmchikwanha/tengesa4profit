@@ -1,3 +1,3 @@
 
 // Re-export everything from the types directory for backward compatibility
-export * from './types';
+export * from './types/index';

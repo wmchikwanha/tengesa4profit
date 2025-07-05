@@ -1,6 +1,6 @@
 
-export * from './types';
-import { Language, TranslationDictionary } from './types';
+export * from './types/index';
+import { Language, TranslationDictionary } from './types/index';
 import { en } from './en';
 import { sn } from './sn';
 import { nd } from './nd';
