@@ -51,6 +51,7 @@ export const nd: TranslationDictionary = {
   cancel: "Khansela",
   add: "Engeza",
   confirmNegativeStock: "Lokhu kuzoholela esitokweni esingaphantsi. Qhubeka?",
+  confirmClearAll: "Uqinisekile ukuthi ufuna ukususa yonke imininingwane? Lokhu akukwazi ukuphendulwa.",
   optional: "okungeyisidingo",
   productInstructions: "Cofa ukubona amacebiso okuphatha imikhiqizo",
   clearForm: "Sula Ifomu",

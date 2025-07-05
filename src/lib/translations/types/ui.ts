@@ -14,6 +14,7 @@ export interface UITranslations {
   // Delete confirmation
   deleteConfirmation?: string;
   deleteWarning?: string;
+  confirmClearAll?: string;
   
   // Summary and reports
   dailySummary?: string;

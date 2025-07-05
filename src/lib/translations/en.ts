@@ -52,6 +52,7 @@ export const en: TranslationDictionary = {
   cancel: "Cancel",
   add: "Add",
   confirmNegativeStock: "This will result in negative stock. Continue?",
+  confirmClearAll: "Are you sure you want to clear all data? This action cannot be undone.",
   optional: "optional",
   productInstructions: "Click to view product management tips",
   clearForm: "Clear Form",

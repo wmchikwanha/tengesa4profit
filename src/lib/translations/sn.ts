@@ -51,6 +51,7 @@ export const sn: TranslationDictionary = {
   cancel: "Siyana",
   add: "Wedzera",
   confirmNegativeStock: "Izvi zvichaguma nesina stock. Enderera mberi?",
+  confirmClearAll: "Une chokwadi here chekuda kubvisa data yese? Hachingadzorerwe.",
   optional: "hachidiwe",
   productInstructions: "Dzvanya kutarisa mazano ekubata zvinhu",
   clearForm: "Chenesa Fomu",
