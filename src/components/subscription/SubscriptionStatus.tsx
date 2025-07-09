@@ -113,27 +113,22 @@ export const SubscriptionStatus: React.FC = () => {
 
   const plans = [
     {
-      name: 'Trader',
-      tier: 'trader',
-      price: 99, // $0.99 in cents
-      features: ['Access marketplace', 'Browse products', 'Contact suppliers']
-    },
-    {
-      name: 'Supplier',
-      tier: 'supplier', 
+      name: 'Premium',
+      tier: 'premium',
       price: 199, // $1.99 in cents
-      features: ['List products', 'Manage inventory', 'Access marketplace']
-    },
-    {
-      name: 'Both',
-      tier: 'both',
-      price: 299, // $2.99 in cents
-      features: ['Full marketplace access', 'List products', 'Browse & buy', 'Priority support']
+      features: [
+        'Full sales & profit reporting', 
+        'Share & download reports', 
+        'Complete marketplace access', 
+        'Contact suppliers directly',
+        'List your own products',
+        'Priority support'
+      ]
     }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-subscription-status>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between flex-wrap gap-2">
@@ -206,7 +201,7 @@ export const SubscriptionStatus: React.FC = () => {
       </Card>
 
       {!subscriptionStatus.subscribed && (
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="max-w-md mx-auto">
           {plans.map((plan) => (
             <Card key={plan.tier} className="relative">
               <CardHeader>
@@ -236,7 +231,7 @@ export const SubscriptionStatus: React.FC = () => {
                       <span className="break-words">Loading...</span>
                     </>
                   ) : (
-                    <span className="break-words">Subscribe</span>
+                    <span className="break-words">Upgrade to Premium</span>
                   )}
                 </Button>
               </CardContent>

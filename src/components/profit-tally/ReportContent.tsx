@@ -7,6 +7,8 @@ import { HistorySection } from './HistorySection';
 import ProductsTable from '../ProductsTable';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
+import { UpgradePrompt } from '@/components/UpgradePrompt';
 import { Product, ProductCalculation } from '@/lib/types';
 
 interface SalesHistoryRecord {

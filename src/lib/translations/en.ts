@@ -148,7 +148,7 @@ export const en: TranslationDictionary = {
   traderRoleDesc: "Sell your products & find suppliers",
   supplierRoleDesc: "List your products",
   bothRoleDesc: "Sell, list & find products",
-  traderRole: "Trader",
+  traderRole: "Vendor",
   supplierRole: "Supplier",
   bothRole: "Both",
   supplierDashboard: "Supplier Dashboard",
@@ -182,7 +182,7 @@ export const en: TranslationDictionary = {
   // Additional translations
   category: "Category",
   brand: "Brand",
-  makeProductVisible: "Make this product visible to traders",
+  makeProductVisible: "Make this product visible to vendors",
   noProductsListed: "No products listed yet. Add your first product to get started!",
   pleaseWaitUpdating: "Please wait while we update this page..."
 };

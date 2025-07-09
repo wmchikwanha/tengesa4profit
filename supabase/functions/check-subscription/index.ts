@@ -110,20 +110,21 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
       
-      const priceId = subscription.items.data[0].price.id;
-      const price = await stripe.prices.retrieve(priceId);
-      const amount = price.unit_amount || 0;
-      
-      if (amount === 99) {
-        subscriptionTier = "trader";
-      } else if (amount === 199) {
-        subscriptionTier = "supplier";
-      } else if (amount === 299) {
-        subscriptionTier = "both";
-      }
-      logStep("Determined subscription tier", { priceId, amount, subscriptionTier });
+      // With simplified tiers, any paid subscription is 'premium'
+      subscriptionTier = "premium";
+      logStep("Determined subscription tier", { subscriptionTier });
     } else {
-      logStep("No active subscription found");
+      // Check if trial has expired to determine if user should be on free tier
+      const now = new Date();
+      const trialEnd = existingSubscriber.trial_end ? new Date(existingSubscriber.trial_end) : null;
+      
+      if (trialEnd && now > trialEnd) {
+        subscriptionTier = "free";
+        logStep("Trial expired, setting to free tier");
+      } else {
+        subscriptionTier = existingSubscriber.subscription_tier || "trial";
+        logStep("No active subscription, maintaining current tier", { subscriptionTier });
+      }
     }
 
     await supabaseClient.from("subscribers").update({

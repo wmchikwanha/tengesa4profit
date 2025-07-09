@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Share, Download, History, Save } from 'lucide-react';
@@ -35,6 +36,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
 }) => {
   const { t } = useLanguage();
   const { formatPrice, settings } = useCurrency();
+  const permissions = useSubscriptionPermissions();
 
   const displayRate = settings.currentCurrency === 'USD' ? 1 : settings.exchangeRate;
 
@@ -81,25 +83,40 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
           <Button 
-            onClick={onSharePDF}
+            onClick={permissions.canShareReports ? onSharePDF : undefined}
             variant="outline"
-            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
+            disabled={!permissions.canShareReports}
+            className={`${permissions.canShareReports 
+              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
+              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+            } flex items-center justify-center gap-2`}
+            title={!permissions.canShareReports ? 'Upgrade to Premium to share reports' : ''}
           >
             <Share className="h-5 w-5" />
             {t.shareTally}
           </Button>
           <Button 
-            onClick={onDownloadPDF}
+            onClick={permissions.canDownloadReports ? onDownloadPDF : undefined}
             variant="outline"
-            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
+            disabled={!permissions.canDownloadReports}
+            className={`${permissions.canDownloadReports 
+              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
+              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+            } flex items-center justify-center gap-2`}
+            title={!permissions.canDownloadReports ? 'Upgrade to Premium to download reports' : ''}
           >
             <Download className="h-5 w-5" />
             {t.downloadReport}
           </Button>
           <Button 
-            onClick={onToggleHistory}
+            onClick={permissions.canUseReporting ? onToggleHistory : undefined}
             variant="outline"
-            className="bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen flex items-center justify-center gap-2"
+            disabled={!permissions.canUseReporting}
+            className={`${permissions.canUseReporting 
+              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
+              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+            } flex items-center justify-center gap-2`}
+            title={!permissions.canUseReporting ? 'Upgrade to Premium to view history' : ''}
           >
             <History className="h-5 w-5" />
             {viewingHistory ? t.hideHistory : t.viewHistory}

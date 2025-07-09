@@ -49,22 +49,20 @@ serve(async (req) => {
     }
 
     const planNames = {
-      trader: 'Trader Plan',
-      supplier: 'Supplier Plan', 
-      both: 'Both Plans'
+      premium: 'Premium Plan - Full Access'
     };
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [
+        line_items: [
         {
           price_data: {
             currency: "usd",
             product_data: { 
-              name: planNames[tier as keyof typeof planNames] || 'Subscription Plan'
+              name: planNames[tier as keyof typeof planNames] || 'Premium Plan'
             },
-            unit_amount: price,
+            unit_amount: 199, // Fixed price for premium plan ($1.99)
             recurring: { interval: "month" },
           },
           quantity: 1,
