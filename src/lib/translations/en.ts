@@ -184,5 +184,17 @@ export const en: TranslationDictionary = {
   brand: "Brand",
   makeProductVisible: "Make this product visible to vendors",
   noProductsListed: "No products listed yet. Add your first product to get started!",
-  pleaseWaitUpdating: "Please wait while we update this page..."
+  pleaseWaitUpdating: "Please wait while we update this page...",
+  
+  // New subscription and trial translations
+  trialExpiresSoon: "Your trial expires soon! Upgrade to continue using premium features.",
+  upgradeNowAction: "Upgrade Now",
+  upgradeToPlansAction: "Upgrade to Premium",
+  
+  // Sales page titles
+  salesAndProfit: "Sales & Profit",
+  dateOfSale: "Date of Sale",
+  
+  // App tagline
+  appTagline: "Always know your profit. Sell smarter!"
 };

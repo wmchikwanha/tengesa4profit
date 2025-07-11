@@ -184,5 +184,17 @@ export const sn: TranslationDictionary = {
   brand: "Brand",
   makeProductVisible: "Ita kuti chinhu ichi chionekwe nevatengesi",
   noProductsListed: "Hapana zvinhu zvanyorwa. Wedzera chinhu chako chekutanga!",
-  pleaseWaitUpdating: "Mira zvishoma tichigadziridza peji ino..."
+  pleaseWaitUpdating: "Mira zvishoma tichigadziridza peji ino...",
+  
+  // New subscription and trial translations
+  trialExpiresSoon: "Edzo rako ripere panguva pfupi! Simudza kuti uendererzewo kushandisa premium features.",
+  upgradeNowAction: "Simudza Zvino",
+  upgradeToPlansAction: "Simudza kuPremium",
+  
+  // Sales page titles
+  salesAndProfit: "Kutengesa & Purofiti",
+  dateOfSale: "Zuva Rekutengesa",
+  
+  // App tagline
+  appTagline: "Tengesa4Profit"
 };

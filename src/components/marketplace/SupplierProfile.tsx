@@ -85,7 +85,7 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showBusinessName}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showBusinessName: !!checked }))}
             />
-            <label className="text-sm break-words">Show to vendors</label>
+            <label className="text-sm break-words">{t.makeProductVisible}</label>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showContactPerson}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showContactPerson: !!checked }))}
             />
-            <label className="text-sm break-words">Show to vendors</label>
+            <label className="text-sm break-words">{t.makeProductVisible}</label>
           </div>
         </div>
 
@@ -119,7 +119,7 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showPhoneNumber}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showPhoneNumber: !!checked }))}
             />
-            <label className="text-sm break-words">Show to vendors</label>
+            <label className="text-sm break-words">{t.makeProductVisible}</label>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ export const SupplierProfileForm: React.FC = () => {
               checked={formData.showEmail}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showEmail: !!checked }))}
             />
-            <label className="text-sm break-words">Show to vendors</label>
+            <label className="text-sm break-words">{t.makeProductVisible}</label>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export const SupplierProfileForm: React.FC = () => {
             checked={formData.showAddress}
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showAddress: !!checked }))}
           />
-          <label className="text-sm break-words">Show to vendors</label>
+          <label className="text-sm break-words">{t.makeProductVisible}</label>
         </div>
       </div>
 

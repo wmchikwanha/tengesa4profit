@@ -54,7 +54,7 @@ export const MainReport: React.FC<MainReportProps> = ({
       <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardContent className="pt-6">
           <div className="mb-4">
-            <label htmlFor="saleDate" className="trader-label">Date of Sale</label>
+            <label htmlFor="saleDate" className="trader-label">{t.dateOfSale}</label>
             <Input
               id="saleDate"
               value={saleDate}

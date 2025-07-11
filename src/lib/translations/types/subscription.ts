@@ -35,4 +35,9 @@ export interface SubscriptionTranslations {
   refreshSubscription: string;
   updatingStatus: string;
   statusRefreshed: string;
+  
+  // New trial and upgrade messages
+  trialExpiresSoon: string;
+  upgradeNowAction: string;
+  upgradeToPlansAction: string;
 }

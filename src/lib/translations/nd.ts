@@ -184,5 +184,17 @@ export const nd: TranslationDictionary = {
   brand: "Uhlobo",
   makeProductVisible: "Yenza lo mkhiqizo ubonakale kubathengisi",
   noProductsListed: "Ayikho imikhiqizo efakiwe. Engeza umkhiqizo wakho wokuqala ukuze uqale!",
-  pleaseWaitUpdating: "Sicela ulinde ngenkathi sibuyekeza leli khasi..."
+  pleaseWaitUpdating: "Sicela ulinde ngenkathi sibuyekeza leli khasi...",
+  
+  // New subscription and trial translations
+  trialExpiresSoon: "Isikhathi sakho sokuhlola siza kuphela! Thuthukisa ukuze uqhubeke usebenzisa izinsiza ze-premium.",
+  upgradeNowAction: "Thuthukisa Manje",
+  upgradeToPlansAction: "Thuthukisa ku-Premium",
+  
+  // Sales page titles
+  salesAndProfit: "Ukuthengisa & Inzuzo",
+  dateOfSale: "Usuku Lokuthengisa",
+  
+  // App tagline
+  appTagline: "Tengesa4Profit"
 };

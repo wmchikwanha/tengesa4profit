@@ -31,4 +31,8 @@ export interface SalesTranslations {
   noSalesHistory: string;
   viewHistory: string;
   hideHistory: string;
+  
+  // Sales page titles
+  salesAndProfit: string;
+  dateOfSale: string;
 }

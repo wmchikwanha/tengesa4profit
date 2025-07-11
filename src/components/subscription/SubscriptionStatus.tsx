@@ -185,13 +185,13 @@ export const SubscriptionStatus: React.FC = () => {
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="secondary">Trial</Badge>
                 <span className="font-medium break-words">
-                  {trialDaysLeft > 0 ? `${trialDaysLeft} days left` : 'Trial expired'}
+                  {trialDaysLeft > 0 ? `${trialDaysLeft} ${t.daysLeft}` : t.trialExpired}
                 </span>
               </div>
               {trialDaysLeft <= 7 && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                   <p className="text-sm text-yellow-800 break-words">
-                    Your trial expires soon! Upgrade to continue using premium features.
+                    {t.trialExpiresSoon}
                   </p>
                 </div>
               )}

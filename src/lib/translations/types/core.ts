@@ -8,4 +8,7 @@ export interface CoreTranslations {
   addProduct: string;
   tallyProfit: string;
   language: string;
+  
+  // App tagline
+  appTagline: string;
 }
