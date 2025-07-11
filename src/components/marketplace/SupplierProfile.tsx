@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { SupplierProfile } from '@/lib/marketplace-types';
 
 export const SupplierProfileForm: React.FC = () => {
-  const { supplierProfile, setSupplierProfile } = useMarketplace();
+  const { supplierProfile, setSupplierProfile, marketplaceProducts, updateMarketplaceProduct } = useMarketplace();
   const { t } = useLanguage();
   const { toast } = useToast();
   
@@ -56,6 +56,13 @@ export const SupplierProfileForm: React.FC = () => {
     
     setSupplierProfile(profile);
     
+    // Update marketplace products with new supplier profile
+    marketplaceProducts.forEach(product => {
+      if (product.supplierId === profile.id) {
+        updateMarketplaceProduct(product.id, { supplierProfile: profile });
+      }
+    });
+    
     toast({
       title: "Success",
       description: t.profileUpdated,
@@ -73,12 +80,12 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-          <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2 mt-2">
             <Checkbox
               checked={formData.showBusinessName}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showBusinessName: !!checked }))}
             />
-            <label className="text-sm break-words">Show to traders</label>
+            <label className="text-sm break-words">Show to vendors</label>
           </div>
         </div>
 
@@ -90,12 +97,12 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-          <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2 mt-2">
             <Checkbox
               checked={formData.showContactPerson}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showContactPerson: !!checked }))}
             />
-            <label className="text-sm break-words">Show to traders</label>
+            <label className="text-sm break-words">Show to vendors</label>
           </div>
         </div>
 
@@ -107,12 +114,12 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-          <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2 mt-2">
             <Checkbox
               checked={formData.showPhoneNumber}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showPhoneNumber: !!checked }))}
             />
-            <label className="text-sm break-words">Show to traders</label>
+            <label className="text-sm break-words">Show to vendors</label>
           </div>
         </div>
 
@@ -124,12 +131,12 @@ export const SupplierProfileForm: React.FC = () => {
             onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
             className="trader-input"
           />
-          <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2 mt-2">
             <Checkbox
               checked={formData.showEmail}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showEmail: !!checked }))}
             />
-            <label className="text-sm break-words">Show to traders</label>
+            <label className="text-sm break-words">Show to vendors</label>
           </div>
         </div>
       </div>
@@ -147,7 +154,7 @@ export const SupplierProfileForm: React.FC = () => {
             checked={formData.showAddress}
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showAddress: !!checked }))}
           />
-          <label className="text-sm break-words">Show to traders</label>
+          <label className="text-sm break-words">Show to vendors</label>
         </div>
       </div>
 

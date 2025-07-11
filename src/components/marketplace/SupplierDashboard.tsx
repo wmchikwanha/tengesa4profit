@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { SupplierProfileForm } from './SupplierProfile';
 import { SupplierProducts } from './SupplierProducts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import CurrencySelector from '@/components/CurrencySelector';
 
 export const SupplierDashboard: React.FC = () => {
   const { supplierProfile } = useMarketplace();
@@ -15,12 +16,19 @@ export const SupplierDashboard: React.FC = () => {
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
       <CardHeader>
-        <CardTitle className="break-words text-base sm:text-lg">{t.supplierDashboard}</CardTitle>
-        {!supplierProfile && (
-          <p className="text-sm text-zimbabwe-darkGreen opacity-80 break-words">
-            Complete your profile to start listing products
-          </p>
-        )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <CardTitle className="break-words text-base sm:text-lg">{t.supplierDashboard}</CardTitle>
+            {!supplierProfile && (
+              <p className="text-sm text-zimbabwe-darkGreen opacity-80 break-words">
+                Complete your profile to start listing products
+              </p>
+            )}
+          </div>
+          <div className="shrink-0">
+            <CurrencySelector />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="profile" className="w-full">

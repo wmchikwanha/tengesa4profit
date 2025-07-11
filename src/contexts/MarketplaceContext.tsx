@@ -112,7 +112,13 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const updateMarketplaceProduct = (id: string, updates: Partial<MarketplaceProduct>) => {
     setMarketplaceProducts(prev => 
       prev.map(product => 
-        product.id === id ? { ...product, ...updates, updatedAt: new Date().toISOString() } : product
+        product.id === id ? { 
+          ...product, 
+          ...updates, 
+          updatedAt: new Date().toISOString(),
+          // Ensure supplier profile is updated if it exists
+          supplierProfile: supplierProfile || product.supplierProfile
+        } : product
       )
     );
   };

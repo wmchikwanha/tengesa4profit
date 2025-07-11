@@ -42,7 +42,11 @@ export const TraderMarketplace: React.FC = () => {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.businessName.toLowerCase().includes(searchTerm.toLowerCase()));
+      (product.supplierProfile?.businessName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (product.supplierProfile?.contactPerson?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (product.supplierProfile?.address?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (product.supplierProfile?.email?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (product.supplierProfile?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
 

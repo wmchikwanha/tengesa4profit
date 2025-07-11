@@ -52,9 +52,9 @@ serve(async (req) => {
       .single();
 
     if (!existingSubscriber) {
-      // Create new subscriber with 30-day trial
+      // Create new subscriber with 1-day trial for testing
       const trialStart = new Date();
-      const trialEnd = new Date(trialStart.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const trialEnd = new Date(trialStart.getTime() + 1 * 24 * 60 * 60 * 1000);
       
       await supabaseClient.from("subscribers").insert({
         email: user.email,

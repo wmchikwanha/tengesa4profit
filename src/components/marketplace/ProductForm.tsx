@@ -151,7 +151,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               checked={formData.isPubliclyVisible}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPubliclyVisible: !!checked }))}
             />
-            <label className="text-sm break-words">{t.makeProductVisible || 'Make this product visible to traders'}</label>
+            <label className="text-sm break-words">{t.makeProductVisible || 'Make this product visible to vendors'}</label>
           </div>
 
           <div className="flex gap-2 flex-wrap">

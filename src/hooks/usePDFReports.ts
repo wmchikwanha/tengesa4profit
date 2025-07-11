@@ -17,7 +17,8 @@ export function usePDFReports() {
         description: "Generating PDF for sharing...",
       });
       
-      if (reportRef.current) {
+      const reportElement = document.getElementById('report-content');
+      if (reportElement) {
         await sharePDF('report-content', `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
         
         toast({
@@ -62,7 +63,8 @@ export function usePDFReports() {
         description: "Downloading PDF report...",
       });
       
-      if (reportRef.current) {
+      const reportElement = document.getElementById('report-content');
+      if (reportElement) {
         await downloadPDF('report-content', `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
         
         toast({
