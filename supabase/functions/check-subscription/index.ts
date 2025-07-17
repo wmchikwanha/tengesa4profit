@@ -56,7 +56,7 @@ serve(async (req) => {
       const trialStart = new Date();
       const trialEnd = new Date(trialStart.getTime() + 1 * 24 * 60 * 60 * 1000);
       
-      await supabaseClient.from("subscribers").insert({
+      const { error: insertError } = await supabaseClient.from("subscribers").insert({
         email: user.email,
         user_id: user.id,
         subscribed: false,
@@ -64,6 +64,31 @@ serve(async (req) => {
         trial_start: trialStart.toISOString(),
         trial_end: trialEnd.toISOString(),
       });
+
+      if (insertError) {
+        logStep("Error creating subscriber", { error: insertError.message });
+        // If insert fails, try to fetch existing record (race condition)
+        const { data: existingAfterError } = await supabaseClient
+          .from("subscribers")
+          .select("*")
+          .eq("email", user.email)
+          .single();
+        
+        if (existingAfterError) {
+          logStep("Found existing subscriber after insert error");
+          return new Response(JSON.stringify({
+            subscribed: existingAfterError.subscribed || false,
+            subscription_tier: existingAfterError.subscription_tier || 'trial',
+            trial_end: existingAfterError.trial_end,
+            subscription_end: existingAfterError.subscription_end
+          }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          });
+        } else {
+          throw new Error(`Failed to create subscriber: ${insertError.message}`);
+        }
+      }
 
       logStep("Created new subscriber with trial");
       return new Response(JSON.stringify({

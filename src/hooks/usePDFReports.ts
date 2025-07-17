@@ -17,9 +17,21 @@ export function usePDFReports() {
         description: "Generating PDF for sharing...",
       });
       
-      const reportElement = document.getElementById('report-content');
+      // Try multiple possible element IDs for the report content
+      let reportElement = document.getElementById('report-content');
+      if (!reportElement) {
+        reportElement = reportRef.current;
+      }
+      if (!reportElement) {
+        reportElement = document.querySelector('[data-report-content]') as HTMLElement;
+      }
+      
       if (reportElement) {
-        await sharePDF('report-content', `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
+        // Ensure the element has an ID for PDF generation
+        if (!reportElement.id) {
+          reportElement.id = 'report-content-temp';
+        }
+        await sharePDF(reportElement.id, `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
         
         toast({
           title: "Success",
@@ -63,9 +75,21 @@ export function usePDFReports() {
         description: "Downloading PDF report...",
       });
       
-      const reportElement = document.getElementById('report-content');
+      // Try multiple possible element IDs for the report content
+      let reportElement = document.getElementById('report-content');
+      if (!reportElement) {
+        reportElement = reportRef.current;
+      }
+      if (!reportElement) {
+        reportElement = document.querySelector('[data-report-content]') as HTMLElement;
+      }
+      
       if (reportElement) {
-        await downloadPDF('report-content', `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
+        // Ensure the element has an ID for PDF generation
+        if (!reportElement.id) {
+          reportElement.id = 'report-content-temp';
+        }
+        await downloadPDF(reportElement.id, `trader-profit-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
         
         toast({
           title: "Success",

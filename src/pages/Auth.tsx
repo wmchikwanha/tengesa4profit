@@ -116,7 +116,7 @@ export default function Auth() {
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </CardTitle>
           <p className="text-zimbabwe-darkGreen opacity-80">
-            {isLogin ? 'Sign in to your account' : 'Start your 30-day free trial'}
+            {isLogin ? 'Sign in to your account' : 'Start your 1-day free trial'}
           </p>
           
           {/* Auth method toggle */}

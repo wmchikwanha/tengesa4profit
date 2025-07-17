@@ -66,7 +66,7 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
   const { t } = useLanguage();
   
   return (
-    <div ref={props.reportRef} className="space-y-6">
+    <div ref={props.reportRef} id="report-content" data-report-content className="space-y-6">
       <MainReport
         products={props.products}
         selectedProduct={props.selectedProduct}

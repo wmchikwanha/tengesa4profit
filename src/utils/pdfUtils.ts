@@ -6,6 +6,8 @@ export const generatePDF = async (elementId: string, fileName: string = 'report.
   try {
     const element = document.getElementById(elementId);
     if (!element) {
+      console.error(`Element with ID ${elementId} not found in DOM`);
+      console.log('Available elements with IDs:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
       throw new Error(`Element with ID ${elementId} not found`);
     }
     
