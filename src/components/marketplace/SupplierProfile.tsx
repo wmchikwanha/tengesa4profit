@@ -42,10 +42,10 @@ export const SupplierProfileForm: React.FC = () => {
       phoneNumber: formData.phoneNumber || '',
       email: formData.email || '',
       description: formData.description || '',
-      showBusinessName: formData.showBusinessName || false,
-      showContactPerson: formData.showContactPerson || false,
+      showBusinessName: true, // Always show
+      showContactPerson: true, // Always show
       showAddress: formData.showAddress || false,
-      showPhoneNumber: formData.showPhoneNumber || false,
+      showPhoneNumber: true, // Always show
       showEmail: formData.showEmail || false,
       isActive: true,
       subscriptionStatus: 'trial',
@@ -80,13 +80,6 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-            <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              checked={formData.showBusinessName}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showBusinessName: !!checked }))}
-            />
-            <label className="text-sm break-words">{t.makeProductVisible}</label>
-          </div>
         </div>
 
         <div>
@@ -97,13 +90,6 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-            <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              checked={formData.showContactPerson}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showContactPerson: !!checked }))}
-            />
-            <label className="text-sm break-words">{t.makeProductVisible}</label>
-          </div>
         </div>
 
         <div>
@@ -114,13 +100,6 @@ export const SupplierProfileForm: React.FC = () => {
             className="trader-input"
             required
           />
-            <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              checked={formData.showPhoneNumber}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showPhoneNumber: !!checked }))}
-            />
-            <label className="text-sm break-words">{t.makeProductVisible}</label>
-          </div>
         </div>
 
         <div>
@@ -131,12 +110,12 @@ export const SupplierProfileForm: React.FC = () => {
             onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
             className="trader-input"
           />
-            <div className="flex items-center space-x-2 mt-2">
+          <div className="flex items-center space-x-2 mt-2">
             <Checkbox
               checked={formData.showEmail}
               onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showEmail: !!checked }))}
             />
-            <label className="text-sm break-words">{t.makeProductVisible}</label>
+            <label className="text-sm break-words">Show email to vendors</label>
           </div>
         </div>
       </div>
@@ -154,7 +133,7 @@ export const SupplierProfileForm: React.FC = () => {
             checked={formData.showAddress}
             onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showAddress: !!checked }))}
           />
-          <label className="text-sm break-words">{t.makeProductVisible}</label>
+          <label className="text-sm break-words">Show address to vendors</label>
         </div>
       </div>
 

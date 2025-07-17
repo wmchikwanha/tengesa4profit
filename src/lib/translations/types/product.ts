@@ -6,6 +6,7 @@ export interface ProductTranslations {
   quantityBought: string;
   buyingPrice: string;
   unitPrice?: string;
+  costPerUnit: string;
   transportCost: string;
   stallFee: string;
   otherFees?: string;

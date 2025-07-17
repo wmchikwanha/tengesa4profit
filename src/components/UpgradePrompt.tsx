@@ -39,11 +39,19 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
         <p className="text-sm text-gray-600 mb-4">
           {description}
         </p>
+        <div className="mb-4">
+          <h4 className="font-medium text-gray-700 mb-2">Premium Benefits:</h4>
+          <ul className="text-sm text-gray-600 text-left list-disc list-inside space-y-1">
+            {t.premiumBenefits.map((benefit, index) => (
+              <li key={index}>{benefit}</li>
+            ))}
+          </ul>
+        </div>
         <Button 
           onClick={handleUpgrade}
           className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
         >
-          Upgrade to Premium - $1.99/month
+          {t.upgradeToPlansAction} - $1.99/month
         </Button>
       </CardContent>
     </Card>

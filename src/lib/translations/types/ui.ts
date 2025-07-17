@@ -40,4 +40,27 @@ export interface UITranslations {
   unit: string;
   unitPriceDollar: string;
   yourProductsColumn: string;
+  stockQty: string;
+  actions: string;
+  stockValue: string;
+  
+  // Category translations
+  vegetables: string;
+  fruits: string;
+  grains: string;
+  dairy: string;
+  meat: string;
+  beverages: string;
+  snacks: string;
+  household: string;
+  clothing: string;
+  electronics: string;
+  tools: string;
+  books: string;
+  other: string;
+  livestock: string;
+  produce: string;
+  
+  // Premium benefits
+  premiumBenefits: string[];
 }

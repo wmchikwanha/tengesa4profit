@@ -27,6 +27,9 @@ export const sn: TranslationDictionary = {
   totalStockValue: "Huwandu Hwestock",
   totalDiscardedValue: "Huwandu Hwezvinhu Zvaraswa",
   totalDiscardedQuantity: "Huwandu Hwezvinhu Zvaraswa",
+  stockQty: "Huwandu hweStock",
+  stockValue: "Mutengo hweStock",
+  actions: "Zviito",
   calculate: "Verenga",
   salesHistory: "Nhoroondo Yekutengesa",
   clearAllData: "Bvisa Data",
@@ -196,5 +199,32 @@ export const sn: TranslationDictionary = {
   dateOfSale: "Zuva Rekutengesa",
   
   // App tagline
-  appTagline: "Tengesa4Profit"
+  appTagline: "Ziva Purofiti Yako Nguva Dzese. Tengesa Zvakangwara!",
+  
+  // Category translations
+  vegetables: "Muriwo",
+  fruits: "Michero", 
+  grains: "Zviyo",
+  dairy: "Zvemukaka",
+  meat: "Nyama",
+  beverages: "Zvinwiwa",
+  snacks: "Zvokudya",
+  household: "Zvemumba",
+  clothing: "Zvipfeko",
+  electronics: "Zvemagetsi",
+  tools: "Maturusi",
+  books: "Mabhuku",
+  other: "Zvimwe",
+  livestock: "Zvipfuyo",
+  produce: "Zvirimwa",
+  
+  // Premium benefits translations
+  premiumBenefits: [
+    "Gadzira uye dhaunirodha mapurisa akajeka ePDF",
+    "Govera mapurisa kuburikidza ne-email nesocial media",
+    "Wana nhoroondo yekutengesa yakazara ne-filtering",
+    "Bata vatengesi zvakananga kuburikidza nemusika",
+    "Nyora zvinhu zvako kuti vatengesi vakubate",
+    "Rubatsiro rwekutanga rwevatengi"
+  ]
 };

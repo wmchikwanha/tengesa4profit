@@ -27,6 +27,9 @@ export const en: TranslationDictionary = {
   totalStockValue: "Total Stock Value",
   totalDiscardedValue: "Total Discarded Value",
   totalDiscardedQuantity: "Total Discarded Quantity",
+  stockQty: "Stock Qty",
+  stockValue: "Stock Value",
+  actions: "Actions",
   calculate: "Calculate",
   clearAllData: "Clear All Data",
   salesHistory: "Sales History",
@@ -196,5 +199,32 @@ export const en: TranslationDictionary = {
   dateOfSale: "Date of Sale",
   
   // App tagline
-  appTagline: "Always know your profit. Sell smarter!"
+  appTagline: "Always know your profit. Sell smarter!",
+  
+  // Category translations
+  vegetables: "Vegetables",
+  fruits: "Fruits", 
+  grains: "Grains",
+  dairy: "Dairy",
+  meat: "Meat",
+  beverages: "Beverages",
+  snacks: "Snacks",
+  household: "Household",
+  clothing: "Clothing",
+  electronics: "Electronics",
+  tools: "Tools",
+  books: "Books",
+  other: "Other",
+  livestock: "Livestock",
+  produce: "Produce",
+  
+  // Premium benefits translations
+  premiumBenefits: [
+    "Generate and download detailed PDF reports",
+    "Share reports via email and social media",
+    "Access complete sales history with filtering",
+    "Contact suppliers directly through the marketplace",
+    "List your products for vendors to find",
+    "Priority customer support"
+  ]
 };

@@ -30,6 +30,9 @@ export const nd: TranslationDictionary = {
   totalStockValue: "Inani Lesitoko Lilonke",
   totalDiscardedValue: "Inani Elilahliweyo Lilonke",
   totalDiscardedQuantity: "Inani Elilahliweyo Lilonke",
+  stockQty: "Inani Lesitoko",
+  stockValue: "Inani Lesitoko",
+  actions: "Izenzo",
   viewHistory: "Buka Umlando",
   hideHistory: "Fihla Umlando",
   clearAllData: "Sula Yonke Imininingwane",
@@ -196,5 +199,32 @@ export const nd: TranslationDictionary = {
   dateOfSale: "Usuku Lokuthengisa",
   
   // App tagline
-  appTagline: "Tengesa4Profit"
+  appTagline: "Hlala Wazi Ngenani Yakho. Thengisa Ngobuchule!",
+  
+  // Category translations
+  vegetables: "Imifino",
+  fruits: "Izithelo", 
+  grains: "Amabele",
+  dairy: "Ubisi",
+  meat: "Inyama",
+  beverages: "Iziphuzo",
+  snacks: "Ukudla Okuncane",
+  household: "Ekhaya",
+  clothing: "Izimpahla",
+  electronics: "Okwombane",
+  tools: "Amathuluzi",
+  books: "Izincwadi",
+  other: "Okunye",
+  livestock: "Izifuyo",
+  produce: "Izilimo",
+  
+  // Premium benefits translations
+  premiumBenefits: [
+    "Khiqiza futhi ulandise imibiko ecacileyo ye-PDF",
+    "Yabelana ngemibiko nge-email kanye ne-social media",
+    "Finyelela umlando wokuthengisa ogcwele nesihlungi",
+    "Xhumana nabahlinzeki ngokuthe ngqo ngendawo yokuthengisa",
+    "Dweba imikhiqizo yakho ukuze abathengisi bakuthole",
+    "Usekelo lwamakhasimende olufika kuqala"
+  ]
 };

@@ -23,6 +23,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     <div className="trader-container min-h-screen">
       <header className="text-center mb-6">
         <h1 className="text-3xl app-title">Tengesa4Profit</h1>
+        <p className="text-lg text-zimbabwe-darkGreen mt-2 font-medium">{t.appTagline}</p>
       </header>
       
       <LanguageToggle />
@@ -32,21 +33,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <TabsList className="w-full mb-6 grid grid-cols-3 bg-zimbabwe-lightGreen border border-zimbabwe-green h-16">
             <TabsTrigger 
               value="addProduct" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
+              className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
             >
-              {t.addProduct}
+              <span className="text-center">{t.addProduct}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="tallyProfit" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
+              className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
             >
-              {t.tallyProfit}
+              <span className="text-center">{t.tallyProfit}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="marketplace" 
-              className="text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-2 text-center leading-tight"
+              className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
             >
-              {t.marketplace}
+              <span className="text-center">{t.marketplace}</span>
             </TabsTrigger>
           </TabsList>
           

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { PRODUCT_CATEGORIES, type MarketplaceProduct, type ProductCategory, type SupplierProfile } from '@/lib/marketplace-types';
+import { getAllCategoryTranslations } from '@/lib/categoryTranslations';
 
 interface ProductFormProps {
   editingProduct: MarketplaceProduct | null;
@@ -91,7 +92,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(PRODUCT_CATEGORIES).map(([key, label]) => (
+                  {Object.entries(getAllCategoryTranslations(t)).map(([key, label]) => (
                     <SelectItem key={key} value={key}>{label}</SelectItem>
                   ))}
                 </SelectContent>

@@ -64,23 +64,23 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                   {t.productName}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
-                  Supplier
+                  {t.supplier}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
-                  Stock Qty
+                  {t.stockQty}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
-                  Cost/Unit
+                  {t.costPerUnit}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
-                  Selling Price
+                  {t.sellingPrice}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
-                  Stock Value
+                  {t.stockValue}
                 </TableHead>
                 {!isReadOnly && (
                   <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
-                    Actions
+                    {t.actions}
                   </TableHead>
                 )}
               </TableRow>

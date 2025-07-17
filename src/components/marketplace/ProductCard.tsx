@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2 } from 'lucide-react';
 import { PRODUCT_CATEGORIES, type MarketplaceProduct } from '@/lib/marketplace-types';
+import { getCategoryTranslation } from '@/lib/categoryTranslations';
 
 interface ProductCardProps {
   product: MarketplaceProduct;
@@ -41,7 +42,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
                 {getCurrencySymbol()} {convertPrice(product.price).toFixed(2)}/{product.unit}
               </span>
               <span className="text-gray-500">•</span>
-              <span className="break-words">{PRODUCT_CATEGORIES[product.category]}</span>
+              <span className="break-words">{getCategoryTranslation(product.category, t)}</span>
               {product.brand && (
                 <>
                   <span className="text-gray-500">•</span>

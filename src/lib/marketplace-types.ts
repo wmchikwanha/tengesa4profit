@@ -2,35 +2,37 @@
 export type UserRole = 'trader' | 'supplier' | 'both';
 
 export type ProductCategory = 
-  | 'food-beverages'
-  | 'clothing-fashion'
+  | 'vegetables'
+  | 'fruits'
+  | 'grains'
+  | 'dairy'
+  | 'meat'
+  | 'beverages'
+  | 'snacks'
+  | 'household'
+  | 'clothing'
   | 'electronics'
-  | 'home-garden'
-  | 'health-beauty'
-  | 'sports-outdoors'
-  | 'automotive'
-  | 'books-media'
-  | 'toys-games'
-  | 'business-industrial'
-  | 'personal-care'
-  | 'services'
-  | 'industrial-goods'
+  | 'tools'
+  | 'books'
+  | 'livestock'
+  | 'produce'
   | 'other';
 
 export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
-  'food-beverages': 'Food & Beverages',
-  'clothing-fashion': 'Clothing & Fashion',
+  'vegetables': 'Vegetables',
+  'fruits': 'Fruits',
+  'grains': 'Grains',
+  'dairy': 'Dairy',
+  'meat': 'Meat',
+  'beverages': 'Beverages',
+  'snacks': 'Snacks',
+  'household': 'Household',
+  'clothing': 'Clothing',
   'electronics': 'Electronics',
-  'home-garden': 'Home & Garden',
-  'health-beauty': 'Health & Beauty',
-  'sports-outdoors': 'Sports & Outdoors',
-  'automotive': 'Automotive',
-  'books-media': 'Books & Media',
-  'toys-games': 'Toys & Games',
-  'business-industrial': 'Business & Industrial',
-  'personal-care': 'Personal Care',
-  'services': 'Services',
-  'industrial-goods': 'Industrial Goods',
+  'tools': 'Tools',
+  'books': 'Books',
+  'livestock': 'Livestock',
+  'produce': 'Produce',
   'other': 'Other'
 };
 

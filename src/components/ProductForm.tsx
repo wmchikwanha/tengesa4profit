@@ -309,7 +309,7 @@ const ProductForm: React.FC = () => {
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="purchaseDate" className="trader-label">Date of Purchase</label>
+          <label htmlFor="purchaseDate" className="trader-label">{t.dateOfPurchase}</label>
           <Input
             id="purchaseDate"
             name="purchaseDate"
@@ -340,7 +340,7 @@ const ProductForm: React.FC = () => {
 
         <div>
           <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="supplier" className="trader-label">Supplier</label>
+            <label htmlFor="supplier" className="trader-label">{t.supplier}</label>
             <span className="text-red-500">*</span>
             {invalidFields.has('supplier') && (
               <AlertCircle className="h-4 w-4 text-red-500" />
@@ -378,7 +378,7 @@ const ProductForm: React.FC = () => {
           </div>
           
           <div>
-            <label htmlFor="unitOfMeasurement" className="trader-label">Unit</label>
+            <label htmlFor="unitOfMeasurement" className="trader-label">{t.unit}</label>
             <Select
               value={formData.unitOfMeasurement}
               onValueChange={handleUnitChange}
@@ -399,7 +399,7 @@ const ProductForm: React.FC = () => {
         
         <div>
           <div className="flex items-center gap-1 mb-1">
-            <label htmlFor="buyingPrice" className="trader-label">Unit Price ({getCurrencySymbol()})</label>
+            <label htmlFor="buyingPrice" className="trader-label">{t.unitPriceDollar}</label>
             <span className="text-red-500">*</span>
             {invalidFields.has('buyingPrice') && (
               <AlertCircle className="h-4 w-4 text-red-500" />

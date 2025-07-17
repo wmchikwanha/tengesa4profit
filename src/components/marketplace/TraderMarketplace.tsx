@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Search, Phone, Mail, MapPin, Building } from 'lucide-react';
 import { PRODUCT_CATEGORIES, type ProductCategory } from '@/lib/marketplace-types';
+import { getAllCategoryTranslations } from '@/lib/categoryTranslations';
 import { ContactSupplierModal } from './ContactSupplierModal';
 
 export const TraderMarketplace: React.FC = () => {
@@ -79,7 +80,7 @@ export const TraderMarketplace: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {Object.entries(PRODUCT_CATEGORIES).map(([key, label]) => (
+                {Object.entries(getAllCategoryTranslations(t)).map(([key, label]) => (
                   <SelectItem key={key} value={key}>{label}</SelectItem>
                 ))}
               </SelectContent>
@@ -113,7 +114,7 @@ export const TraderMarketplace: React.FC = () => {
                         <div>
                           <h4 className="font-semibold text-lg">{product.name}</h4>
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary">{PRODUCT_CATEGORIES[product.category]}</Badge>
+                            <Badge variant="secondary">{getAllCategoryTranslations(t)[product.category]}</Badge>
                             {product.brand && (
                               <Badge variant="outline">{product.brand}</Badge>
                             )}
