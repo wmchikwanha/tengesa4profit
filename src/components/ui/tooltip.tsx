@@ -1,5 +1,5 @@
 
-import React from "react"
+import { forwardRef } from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 const TooltipProvider = TooltipPrimitive.Provider
 
 // Create a custom Tooltip component that handles mobile differently
-const Tooltip = React.forwardRef<
+const Tooltip = forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> & { 
     delayDuration?: number 
@@ -32,7 +32,7 @@ Tooltip.displayName = "Tooltip"
 
 const TooltipTrigger = TooltipPrimitive.Trigger
 
-const TooltipContent = React.forwardRef<
+const TooltipContent = forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
 >(({ className, sideOffset = 4, ...props }, ref) => (
