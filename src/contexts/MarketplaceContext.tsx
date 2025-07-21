@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, FC, ReactNode } from 'react';
 import { UserRole, SupplierProfile, MarketplaceProduct, ProductInquiry, InquiryResponse } from '@/lib/marketplace-types';
 
 interface MarketplaceContextType {
@@ -29,7 +29,7 @@ export const useMarketplace = () => {
   return context;
 };
 
-export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const MarketplaceProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [userRole, setUserRole] = useState<UserRole>('trader');
   const [supplierProfile, setSupplierProfile] = useState<SupplierProfile | null>(null);
   const [marketplaceProducts, setMarketplaceProducts] = useState<MarketplaceProduct[]>([]);
