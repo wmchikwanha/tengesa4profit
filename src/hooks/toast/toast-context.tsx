@@ -1,5 +1,5 @@
 
-import React from "react"
+import { createContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react"
 import { Action, actionTypes, State, ToasterToast } from "./types"
 import { genId } from "./utils"
 import { reducer } from "./reducer"
@@ -10,7 +10,7 @@ interface ToastContextValue {
   dismiss: (toastId?: string) => void
 }
 
-export const ToastContext = React.createContext<ToastContextValue | null>(null)
+export const ToastContext = createContext<ToastContextValue | null>(null)
 
 // Global state for toast management outside of React context
 const listeners: Array<(state: State) => void> = []
@@ -52,12 +52,12 @@ export function createToast(props: Omit<ToasterToast, "id">) {
   }
 }
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ 
+export const ToastProvider = ({ 
   children 
-}) => {
-  const [state, setState] = React.useState<State>({ toasts: [] })
+}: { children: ReactNode }) => {
+  const [state, setState] = useState<State>({ toasts: [] })
   
-  React.useEffect(() => {
+  useEffect(() => {
     const listener = (newState: State) => {
       setState(newState)
     }
@@ -71,15 +71,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [])
 
-  const toast = React.useCallback((props: Omit<ToasterToast, "id">) => {
+  const toast = useCallback((props: Omit<ToasterToast, "id">) => {
     return createToast(props)
   }, [])
   
-  const dismiss = React.useCallback((toastId?: string) => {
+  const dismiss = useCallback((toastId?: string) => {
     dispatch({ type: actionTypes.DISMISS_TOAST, toastId })
   }, [])
 
-  const contextValue = React.useMemo(() => ({
+  const contextValue = useMemo(() => ({
     state,
     toast,
     dismiss
