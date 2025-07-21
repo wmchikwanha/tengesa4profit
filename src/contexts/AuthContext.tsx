@@ -45,9 +45,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   const cleanupAuthState = () => {
+    // Clear all localStorage items
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('supabase.auth.') || key.includes('sb-') || key.includes('marketplace-')) {
+      if (key.startsWith('supabase.') || 
+          key.includes('sb-') || 
+          key.includes('marketplace-') ||
+          key.includes('products-') ||
+          key.includes('profit-') ||
+          key.startsWith('auth-')) {
         localStorage.removeItem(key);
+      }
+    });
+    
+    // Clear sessionStorage as well
+    Object.keys(sessionStorage || {}).forEach((key) => {
+      if (key.startsWith('supabase.') || 
+          key.includes('sb-') || 
+          key.includes('marketplace-') ||
+          key.includes('products-') ||
+          key.includes('profit-') ||
+          key.startsWith('auth-')) {
+        sessionStorage.removeItem(key);
       }
     });
   };
@@ -84,8 +102,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         if (event === 'SIGNED_OUT') {
-          // Clear marketplace data on sign out
+          // Complete cleanup on sign out
           cleanupAuthState();
+          setUser(null);
+          setSession(null);
           setSubscriptionStatus({
             subscribed: false,
             tier: null,
@@ -185,9 +205,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Force complete cleanup before sign in
       cleanupAuthState();
+      
+      // Multiple cleanup attempts
       try {
         await supabase.auth.signOut({ scope: 'global' });
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
       } catch (err) {
         // Continue even if this fails
       }
@@ -197,14 +221,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password,
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Sign in error:', error);
+        throw error;
+      }
       
       if (data.user) {
-        window.location.href = '/';
+        // Force complete page reload to ensure clean state
+        window.location.replace('/');
       }
       
       return { error: null };
     } catch (error) {
+      console.error('SignIn failed:', error);
       return { error };
     }
   };
@@ -239,15 +268,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      // Force complete cleanup
       cleanupAuthState();
+      
+      // Reset all state immediately
+      setUser(null);
+      setSession(null);
+      setSubscriptionStatus({
+        subscribed: false,
+        tier: null,
+        trialEnd: null,
+        subscriptionEnd: null,
+      });
+      
       try {
         await supabase.auth.signOut({ scope: 'global' });
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
       } catch (err) {
-        // Ignore errors
+        // Continue even if this fails
       }
-      window.location.href = '/auth';
+      
+      // Force complete page reload
+      window.location.replace('/auth');
     } catch (error) {
       console.error('Error signing out:', error);
+      // Force reload even on error
+      window.location.replace('/auth');
     }
   };
 
