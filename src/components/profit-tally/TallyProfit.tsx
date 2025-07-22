@@ -2,9 +2,11 @@
 import * as React from 'react';
 import { ReportHeader } from './ReportHeader';
 import { ReportContent } from './ReportContent';
+import { SalesReportDialog } from './SalesReportDialog';
 import { useProfitCalculations } from '@/hooks/useProfitCalculations';
 import { usePDFReports } from '@/hooks/usePDFReports';
 import { useHistoryManagement } from '@/hooks/useHistoryManagement';
+import { useSalesReports } from '@/hooks/useSalesReports';
 import { useAppData } from '@/contexts/AppDataContext';
 
 const TallyProfit: React.FC = () => {
@@ -42,6 +44,15 @@ const TallyProfit: React.FC = () => {
     applyDateFilter,
     resetDateFilter
   } = useHistoryManagement(salesHistory);
+
+  // Sales reports
+  const {
+    handleGenerateReport,
+    exportToCSV,
+    shareReport,
+    generatedReport,
+    permissions
+  } = useSalesReports(salesHistory, products);
   
   const handleClearData = () => {
     triggerClearAllData(clearSalesData);
@@ -49,7 +60,17 @@ const TallyProfit: React.FC = () => {
   
   return (
     <div className="space-y-6">
-      <ReportHeader />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <ReportHeader />
+        <SalesReportDialog
+          products={products}
+          onGenerateReport={handleGenerateReport}
+          onExportCSV={exportToCSV}
+          onShareReport={shareReport}
+          generatedReport={generatedReport}
+          permissions={permissions}
+        />
+      </div>
       
       <ReportContent
         reportRef={reportRef}

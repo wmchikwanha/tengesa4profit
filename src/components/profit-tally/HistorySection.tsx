@@ -71,7 +71,9 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
     <Card className="bg-white border border-zimbabwe-green">
       <CardHeader className="pb-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <CardTitle className="text-lg font-bold text-zimbabwe-darkGreen">{t.history}</CardTitle>
+          <CardTitle className="text-lg font-bold text-zimbabwe-darkGreen">
+            {t.salesHistory} ({salesHistory.length} records)
+          </CardTitle>
           <div className="flex space-x-2">
             <Popover open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
               <PopoverTrigger asChild>

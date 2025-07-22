@@ -121,6 +121,17 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         </div>
       </div>
       
+      {/* History Toggle Button */}
+      <div className="flex justify-center pt-4">
+        <Button
+          variant="outline"
+          onClick={props.handleToggleHistory}
+          className="border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen"
+        >
+          {props.viewingHistory ? t.hideHistory : t.viewHistory}
+        </Button>
+      </div>
+      
       <HistorySection
         viewingHistory={props.viewingHistory}
         salesHistory={props.filteredHistory}
