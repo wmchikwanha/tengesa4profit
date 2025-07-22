@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, FC, ReactNode } from 'react';
+import * as React from 'react';
 import { Currency, CurrencySettings } from '@/lib/types';
 
 interface CurrencyContextType {
@@ -10,7 +10,7 @@ interface CurrencyContextType {
   convertPrice: (usdPrice: number) => number;
 }
 
-const CurrencyContext = createContext<CurrencyContextType>({
+const CurrencyContext = React.createContext<CurrencyContextType>({
   settings: { currentCurrency: 'USD', exchangeRate: 1 },
   setCurrency: () => {},
   setExchangeRate: () => {},
@@ -19,13 +19,13 @@ const CurrencyContext = createContext<CurrencyContextType>({
   convertPrice: () => 0,
 });
 
-export const useCurrency = () => useContext(CurrencyContext);
+export const useCurrency = () => React.useContext(CurrencyContext);
 
-export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize with default values first, then update from localStorage in useEffect
-  const [settings, setSettings] = useState<CurrencySettings>({ currentCurrency: 'USD', exchangeRate: 1 });
+  const [settings, setSettings] = React.useState<CurrencySettings>({ currentCurrency: 'USD', exchangeRate: 1 });
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Load currency settings from localStorage after component mounts
     try {
       const saved = localStorage.getItem('currencySettings');
@@ -38,7 +38,7 @@ export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       localStorage.setItem('currencySettings', JSON.stringify(settings));
     } catch (error) {
