@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, useEffect, FC, ReactNode } from 'react';
+import * as React from 'react';
 import { UserRole, SupplierProfile, MarketplaceProduct, ProductInquiry, InquiryResponse } from '@/lib/marketplace-types';
 
 interface MarketplaceContextType {
@@ -19,25 +19,25 @@ interface MarketplaceContextType {
   addInquiryResponse: (response: InquiryResponse) => void;
 }
 
-const MarketplaceContext = createContext<MarketplaceContextType | undefined>(undefined);
+const MarketplaceContext = React.createContext<MarketplaceContextType | undefined>(undefined);
 
 export const useMarketplace = () => {
-  const context = useContext(MarketplaceContext);
+  const context = React.useContext(MarketplaceContext);
   if (!context) {
     throw new Error('useMarketplace must be used within a MarketplaceProvider');
   }
   return context;
 };
 
-export const MarketplaceProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [userRole, setUserRole] = useState<UserRole>('trader');
-  const [supplierProfile, setSupplierProfile] = useState<SupplierProfile | null>(null);
-  const [marketplaceProducts, setMarketplaceProducts] = useState<MarketplaceProduct[]>([]);
-  const [inquiries, setInquiries] = useState<ProductInquiry[]>([]);
-  const [inquiryResponses, setInquiryResponses] = useState<InquiryResponse[]>([]);
+export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [userRole, setUserRole] = React.useState<UserRole>('trader');
+  const [supplierProfile, setSupplierProfile] = React.useState<SupplierProfile | null>(null);
+  const [marketplaceProducts, setMarketplaceProducts] = React.useState<MarketplaceProduct[]>([]);
+  const [inquiries, setInquiries] = React.useState<ProductInquiry[]>([]);
+  const [inquiryResponses, setInquiryResponses] = React.useState<InquiryResponse[]>([]);
 
   // Load data from localStorage on mount
-  useEffect(() => {
+  React.useEffect(() => {
     const savedRole = localStorage.getItem('userRole') as UserRole;
     if (savedRole && ['trader', 'supplier', 'both'].includes(savedRole)) {
       setUserRole(savedRole);
@@ -81,11 +81,11 @@ export const MarketplaceProvider: FC<{ children: ReactNode }> = ({ children }) =
   }, []);
 
   // Save to localStorage when data changes
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem('userRole', userRole);
   }, [userRole]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (supplierProfile) {
       localStorage.setItem('supplierProfile', JSON.stringify(supplierProfile));
     } else {
@@ -93,15 +93,15 @@ export const MarketplaceProvider: FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [supplierProfile]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem('marketplaceProducts', JSON.stringify(marketplaceProducts));
   }, [marketplaceProducts]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem('productInquiries', JSON.stringify(inquiries));
   }, [inquiries]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem('inquiryResponses', JSON.stringify(inquiryResponses));
   }, [inquiryResponses]);
 
