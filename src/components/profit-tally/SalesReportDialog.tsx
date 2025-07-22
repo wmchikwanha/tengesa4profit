@@ -130,14 +130,17 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
       <DialogTrigger asChild>
         <Button 
           variant="outline" 
-          className="border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen"
-          disabled={!permissions.canUseReporting && permissions.showUpgradePrompt('reporting')}
+          className={`${permissions.canUseReporting 
+            ? 'border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
+            : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+          }`}
+          disabled={!permissions.canUseReporting}
         >
           <FileText className="h-4 w-4 mr-2" />
           {t.salesAndProfit} Report
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-zimbabwe-darkGreen flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -291,7 +294,7 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
                   </CardHeader>
                   <CardContent>
                     {/* Summary Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 min-w-[400px] overflow-x-auto">
                       <div className="text-center p-3 bg-white rounded-lg border">
                         <div className="flex items-center justify-center mb-2">
                           <DollarSign className="h-5 w-5 text-green-600" />
@@ -337,10 +340,14 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
                   <h3 className="text-lg font-semibold text-zimbabwe-darkGreen">
                     Product Performance ({generatedReport.productReports.length} products)
                   </h3>
-                  <div className="grid gap-4">
-                    {generatedReport.productReports.map(product => (
-                      <ProductSummaryCard key={product.productId} product={product} />
-                    ))}
+                  <div className="grid gap-4 overflow-x-auto">
+                    <div className="min-w-[600px]">
+                      {generatedReport.productReports.map(product => (
+                        <div key={product.productId} className="mb-4">
+                          <ProductSummaryCard product={product} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

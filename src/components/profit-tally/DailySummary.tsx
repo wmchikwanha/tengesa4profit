@@ -81,46 +81,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <span>{totalDiscardedQuantity}</span>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-          <Button 
-            onClick={permissions.canShareReports ? onSharePDF : undefined}
-            variant="outline"
-            disabled={!permissions.canShareReports}
-            className={`${permissions.canShareReports 
-              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
-              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
-            } flex items-center justify-center gap-2`}
-            title={!permissions.canShareReports ? 'Upgrade to Premium to share reports' : ''}
-          >
-            <Share className="h-5 w-5" />
-            {t.shareTally}
-          </Button>
-          <Button 
-            onClick={permissions.canDownloadReports ? onDownloadPDF : undefined}
-            variant="outline"
-            disabled={!permissions.canDownloadReports}
-            className={`${permissions.canDownloadReports 
-              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
-              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
-            } flex items-center justify-center gap-2`}
-            title={!permissions.canDownloadReports ? 'Upgrade to Premium to download reports' : ''}
-          >
-            <Download className="h-5 w-5" />
-            {t.downloadReport}
-          </Button>
-          <Button 
-            onClick={permissions.canUseReporting ? onToggleHistory : undefined}
-            variant="outline"
-            disabled={!permissions.canUseReporting}
-            className={`${permissions.canUseReporting 
-              ? 'bg-white border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen' 
-              : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
-            } flex items-center justify-center gap-2`}
-            title={!permissions.canUseReporting ? 'Upgrade to Premium to view history' : ''}
-          >
-            <History className="h-5 w-5" />
-            {viewingHistory ? t.hideHistory : t.viewHistory}
-          </Button>
+        <div className="flex justify-center mt-4">
           <Button 
             onClick={onClearAllData}
             variant="destructive"
