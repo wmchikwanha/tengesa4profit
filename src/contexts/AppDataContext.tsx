@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, FC, ReactNode } from 'react';
+import * as React from 'react';
 import { Product } from '@/lib/types';
 
 export interface SalesRecord {
@@ -19,7 +19,7 @@ interface AppDataContextType {
   addToHistory: () => void;
 }
 
-const AppDataContext = createContext<AppDataContextType>({
+const AppDataContext = React.createContext<AppDataContextType>({
   products: [],
   salesHistory: [],
   addProduct: () => {},
@@ -31,14 +31,14 @@ const AppDataContext = createContext<AppDataContextType>({
   addToHistory: () => {},
 });
 
-export const useAppData = () => useContext(AppDataContext);
+export const useAppData = () => React.useContext(AppDataContext);
 
-export const AppDataProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize with empty arrays, then load from localStorage in useEffect
-  const [products, setProducts] = useState<Product[]>([]);
-  const [salesHistory, setSalesHistory] = useState<SalesRecord[]>([]);
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [salesHistory, setSalesHistory] = React.useState<SalesRecord[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Load products from localStorage after component mounts
     try {
       const savedProducts = localStorage.getItem('products');
@@ -50,7 +50,7 @@ export const AppDataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Load sales history from localStorage after component mounts
     try {
       const savedHistory = localStorage.getItem('salesHistory');
@@ -62,7 +62,7 @@ export const AppDataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       localStorage.setItem('products', JSON.stringify(products));
     } catch (error) {
@@ -70,7 +70,7 @@ export const AppDataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [products]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
     } catch (error) {
