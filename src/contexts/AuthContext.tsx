@@ -45,26 +45,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   const cleanupAuthState = () => {
-    // Clear all localStorage items
+    // Clear ONLY auth-related items, NOT user data
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('supabase.') || 
-          key.includes('sb-') || 
-          key.includes('marketplace-') ||
-          key.includes('products-') ||
-          key.includes('profit-') ||
-          key.startsWith('auth-')) {
+      if (key.startsWith('supabase.auth') || 
+          key.includes('sb-auth') ||
+          key.startsWith('auth-token')) {
         localStorage.removeItem(key);
       }
     });
     
-    // Clear sessionStorage as well
+    // Clear sessionStorage auth items only
     Object.keys(sessionStorage || {}).forEach((key) => {
-      if (key.startsWith('supabase.') || 
-          key.includes('sb-') || 
-          key.includes('marketplace-') ||
-          key.includes('products-') ||
-          key.includes('profit-') ||
-          key.startsWith('auth-')) {
+      if (key.startsWith('supabase.auth') || 
+          key.includes('sb-auth') ||
+          key.startsWith('auth-token')) {
         sessionStorage.removeItem(key);
       }
     });
@@ -161,13 +155,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     
     if (error) {
-      if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-        toast({
-          title: "Account exists",
-          description: "This email is already registered. Please sign in instead.",
-          variant: "destructive",
-        });
-        return { error }; // Return early to prevent success message
+      if (error.message.includes('already registered') || 
+          error.message.includes('User already registered') ||
+          error.message.includes('email address is already registered')) {
+        // Don't show success for duplicate registrations
+        return { error };
       } else {
         toast({
           title: "Sign up error",

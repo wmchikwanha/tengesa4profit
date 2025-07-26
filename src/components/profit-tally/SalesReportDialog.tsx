@@ -140,7 +140,7 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
           {t.salesAndProfit} Report
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-zimbabwe-darkGreen flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -335,17 +335,15 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
                   </CardContent>
                 </Card>
 
-                {/* Product Details */}
+                 {/* Product Details */}
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold text-zimbabwe-darkGreen">
                     Product Performance ({generatedReport.productReports.length} products)
                   </h3>
-                  <div className="grid gap-4 overflow-x-auto">
-                    <div className="min-w-[600px]">
+                  <div className="overflow-x-auto">
+                    <div className="min-w-[800px] space-y-4">
                       {generatedReport.productReports.map(product => (
-                        <div key={product.productId} className="mb-4">
-                          <ProductSummaryCard product={product} />
-                        </div>
+                        <ProductSummaryCard key={product.productId} product={product} />
                       ))}
                     </div>
                   </div>

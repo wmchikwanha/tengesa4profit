@@ -37,46 +37,93 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Initialize with empty arrays, then load from localStorage in useEffect
   const [products, setProducts] = React.useState<Product[]>([]);
   const [salesHistory, setSalesHistory] = React.useState<SalesRecord[]>([]);
+  const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
+
+  // Helper function to get user-specific storage keys
+  const getUserStorageKey = (key: string, userId: string | null) => {
+    return userId ? `${key}_${userId}` : key;
+  };
 
   React.useEffect(() => {
-    // Load products from localStorage after component mounts
+    // Get current user ID from auth context
+    const getCurrentUserId = () => {
+      try {
+        // Try to get user from various possible auth storage locations
+        const authKeys = Object.keys(localStorage).filter(key => 
+          key.includes('supabase.auth') && key.includes('user')
+        );
+        
+        for (const key of authKeys) {
+          try {
+            const authData = JSON.parse(localStorage.getItem(key) || '{}');
+            if (authData.user?.id) {
+              return authData.user.id;
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+        return null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const userId = getCurrentUserId();
+    setCurrentUserId(userId);
+
+    // Load user-specific products from localStorage
     try {
-      const savedProducts = localStorage.getItem('products');
+      const userProductsKey = getUserStorageKey('products', userId);
+      const savedProducts = localStorage.getItem(userProductsKey);
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
+      } else {
+        setProducts([]);
       }
     } catch (error) {
       console.error('Failed to load products from localStorage:', error);
+      setProducts([]);
     }
-  }, []);
 
-  React.useEffect(() => {
-    // Load sales history from localStorage after component mounts
+    // Load user-specific sales history from localStorage
     try {
-      const savedHistory = localStorage.getItem('salesHistory');
+      const userHistoryKey = getUserStorageKey('salesHistory', userId);
+      const savedHistory = localStorage.getItem(userHistoryKey);
       if (savedHistory) {
         setSalesHistory(JSON.parse(savedHistory));
+      } else {
+        setSalesHistory([]);
       }
     } catch (error) {
       console.error('Failed to load sales history from localStorage:', error);
+      setSalesHistory([]);
     }
   }, []);
 
   React.useEffect(() => {
-    try {
-      localStorage.setItem('products', JSON.stringify(products));
-    } catch (error) {
-      console.error('Failed to save products to localStorage:', error);
+    // Save user-specific products to localStorage
+    if (currentUserId) {
+      try {
+        const userProductsKey = getUserStorageKey('products', currentUserId);
+        localStorage.setItem(userProductsKey, JSON.stringify(products));
+      } catch (error) {
+        console.error('Failed to save products to localStorage:', error);
+      }
     }
-  }, [products]);
+  }, [products, currentUserId]);
 
   React.useEffect(() => {
-    try {
-      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-    } catch (error) {
-      console.error('Failed to save sales history to localStorage:', error);
+    // Save user-specific sales history to localStorage
+    if (currentUserId) {
+      try {
+        const userHistoryKey = getUserStorageKey('salesHistory', currentUserId);
+        localStorage.setItem(userHistoryKey, JSON.stringify(salesHistory));
+      } catch (error) {
+        console.error('Failed to save sales history to localStorage:', error);
+      }
     }
-  }, [salesHistory]);
+  }, [salesHistory, currentUserId]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
