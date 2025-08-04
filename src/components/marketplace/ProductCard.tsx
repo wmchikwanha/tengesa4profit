@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDelete }) => {
   const { convertPrice, getCurrencySymbol } = useCurrency();
   const { t } = useLanguage();
+  const { canListProducts } = useSubscriptionPermissions();
 
   const handleDelete = () => {
     if (confirm(t.deleteWarning || 'Are you sure you want to delete this product?')) {
@@ -32,8 +34,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <h4 className="font-semibold break-words">{product.name}</h4>
-              <Badge variant={product.isPubliclyVisible ? "default" : "secondary"}>
-                {product.isPubliclyVisible ? "Public" : "Private"}
+              <Badge variant={
+                !canListProducts ? 'destructive' : 
+                product.isPubliclyVisible ? 'default' : 'secondary'
+              }>
+                {!canListProducts ? 'Delisted' : 
+                 product.isPubliclyVisible ? 'Public' : 'Private'}
               </Badge>
             </div>
             <p className="text-sm text-gray-600 mb-2 break-words">{product.description}</p>
@@ -51,21 +57,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
               )}
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onEdit(product)}
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleDelete}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+          <div className="flex gap-2 flex-col">
+            <div className="flex gap-2">
+              {canListProducts && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onEdit(product)}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDelete}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+            {!canListProducts && (
+              <p className="text-xs text-red-500 text-right">
+                Delisted - upgrade to re-list
+              </p>
+            )}
           </div>
         </div>
       </CardContent>

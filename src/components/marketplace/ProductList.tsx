@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from './ProductCard';
 import { type MarketplaceProduct } from '@/lib/marketplace-types';
@@ -9,10 +10,12 @@ interface ProductListProps {
   products: MarketplaceProduct[];
   onEdit: (product: MarketplaceProduct) => void;
   onDelete: (productId: string) => void;
+  canEdit?: boolean;
 }
 
-export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete }) => {
+export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, canEdit = true }) => {
   const { t } = useLanguage();
+  const { canListProducts } = useSubscriptionPermissions();
 
   if (products.length === 0) {
     return (

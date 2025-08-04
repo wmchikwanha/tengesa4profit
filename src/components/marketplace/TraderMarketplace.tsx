@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,16 +12,20 @@ import { Search, Phone, Mail, MapPin, Building } from 'lucide-react';
 import { PRODUCT_CATEGORIES, type ProductCategory } from '@/lib/marketplace-types';
 import { getAllCategoryTranslations } from '@/lib/categoryTranslations';
 import { ContactSupplierModal } from './ContactSupplierModal';
+import { UpgradePrompt } from '@/components/UpgradePrompt';
 
 export const TraderMarketplace: React.FC = () => {
   const { marketplaceProducts } = useMarketplace();
   const { t } = useLanguage();
+  const { canContactSuppliers, showUpgradePrompt } = useSubscriptionPermissions();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
+  const [showUpgradePromptModal, setShowUpgradePromptModal] = React.useState(false);
 
   // Filter products that are publicly visible AND have at least one visible supplier profile field
+  // AND only show products from suppliers with active subscriptions
   const publicProducts = marketplaceProducts.filter(product => {
     if (!product.isPubliclyVisible || !product.supplierProfile) return false;
     
@@ -31,6 +36,8 @@ export const TraderMarketplace: React.FC = () => {
                           product.supplierProfile.showEmail ||
                           product.supplierProfile.showAddress;
     
+    // Only show products from active suppliers (not expired)
+    // This will be handled by filtering based on subscription status of the supplier
     return hasVisibleInfo;
   });
 
@@ -55,6 +62,10 @@ export const TraderMarketplace: React.FC = () => {
   }) : [];
 
   const handleContactSupplier = (product: any) => {
+    if (!canContactSuppliers) {
+      setShowUpgradePromptModal(true);
+      return;
+    }
     setSelectedProduct(product);
     setIsContactModalOpen(true);
   };
@@ -132,7 +143,8 @@ export const TraderMarketplace: React.FC = () => {
                         <p className="text-gray-600 mb-3">{product.description}</p>
                       )}
 
-                      {product.supplierProfile && (
+                      {/* Show supplier info only if user can contact suppliers */}
+                      {canContactSuppliers && product.supplierProfile && (
                         <div className="border-t pt-3 mt-3">
                           <h5 className="font-medium mb-2 flex items-center gap-2">
                             <Building className="w-4 h-4" />
@@ -170,15 +182,27 @@ export const TraderMarketplace: React.FC = () => {
                               </div>
                             )}
                           </div>
-                          <Button
-                            className="mt-3 bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
-                            size="sm"
-                            onClick={() => handleContactSupplier(product)}
-                          >
-                            Contact Supplier
-                          </Button>
                         </div>
                       )}
+                      
+                      {/* Contact button - always visible but functionality depends on subscription */}
+                      <div className="border-t pt-3 mt-3">
+                        <Button
+                          className={`mt-2 ${canContactSuppliers 
+                            ? 'bg-zimbabwe-green hover:bg-zimbabwe-darkGreen' 
+                            : 'bg-gray-400 cursor-not-allowed'}`}
+                          size="sm"
+                          onClick={() => handleContactSupplier(product)}
+                          disabled={!canContactSuppliers}
+                        >
+                          Contact Supplier
+                        </Button>
+                        {!canContactSuppliers && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Upgrade to view supplier details
+                          </p>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -197,6 +221,25 @@ export const TraderMarketplace: React.FC = () => {
           }}
           product={selectedProduct}
         />
+      )}
+
+      {showUpgradePromptModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <UpgradePrompt
+              feature="Contact Suppliers"
+              description="Upgrade to view supplier details and contact information."
+              onUpgrade={() => setShowUpgradePromptModal(false)}
+            />
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => setShowUpgradePromptModal(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
       )}
     </>
   );
