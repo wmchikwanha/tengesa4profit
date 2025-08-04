@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Form, FormField, FormLabel, FormControl } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { format, parseISO } from 'date-fns';
 import { calculateProduct, Product } from '@/lib/types';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -94,7 +94,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
               <PopoverContent className="w-auto p-0 bg-white border border-gray-200 shadow-lg z-50" align="start">
                 <div className="grid gap-4 p-4 bg-white">
                   <div className="grid gap-2">
-                    <FormLabel className="text-sm font-medium">{t.startDate}</FormLabel>
+                    <Label className="text-sm font-medium">{t.startDate}</Label>
                     <Calendar
                       mode="single"
                       selected={startDate}
@@ -105,7 +105,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <FormLabel className="text-sm font-medium">{t.endDate}</FormLabel>
+                    <Label className="text-sm font-medium">{t.endDate}</Label>
                     <Calendar
                       mode="single"
                       selected={endDate}
