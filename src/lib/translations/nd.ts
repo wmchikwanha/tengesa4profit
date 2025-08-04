@@ -218,6 +218,10 @@ export const nd: TranslationDictionary = {
   livestock: "Izifuyo",
   produce: "Izilimo",
   
+  // UI translations
+  allCategories: "Zonke Izigaba",
+  productDescription: "Incazelo Yomkhiqizo",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Khiqiza futhi ulandise imibiko ecacileyo ye-PDF",

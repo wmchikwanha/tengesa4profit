@@ -29,9 +29,12 @@ export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDe
     );
   }
 
+  // Sort products alphabetically by name
+  const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="grid gap-4">
-      {products.map((product) => (
+      {sortedProducts.map((product) => (
         <ProductCard
           key={product.id}
           product={product}

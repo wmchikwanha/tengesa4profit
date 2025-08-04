@@ -138,7 +138,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </div>
 
           <div>
-            <label className="trader-label break-words">{t.businessDescription}</label>
+            <label className="trader-label break-words">{t.productDescription || 'Product Description'}</label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}

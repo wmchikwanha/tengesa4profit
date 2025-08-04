@@ -51,7 +51,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           onClick={handleUpgrade}
           className="bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
         >
-          {t.upgradeToPlansAction} - $1.99/month
+          {t.upgradeToPlansAction || 'Upgrade to Premium'} - $1.99/month
         </Button>
       </CardContent>
     </Card>

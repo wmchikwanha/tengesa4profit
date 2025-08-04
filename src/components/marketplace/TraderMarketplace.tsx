@@ -90,7 +90,7 @@ export const TraderMarketplace: React.FC = () => {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all">{t.allCategories || 'All Categories'}</SelectItem>
                 {Object.entries(getAllCategoryTranslations(t)).map(([key, label]) => (
                   <SelectItem key={key} value={key}>{label}</SelectItem>
                 ))}

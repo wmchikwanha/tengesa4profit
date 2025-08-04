@@ -63,4 +63,8 @@ export interface UITranslations {
   
   // Premium benefits
   premiumBenefits: string[];
+  
+  // Additional UI translations
+  allCategories?: string;
+  productDescription?: string;
 }

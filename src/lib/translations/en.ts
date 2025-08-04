@@ -218,6 +218,10 @@ export const en: TranslationDictionary = {
   livestock: "Livestock",
   produce: "Produce",
   
+  // UI translations
+  allCategories: "All Categories",
+  productDescription: "Product Description",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Generate and download detailed PDF reports",

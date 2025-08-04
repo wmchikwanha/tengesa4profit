@@ -218,6 +218,10 @@ export const sn: TranslationDictionary = {
   livestock: "Zvipfuyo",
   produce: "Zvirimwa",
   
+  // UI translations
+  allCategories: "Zvese Zvikamu",
+  productDescription: "Tsanangudzo Yechinhu",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Gadzira uye dhaunirodha mapurisa akajeka ePDF",
