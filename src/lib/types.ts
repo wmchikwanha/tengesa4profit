@@ -1,5 +1,5 @@
 
-export type UnitOfMeasurement = 'each' | 'gram' | 'kg' | 'ton' | 'cm' | 'mm' | 'metre' | 'inch' | 'litre' | 'ml' | 'pint' | 'gallon' | 'cup' | 'bucket' | 'bunch' | 'pack' | 'packet' | 'piece' | 'length' | 'mg' | 'pair' | 'container' | 'case' | 'carton' | 'bundle';
+export type UnitOfMeasurement = 'each' | 'gram' | 'kg' | 'ton' | 'cm' | 'mm' | 'metre' | 'inch' | 'litre' | 'ml' | 'pint' | 'gallon' | 'cup' | 'bucket' | 'bunch' | 'pack' | 'packet' | 'piece' | 'length' | 'mg' | 'pair' | 'container' | 'case' | 'carton' | 'bundle' | 'set';
 
 export interface Product {
   id: string;
@@ -16,6 +16,7 @@ export interface Product {
   sellingPrice: number;
   quantitySold: number;
   quantityDiscarded: number;
+  description?: string;
 }
 
 export interface ProductCalculation {
@@ -49,7 +50,7 @@ export const calculateProduct = (product: Product): ProductCalculation => {
   const profitPerUnit = sellingPrice - costPerUnit;
   
   // Stock calculation should use the actual stored quantities from the product
-  const stockRemaining = product.quantityBought - (product.quantitySold + product.quantityDiscarded);
+  const stockRemaining = Math.max(0, product.quantityBought - product.quantitySold - product.quantityDiscarded);
   
   const dailyProfit = product.quantitySold * profitPerUnit;
   

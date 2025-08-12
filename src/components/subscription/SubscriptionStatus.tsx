@@ -56,7 +56,8 @@ export const SubscriptionStatus: React.FC = () => {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
+      // Try the new customer portal function first
+      const { data, error } = await supabase.functions.invoke('customer-portal-v2', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
         }

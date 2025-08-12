@@ -187,10 +187,12 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     addToHistory();
     
     // Only clear sales data, preserve products but reset their sales quantities
+    // Stock quantities should remain unchanged
     setProducts(prev => prev.map(product => ({
       ...product,
       quantitySold: 0,
       quantityDiscarded: 0
+      // quantityBought, buyingPrice, transportCost, stallFee remain unchanged
     })));
   };
 

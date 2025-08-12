@@ -36,14 +36,48 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [inquiries, setInquiries] = React.useState<ProductInquiry[]>([]);
   const [inquiryResponses, setInquiryResponses] = React.useState<InquiryResponse[]>([]);
 
+  // Get current user ID for user-specific data
+  const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
+
+  // Helper function to get user-specific storage keys
+  const getUserStorageKey = (key: string, userId: string | null) => {
+    return userId ? `${key}_${userId}` : key;
+  };
+
   // Load data from localStorage on mount
   React.useEffect(() => {
-    const savedRole = localStorage.getItem('userRole') as UserRole;
+    // Get current user ID from auth context
+    const getCurrentUserId = () => {
+      try {
+        const authKeys = Object.keys(localStorage).filter(key => 
+          key.includes('supabase.auth') && key.includes('user')
+        );
+        
+        for (const key of authKeys) {
+          try {
+            const authData = JSON.parse(localStorage.getItem(key) || '{}');
+            if (authData.user?.id) {
+              return authData.user.id;
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+        return null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const userId = getCurrentUserId();
+    setCurrentUserId(userId);
+
+    const savedRole = localStorage.getItem(getUserStorageKey('userRole', userId)) as UserRole;
     if (savedRole && ['trader', 'supplier', 'both'].includes(savedRole)) {
       setUserRole(savedRole);
     }
 
-    const savedProfile = localStorage.getItem('supplierProfile');
+    const savedProfile = localStorage.getItem(getUserStorageKey('supplierProfile', userId));
     if (savedProfile) {
       try {
         setSupplierProfile(JSON.parse(savedProfile));
@@ -52,7 +86,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedProducts = localStorage.getItem('marketplaceProducts');
+    const savedProducts = localStorage.getItem(getUserStorageKey('marketplaceProducts', userId));
     if (savedProducts) {
       try {
         setMarketplaceProducts(JSON.parse(savedProducts));
@@ -61,7 +95,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedInquiries = localStorage.getItem('productInquiries');
+    const savedInquiries = localStorage.getItem(getUserStorageKey('productInquiries', userId));
     if (savedInquiries) {
       try {
         setInquiries(JSON.parse(savedInquiries));
@@ -70,7 +104,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedResponses = localStorage.getItem('inquiryResponses');
+    const savedResponses = localStorage.getItem(getUserStorageKey('inquiryResponses', userId));
     if (savedResponses) {
       try {
         setInquiryResponses(JSON.parse(savedResponses));
@@ -82,28 +116,38 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Save to localStorage when data changes
   React.useEffect(() => {
-    localStorage.setItem('userRole', userRole);
-  }, [userRole]);
-
-  React.useEffect(() => {
-    if (supplierProfile) {
-      localStorage.setItem('supplierProfile', JSON.stringify(supplierProfile));
-    } else {
-      localStorage.removeItem('supplierProfile');
+    if (currentUserId) {
+      localStorage.setItem(getUserStorageKey('userRole', currentUserId), userRole);
     }
-  }, [supplierProfile]);
+  }, [userRole, currentUserId]);
 
   React.useEffect(() => {
-    localStorage.setItem('marketplaceProducts', JSON.stringify(marketplaceProducts));
-  }, [marketplaceProducts]);
+    if (currentUserId) {
+      if (supplierProfile) {
+        localStorage.setItem(getUserStorageKey('supplierProfile', currentUserId), JSON.stringify(supplierProfile));
+      } else {
+        localStorage.removeItem(getUserStorageKey('supplierProfile', currentUserId));
+      }
+    }
+  }, [supplierProfile, currentUserId]);
 
   React.useEffect(() => {
-    localStorage.setItem('productInquiries', JSON.stringify(inquiries));
-  }, [inquiries]);
+    if (currentUserId) {
+      localStorage.setItem(getUserStorageKey('marketplaceProducts', currentUserId), JSON.stringify(marketplaceProducts));
+    }
+  }, [marketplaceProducts, currentUserId]);
 
   React.useEffect(() => {
-    localStorage.setItem('inquiryResponses', JSON.stringify(inquiryResponses));
-  }, [inquiryResponses]);
+    if (currentUserId) {
+      localStorage.setItem(getUserStorageKey('productInquiries', currentUserId), JSON.stringify(inquiries));
+    }
+  }, [inquiries, currentUserId]);
+
+  React.useEffect(() => {
+    if (currentUserId) {
+      localStorage.setItem(getUserStorageKey('inquiryResponses', currentUserId), JSON.stringify(inquiryResponses));
+    }
+  }, [inquiryResponses, currentUserId]);
 
   const addMarketplaceProduct = (product: MarketplaceProduct) => {
     setMarketplaceProducts(prev => [...prev, product]);

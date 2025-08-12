@@ -66,6 +66,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
                   {t.supplier}
                 </TableHead>
+                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                  Description
+                </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
                   {t.stockQty}
                 </TableHead>
@@ -103,6 +106,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                       </div>
                     </TableCell>
                     <TableCell className="text-sm">{product.supplier}</TableCell>
+                    <TableCell className="text-sm text-gray-600">
+                      {product.description || '-'}
+                    </TableCell>
                     <TableCell className="text-center">
                       <div className="text-sm font-medium">{calc.stockRemaining}</div>
                       <div className="text-xs text-gray-500">

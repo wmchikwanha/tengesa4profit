@@ -60,7 +60,8 @@ const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   markupPercentage: 20,
   sellingPrice: 0,
   quantitySold: 0,
-  quantityDiscarded: 0
+  quantityDiscarded: 0,
+  description: ''
 };
 
 const unitOptions: { value: UnitOfMeasurement; label: string }[] = [
@@ -85,7 +86,11 @@ const unitOptions: { value: UnitOfMeasurement; label: string }[] = [
   { value: 'length', label: 'Length' },
   { value: 'mg', label: 'MG' },
   { value: 'pair', label: 'Pair' },
-  { value: 'container', label: 'Container' }
+  { value: 'container', label: 'Container' },
+  { value: 'case', label: 'Case' },
+  { value: 'carton', label: 'Carton' },
+  { value: 'bundle', label: 'Bundle' },
+  { value: 'set', label: 'Set' }
 ];
 
 const ProductForm: React.FC = () => {
@@ -109,7 +114,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: (name === 'name' || name === 'supplier' || name === 'purchaseDate' || name === 'saleDate') ? value : value === '' ? 0 : Number(value)
+      [name]: (name === 'name' || name === 'supplier' || name === 'purchaseDate' || name === 'saleDate' || name === 'description') ? value : value === '' ? 0 : Number(value)
     }));
     
     // Clear validation error when field is filled
@@ -353,6 +358,20 @@ const ProductForm: React.FC = () => {
             onChange={handleChange}
             className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('supplier') ? 'border-red-500' : ''}`}
             placeholder="e.g. ABC Farm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="trader-label">
+            Product Description <span className="text-sm text-trader-neutral">({t.optional})</span>
+          </label>
+          <Input
+            id="description"
+            name="description"
+            value={formData.description || ''}
+            onChange={handleChange}
+            className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
+            placeholder="Optional product description"
           />
         </div>
         
