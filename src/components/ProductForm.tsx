@@ -211,9 +211,6 @@ const ProductForm: React.FC = () => {
       // Update existing product, preserving quantitySold/Discarded
       const existingProduct = getProduct(activeProductId);
       if (existingProduct) {
-        // Calculate the quantity change
-        const quantityDifference = formData.quantityBought - existingProduct.quantityBought;
-        
         // If quantity is reduced, ensure it doesn't go below what's been sold/discarded
         const totalUsed = existingProduct.quantitySold + existingProduct.quantityDiscarded;
         if (formData.quantityBought < totalUsed) {
@@ -225,7 +222,13 @@ const ProductForm: React.FC = () => {
           return;
         }
         
-        updateProduct(activeProductId, formData);
+        // Update product while preserving quantitySold and quantityDiscarded
+        updateProduct(activeProductId, {
+          ...formData,
+          quantitySold: existingProduct.quantitySold,
+          quantityDiscarded: existingProduct.quantityDiscarded
+        });
+        
         toast({
           title: "Success",
           description: "Product updated successfully",
