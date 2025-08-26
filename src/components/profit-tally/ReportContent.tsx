@@ -50,6 +50,7 @@ interface ReportContentProps {
   handleDownloadPDF: () => void;
   handleToggleHistory: () => void;
   handleClearAllData: () => void;
+  handleSaveToHistory: () => void;
   applyDateFilter: (data: DateFilterForm) => void;
   resetDateFilter: () => void;
   calculateTotalSalesPerProduct: (productId: string) => {
@@ -92,6 +93,7 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         onDownloadPDF={props.handleDownloadPDF}
         onToggleHistory={props.handleToggleHistory}
         onClearAllData={props.handleClearAllData}
+        onSaveToHistory={props.handleSaveToHistory}
         viewingHistory={props.viewingHistory}
       />
       

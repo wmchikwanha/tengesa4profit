@@ -10,7 +10,7 @@ import { useSalesReports } from '@/hooks/useSalesReports';
 import { useAppData } from '@/contexts/AppDataContext';
 
 const TallyProfit: React.FC = () => {
-  const { salesHistory, clearSalesData } = useAppData();
+  const { salesHistory, clearSalesData, addToHistory } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   
   const {
@@ -57,6 +57,10 @@ const TallyProfit: React.FC = () => {
   const handleClearData = () => {
     triggerClearAllData(clearSalesData);
   };
+
+  const handleSaveToHistory = () => {
+    addToHistory();
+  };
   
   return (
     <div className="space-y-6">
@@ -100,6 +104,7 @@ const TallyProfit: React.FC = () => {
         handleDownloadPDF={handleDownloadPDF}
         handleToggleHistory={handleToggleHistory}
         handleClearAllData={handleClearData}
+        handleSaveToHistory={handleSaveToHistory}
         applyDateFilter={applyDateFilter}
         resetDateFilter={resetDateFilter}
         calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}

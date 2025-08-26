@@ -19,6 +19,7 @@ interface DailySummaryProps {
   onDownloadPDF: () => void;  
   onToggleHistory: () => void;
   onClearAllData: () => void;
+  onSaveToHistory: () => void;
 }
 
 export const DailySummary: React.FC<DailySummaryProps> = ({
@@ -33,6 +34,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   onDownloadPDF,
   onToggleHistory,
   onClearAllData,
+  onSaveToHistory,
 }) => {
   const { t } = useLanguage();
   const { formatPrice, settings } = useCurrency();
@@ -81,7 +83,15 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
           <span>{totalDiscardedQuantity}</span>
         </div>
         
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center gap-4 mt-4">
+          <Button 
+            onClick={onSaveToHistory}
+            variant="default"
+            className="bg-zimbabwe-green hover:bg-green-700 flex items-center justify-center gap-2"
+          >
+            <Save className="h-5 w-5" />
+            Save to History
+          </Button>
           <Button 
             onClick={onClearAllData}
             variant="destructive"
