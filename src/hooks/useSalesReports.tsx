@@ -78,16 +78,28 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
       });
     }
 
-    // Get all products from filtered history
+    // Debug: Log the sales history being processed
+    console.log('Sales history for report:', { 
+      totalRecords: salesHistory.length, 
+      filteredRecords: filteredHistory.length,
+      records: filteredHistory 
+    });
+
+    // Get all products from filtered history  
     const allProductsInHistory = new Map<string, Product[]>();
     filteredHistory.forEach(record => {
       record.products.forEach(product => {
-        if (!allProductsInHistory.has(product.id)) {
-          allProductsInHistory.set(product.id, []);
+        // Only include products that have actual sales or discarded quantities
+        if ((product.quantitySold || 0) > 0 || (product.quantityDiscarded || 0) > 0) {
+          if (!allProductsInHistory.has(product.id)) {
+            allProductsInHistory.set(product.id, []);
+          }
+          allProductsInHistory.get(product.id)!.push(product);
         }
-        allProductsInHistory.get(product.id)!.push(product);
       });
     });
+
+    console.log('Products found in history:', Array.from(allProductsInHistory.keys()));
 
     // Calculate aggregated data per product
     const productReports: ProductReportData[] = [];

@@ -217,7 +217,7 @@ export const SubscriptionStatus: React.FC = () => {
                   {plan.features.map((feature, index) => (
                     <li key={index} className="text-sm flex items-start">
                       <span className="w-1 h-1 bg-zimbabwe-green rounded-full mr-2 mt-2 flex-shrink-0"></span>
-                      <span className="break-words">{feature}</span>
+                      <span className="break-words">{t.premiumBenefits[index] || feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -232,7 +232,7 @@ export const SubscriptionStatus: React.FC = () => {
                       <span className="break-words">Loading...</span>
                     </>
                   ) : (
-                    <span className="break-words">Upgrade to Premium</span>
+                    <span className="break-words">{t.upgradeToPlansAction}</span>
                   )}
                 </Button>
               </CardContent>

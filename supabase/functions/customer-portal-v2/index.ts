@@ -128,16 +128,60 @@ serve(async (req) => {
     const cleanOrigin = origin.replace(/\/$/, ''); // Remove trailing slash
     const returnUrl = `${cleanOrigin}/`;
 
+    // Create or get the default portal configuration
+    let portalConfig;
+    try {
+      // First, try to get existing configurations
+      const configs = await stripe.billingPortal.configurations.list({ limit: 1 });
+      
+      if (configs.data.length > 0) {
+        portalConfig = configs.data[0];
+        logStep("Using existing portal configuration", { configId: portalConfig.id });
+      } else {
+        // Create a new portal configuration
+        portalConfig = await stripe.billingPortal.configurations.create({
+          business_profile: {
+            headline: "Manage your subscription",
+          },
+          features: {
+            payment_method_update: { enabled: true },
+            subscription_cancel: { 
+              enabled: true,
+              mode: "at_period_end"
+            },
+            subscription_update: {
+              enabled: true,
+              default_allowed_updates: ["price", "promotion_code"],
+              proration_behavior: "create_prorations"
+            }
+          }
+        });
+        logStep("Created new portal configuration", { configId: portalConfig.id });
+      }
+    } catch (configError) {
+      logStep("Portal configuration error", { error: configError.message });
+      // If we can't create/get a configuration, try without specifying one
+      portalConfig = null;
+    }
+
     // Create billing portal session
-    const portalSession = await stripe.billingPortal.sessions.create({
+    const sessionParams: any = {
       customer: customerId,
       return_url: returnUrl,
-    });
+    };
+
+    // Only add configuration if we have one
+    if (portalConfig) {
+      sessionParams.configuration = portalConfig.id;
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create(sessionParams);
 
     logStep("Customer portal session created", { 
       sessionId: portalSession.id, 
       url: portalSession.url,
-      returnUrl 
+      returnUrl,
+      configUsed: portalConfig?.id || 'default'
     });
 
     return new Response(

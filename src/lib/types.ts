@@ -1,5 +1,5 @@
 
-export type UnitOfMeasurement = 'each' | 'gram' | 'kg' | 'ton' | 'cm' | 'mm' | 'metre' | 'inch' | 'litre' | 'ml' | 'pint' | 'gallon' | 'cup' | 'bucket' | 'bunch' | 'pack' | 'packet' | 'piece' | 'length' | 'mg' | 'pair' | 'container' | 'case' | 'carton' | 'bundle' | 'set';
+export type UnitOfMeasurement = 'bundle' | 'carton' | 'case' | 'centimetre' | 'container' | 'each' | 'gram' | 'kilogramme' | 'litre' | 'metre' | 'millilitre' | 'millimetre' | 'pack' | 'packet' | 'piece' | 'set' | 'ton';
 
 export interface Product {
   id: string;
