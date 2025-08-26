@@ -217,6 +217,8 @@ export const en: TranslationDictionary = {
   other: "Other",
   livestock: "Livestock",
   produce: "Produce",
+  condiments: "Condiments & Additives",
+  industrial: "Industrial",
   
   // UI translations
   allCategories: "All Categories",

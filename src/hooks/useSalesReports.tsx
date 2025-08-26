@@ -78,11 +78,11 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
       });
     }
 
-    // Debug: Log the sales history being processed
-    console.log('Sales history for report:', { 
+    // Debug: Log the sales history being processed - now exclude detailed logs
+    console.log('Sales history summary:', { 
       totalRecords: salesHistory.length, 
       filteredRecords: filteredHistory.length,
-      records: filteredHistory 
+      datesWithData: filteredHistory.map(r => r.date)
     });
 
     // Get all products from filtered history  

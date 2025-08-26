@@ -61,6 +61,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             <TableHeader className="sticky top-0 bg-zimbabwe-lightGreen">
               <TableRow>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                  {t.dateOfPurchase}
+                </TableHead>
+                <TableHead className="text-zimbabwe-darkGreen font-semibold">
                   {t.productName}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
@@ -97,6 +100,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                 
                 return (
                   <TableRow key={product.id} className="hover:bg-zimbabwe-lightGreen/30">
+                    <TableCell className="font-medium">
+                      <div className="text-sm text-gray-600">
+                        {product.purchaseDate ? new Date(product.purchaseDate).toLocaleDateString() : '-'}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium">
                       <div>
                         <div className="text-sm font-semibold">{product.name}</div>

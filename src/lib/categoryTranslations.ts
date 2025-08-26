@@ -31,6 +31,10 @@ export const getCategoryTranslation = (category: ProductCategory, t: Translation
       return t.livestock;
     case 'produce':
       return t.produce;
+    case 'condiments':
+      return t.condiments;
+    case 'industrial':
+      return t.industrial;
     case 'other':
       return t.other;
     default:
@@ -54,6 +58,8 @@ export const getAllCategoryTranslations = (t: TranslationDictionary): Record<Pro
     books: t.books,
     livestock: t.livestock,
     produce: t.produce,
+    condiments: t.condiments,
+    industrial: t.industrial,
     other: t.other,
   };
 };

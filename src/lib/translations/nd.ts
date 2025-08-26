@@ -217,6 +217,8 @@ export const nd: TranslationDictionary = {
   other: "Okunye",
   livestock: "Izifuyo",
   produce: "Izilimo",
+  condiments: "Izivuthelo nezEngeze",
+  industrial: "Kwezimboni",
   
   // UI translations
   allCategories: "Zonke Izigaba",

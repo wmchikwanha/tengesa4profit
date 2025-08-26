@@ -16,6 +16,8 @@ export type ProductCategory =
   | 'books'
   | 'livestock'
   | 'produce'
+  | 'condiments'
+  | 'industrial'
   | 'other';
 
 export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
@@ -33,6 +35,8 @@ export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
   'books': 'Books',
   'livestock': 'Livestock',
   'produce': 'Produce',
+  'condiments': 'Condiments & Additives',
+  'industrial': 'Industrial',
   'other': 'Other'
 };
 

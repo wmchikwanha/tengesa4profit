@@ -217,6 +217,8 @@ export const sn: TranslationDictionary = {
   other: "Zvimwe",
   livestock: "Zvipfuyo",
   produce: "Zvirimwa",
+  condiments: "Zvidongo neZvinowedzera",
+  industrial: "Zveindasitiri",
   
   // UI translations
   allCategories: "Zvese Zvikamu",

@@ -170,7 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       toast({
         title: "Account created!",
-        description: "You can now sign in to your account.",
+        description: "Check your email to sign into your account.",
       });
     }
     

@@ -60,6 +60,8 @@ export interface UITranslations {
   other: string;
   livestock: string;
   produce: string;
+  condiments: string;
+  industrial: string;
   
   // Premium benefits
   premiumBenefits: string[];
