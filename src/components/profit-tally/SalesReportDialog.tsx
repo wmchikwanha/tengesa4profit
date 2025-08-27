@@ -108,6 +108,10 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
               <span className="text-gray-600">Cost Value:</span>
               <span className="font-medium">{formatPrice(product.totalCostValue)}</span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Discarded Value:</span>
+              <span className="font-medium text-red-600">{formatPrice(product.totalDiscardedValue)}</span>
+            </div>
           </div>
         </div>
         <Separator />
@@ -186,7 +190,12 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
                           mode="single"
                           selected={filters.startDate}
                           onSelect={(date) => handleDateSelect(date, 'start')}
-                          disabled={(date) => filters.endDate ? date > filters.endDate : false}
+                          disabled={(date) => {
+                            const today = new Date();
+                            const isAfterToday = date > today;
+                            const isAfterEndDate = filters.endDate ? date > filters.endDate : false;
+                            return isAfterToday || isAfterEndDate;
+                          }}
                           initialFocus
                           className="p-3 pointer-events-auto"
                         />
@@ -214,7 +223,12 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
                           mode="single"
                           selected={filters.endDate}
                           onSelect={(date) => handleDateSelect(date, 'end')}
-                          disabled={(date) => filters.startDate ? date < filters.startDate : false}
+                          disabled={(date) => {
+                            const today = new Date();
+                            const isAfterToday = date > today;
+                            const isBeforeStartDate = filters.startDate ? date < filters.startDate : false;
+                            return isAfterToday || isBeforeStartDate;
+                          }}
                           initialFocus
                           className="p-3 pointer-events-auto"
                         />

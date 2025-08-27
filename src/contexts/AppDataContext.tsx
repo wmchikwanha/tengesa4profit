@@ -152,7 +152,15 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (products.length === 0) return;
     
     const todayFormatted = new Date().toISOString().split('T')[0];
-    const todayTotalProfit = products.reduce((sum, product) => {
+    
+    // Only include products that have actual sales or discarded quantities
+    const productsWithSales = products.filter(product => 
+      (product.quantitySold || 0) > 0 || (product.quantityDiscarded || 0) > 0
+    );
+    
+    if (productsWithSales.length === 0) return;
+    
+    const todayTotalProfit = productsWithSales.reduce((sum, product) => {
       const profit = product.quantitySold * 
         (product.sellingPrice - 
          (product.buyingPrice + 
@@ -161,18 +169,53 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return sum + profit;
     }, 0);
 
-    // Create a deep copy of products to avoid reference issues
-    const productsCopy = JSON.parse(JSON.stringify(products));
+    setSalesHistory(prev => {
+      // Check if there's already a record for today
+      const existingRecordIndex = prev.findIndex(record => record.date === todayFormatted);
+      
+      if (existingRecordIndex >= 0) {
+        // Update existing record by merging products
+        const existingRecord = prev[existingRecordIndex];
+        const updatedProducts = [...existingRecord.products];
+        
+        // Add or update products in the existing record
+        productsWithSales.forEach(newProduct => {
+          const existingProductIndex = updatedProducts.findIndex(p => p.id === newProduct.id);
+          if (existingProductIndex >= 0) {
+            // Update existing product by adding quantities
+            const existingProduct = updatedProducts[existingProductIndex];
+            updatedProducts[existingProductIndex] = {
+              ...existingProduct,
+              quantitySold: (existingProduct.quantitySold || 0) + (newProduct.quantitySold || 0),
+              quantityDiscarded: (existingProduct.quantityDiscarded || 0) + (newProduct.quantityDiscarded || 0)
+            };
+          } else {
+            // Add new product
+            updatedProducts.push(JSON.parse(JSON.stringify(newProduct)));
+          }
+        });
+        
+        const updatedRecord = {
+          ...existingRecord,
+          products: updatedProducts,
+          totalProfit: existingRecord.totalProfit + todayTotalProfit
+        };
+        
+        const newHistory = [...prev];
+        newHistory[existingRecordIndex] = updatedRecord;
+        return newHistory;
+      } else {
+        // Create new record
+        const productsCopy = JSON.parse(JSON.stringify(productsWithSales));
+        const newRecord: SalesRecord = {
+          date: todayFormatted,
+          products: productsCopy,
+          totalProfit: todayTotalProfit
+        };
+        return [...prev, newRecord];
+      }
+    });
     
-    const newRecord: SalesRecord = {
-      date: todayFormatted,
-      products: productsCopy,
-      totalProfit: todayTotalProfit
-    };
-    
-    setSalesHistory(prev => [...prev, newRecord]);
-    
-    // Use console.log instead of toast to avoid circular dependency
     console.log("History Saved: Today's sales have been added to history");
   };
 

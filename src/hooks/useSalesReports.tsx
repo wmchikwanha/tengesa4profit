@@ -125,7 +125,7 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
         totalProfit += calc.dailyProfit;
         totalSalesValue += (product.quantitySold || 0) * calc.sellingPrice;
         totalCostValue += (product.quantitySold || 0) * calc.costPerUnit;
-        totalDiscardedValue += (product.quantityDiscarded || 0) * calc.costPerUnit;
+        totalDiscardedValue += (product.quantityDiscarded || 0) * calc.sellingPrice;
       });
 
       const averageDailyProfit = productInstances.length > 0 ? totalProfit / productInstances.length : 0;
@@ -146,10 +146,10 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
       });
     });
 
-    // Calculate overall totals
+    // Calculate overall totals - correct profit calculation
     const overallTotals = productReports.reduce(
       (acc, product) => ({
-        totalProfit: acc.totalProfit + product.totalProfit,
+        totalProfit: acc.totalProfit + (product.totalSalesValue - product.totalCostValue),
         totalSalesValue: acc.totalSalesValue + product.totalSalesValue,
         totalCostValue: acc.totalCostValue + product.totalCostValue,
         totalDiscardedValue: acc.totalDiscardedValue + product.totalDiscardedValue
