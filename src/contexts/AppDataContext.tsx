@@ -183,11 +183,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const clearSalesData = () => {
-    // Add current state to history before clearing
-    addToHistory();
-    
     // Only clear sales data, preserve products but reset their sales quantities
-    // Stock quantities should remain unchanged
+    // Don't automatically add to history since we now do it per sale
     setProducts(prev => prev.map(product => ({
       ...product,
       quantitySold: 0,

@@ -8,10 +8,12 @@ import { usePDFReports } from '@/hooks/usePDFReports';
 import { useHistoryManagement } from '@/hooks/useHistoryManagement';
 import { useSalesReports } from '@/hooks/useSalesReports';
 import { useAppData } from '@/contexts/AppDataContext';
+import { useToast } from '@/hooks/use-toast';
 
 const TallyProfit: React.FC = () => {
   const { salesHistory, clearSalesData, addToHistory } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
+  const { toast } = useToast();
   
   const {
     products,
@@ -54,12 +56,18 @@ const TallyProfit: React.FC = () => {
     permissions
   } = useSalesReports(salesHistory, products);
   
-  const handleClearData = () => {
-    triggerClearAllData(clearSalesData);
+  const handleClearAllData = () => {
+    if (window.confirm("Are you sure you want to clear all data? This will delete all products and sales history.")) {
+      clearSalesData();
+      toast({
+        title: "Success",
+        description: "All data has been cleared",
+      });
+    }
   };
 
-  const handleSaveToHistory = () => {
-    addToHistory();
+  const handleAddSale = () => {
+    handleCalculate(addToHistory);
   };
   
   return (
@@ -99,12 +107,11 @@ const TallyProfit: React.FC = () => {
         handleSelectProduct={handleSelectProduct}
         handleQuantitySoldChange={handleQuantitySoldChange}
         handleQuantityDiscardedChange={handleQuantityDiscardedChange}
-        handleCalculate={handleCalculate}
+        handleCalculate={handleAddSale}
         handleSharePDF={handleSharePDF}
         handleDownloadPDF={handleDownloadPDF}
         handleToggleHistory={handleToggleHistory}
-        handleClearAllData={handleClearData}
-        handleSaveToHistory={handleSaveToHistory}
+        handleClearAllData={handleClearAllData}
         applyDateFilter={applyDateFilter}
         resetDateFilter={resetDateFilter}
         calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}

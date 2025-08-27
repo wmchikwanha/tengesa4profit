@@ -50,7 +50,6 @@ interface ReportContentProps {
   handleDownloadPDF: () => void;
   handleToggleHistory: () => void;
   handleClearAllData: () => void;
-  handleSaveToHistory: () => void;
   applyDateFilter: (data: DateFilterForm) => void;
   resetDateFilter: () => void;
   calculateTotalSalesPerProduct: (productId: string) => {
@@ -82,20 +81,7 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         onCalculate={props.handleCalculate}
       />
       
-      <DailySummary
-        totalProfit={props.totalProfit}
-        totalSalesValue={props.totalSalesValue}
-        totalCostValue={props.totalCostValue}
-        totalStockValue={props.totalStockValue}
-        totalDiscardedValue={props.totalDiscardedValue}
-        totalDiscardedQuantity={props.totalDiscardedQuantity}
-        onSharePDF={props.handleSharePDF}
-        onDownloadPDF={props.handleDownloadPDF}
-        onToggleHistory={props.handleToggleHistory}
-        onClearAllData={props.handleClearAllData}
-        onSaveToHistory={props.handleSaveToHistory}
-        viewingHistory={props.viewingHistory}
-      />
+      {/* Removed Daily Summary section for cleaner UI */}
       
       <div className="max-h-96 overflow-y-auto">
         <ProductSummary
@@ -123,14 +109,21 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         </div>
       </div>
       
-      {/* History Toggle Button */}
-      <div className="flex justify-center pt-4">
+      {/* History Toggle and Clear Data Buttons */}
+      <div className="flex justify-center gap-4 pt-4">
         <Button
           variant="outline"
           onClick={props.handleToggleHistory}
           className="border-zimbabwe-green text-zimbabwe-darkGreen hover:bg-zimbabwe-lightGreen"
         >
           {props.viewingHistory ? t.hideHistory : t.viewHistory}
+        </Button>
+        <Button
+          variant="destructive"
+          onClick={props.handleClearAllData}
+          className="bg-zimbabwe-red hover:bg-red-700"
+        >
+          {t.clearAllData}
         </Button>
       </div>
       

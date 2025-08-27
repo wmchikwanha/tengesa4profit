@@ -76,7 +76,7 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
           onClick={onCalculate}
           className="trader-btn-accent w-full bg-zimbabwe-darkGreen hover:bg-zimbabwe-green text-white"
         >
-          {t.calculate}
+          Add Sale
         </Button>
       </CardContent>
     </Card>

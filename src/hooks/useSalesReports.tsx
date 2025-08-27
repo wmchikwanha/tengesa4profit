@@ -129,7 +129,8 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
       });
 
       const averageDailyProfit = productInstances.length > 0 ? totalProfit / productInstances.length : 0;
-      const profitMargin = totalSalesValue > 0 ? (totalProfit / totalSalesValue) * 100 : 0;
+      // Use the actual markup percentage from the product instead of calculating margin
+      const profitMargin = firstInstance.markupPercentage;
 
       productReports.push({
         productId,
