@@ -49,7 +49,11 @@ export const ProductSummaryItem: React.FC<ProductSummaryItemProps> = ({
   };
 
   const handleDelete = () => {
-    deleteProduct(product.id);
+    // Clear sales data instead of deleting the product
+    updateProduct(product.id, {
+      quantitySold: 0,
+      quantityDiscarded: 0
+    });
   };
 
   return (
@@ -151,9 +155,9 @@ export const ProductSummaryItem: React.FC<ProductSummaryItemProps> = ({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Product</AlertDialogTitle>
+              <AlertDialogTitle>Clear Sales Data</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{product.name}"? This action cannot be undone.
+                Are you sure you want to clear all sales data for "{product.name}"? This will reset sold and discarded quantities to 0.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

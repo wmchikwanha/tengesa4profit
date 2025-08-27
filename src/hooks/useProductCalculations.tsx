@@ -42,48 +42,28 @@ export function useProductCalculations() {
     return sum + (product.quantityDiscarded || 0);
   }, 0);
   
-  // Calculate total sales per product across all history
+  // Calculate total sales per product from current data only (not double counting history)
   const calculateTotalSalesPerProduct = (productId: string) => {
-    let totalQuantitySold = 0;
-    let totalQuantityDiscarded = 0;
-    let totalProfit = 0;
-    let totalSalesValue = 0;
-    let totalCostValue = 0;
-    let totalDiscardedValue = 0;
-    
-    // Calculate from current products
     const product = products.find(p => p.id === productId);
-    if (product) {
-      const calc = calculateProduct(product);
-      totalQuantitySold += product.quantitySold || 0;
-      totalQuantityDiscarded += product.quantityDiscarded || 0;
-      totalProfit += calc.dailyProfit;
-      totalSalesValue += product.quantitySold * calc.sellingPrice;
-      totalCostValue += product.quantitySold * calc.costPerUnit;
-      totalDiscardedValue += product.quantityDiscarded * calc.sellingPrice;
+    if (!product) {
+      return { 
+        totalQuantitySold: 0, 
+        totalQuantityDiscarded: 0, 
+        totalProfit: 0, 
+        totalSalesValue: 0, 
+        totalCostValue: 0, 
+        totalDiscardedValue: 0 
+      };
     }
-    
-    // Add from history too if available
-    salesHistory.forEach(record => {
-      const historyProduct = record.products.find(p => p.id === productId);
-      if (historyProduct) {
-        const calc = calculateProduct(historyProduct);
-        totalQuantitySold += historyProduct.quantitySold || 0;
-        totalQuantityDiscarded += historyProduct.quantityDiscarded || 0;
-        totalProfit += calc.dailyProfit;
-        totalSalesValue += historyProduct.quantitySold * calc.sellingPrice;
-        totalCostValue += historyProduct.quantitySold * calc.costPerUnit;
-        totalDiscardedValue += historyProduct.quantityDiscarded * calc.sellingPrice;
-      }
-    });
-    
+
+    const calc = calculateProduct(product);
     return { 
-      totalQuantitySold, 
-      totalQuantityDiscarded, 
-      totalProfit, 
-      totalSalesValue, 
-      totalCostValue, 
-      totalDiscardedValue 
+      totalQuantitySold: product.quantitySold || 0,
+      totalQuantityDiscarded: product.quantityDiscarded || 0, 
+      totalProfit: calc.dailyProfit,
+      totalSalesValue: product.quantitySold * calc.sellingPrice,
+      totalCostValue: product.quantitySold * calc.costPerUnit,
+      totalDiscardedValue: product.quantityDiscarded * calc.sellingPrice
     };
   };
   
