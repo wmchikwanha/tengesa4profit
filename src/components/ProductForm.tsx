@@ -315,6 +315,7 @@ const ProductForm: React.FC = () => {
             value={formData.purchaseDate || ''}
             onChange={handleChange}
             type="date"
+            max={new Date().toISOString().split('T')[0]}
             className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
           />
         </div>

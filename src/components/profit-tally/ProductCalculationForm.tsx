@@ -52,7 +52,7 @@ export const ProductCalculationForm: React.FC<ProductCalculationFormProps> = ({
             onChange={onQuantitySoldChange}
             type="number"
             min="0"
-            max={selectedProduct.quantityBought}
+            max={Math.max(0, selectedProduct.quantityBought - (selectedProduct.quantitySold + selectedProduct.quantityDiscarded))}
             className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('quantitySold') ? 'border-red-500' : ''}`}
           />
         </div>

@@ -105,7 +105,7 @@ export function useProductForm() {
     // Automatically save to history after updating the product
     if (addToHistoryFn && (soldQty > 0 || discardedQty > 0)) {
       // Use setTimeout to ensure the product state is updated first
-      setTimeout(addToHistoryFn, 100);
+      setTimeout(addToHistoryFn, 0);
     }
     
     // Reset form inputs after successful calculation

@@ -37,11 +37,12 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Initialize with empty arrays, then load from localStorage in useEffect
   const [products, setProducts] = React.useState<Product[]>([]);
   const [salesHistory, setSalesHistory] = React.useState<SalesRecord[]>([]);
+  const [salesBaseline, setSalesBaseline] = React.useState<Record<string, { sold: number; discarded: number }>>({});
   const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
 
   // Helper function to get user-specific storage keys
   const getUserStorageKey = (key: string, userId: string | null) => {
-    return userId ? `${key}_${userId}` : key;
+    return key; // Use global keys to ensure persistence across refresh/login
   };
 
   React.useEffect(() => {
@@ -99,31 +100,51 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       console.error('Failed to load sales history from localStorage:', error);
       setSalesHistory([]);
     }
+
+    // Load user-specific sales baseline from localStorage (to avoid double-counting)
+    try {
+      const userBaselineKey = getUserStorageKey('salesBaseline', userId);
+      const savedBaseline = localStorage.getItem(userBaselineKey);
+      if (savedBaseline) {
+        setSalesBaseline(JSON.parse(savedBaseline));
+      } else {
+        setSalesBaseline({});
+      }
+    } catch (error) {
+      console.error('Failed to load sales baseline from localStorage:', error);
+      setSalesBaseline({});
+    }
   }, []);
 
   React.useEffect(() => {
-    // Save user-specific products to localStorage
-    if (currentUserId) {
-      try {
-        const userProductsKey = getUserStorageKey('products', currentUserId);
-        localStorage.setItem(userProductsKey, JSON.stringify(products));
-      } catch (error) {
-        console.error('Failed to save products to localStorage:', error);
-      }
+    // Persist products for the current context (user-specific if logged in, otherwise global)
+    try {
+      const key = getUserStorageKey('products', currentUserId);
+      localStorage.setItem(key, JSON.stringify(products));
+    } catch (error) {
+      console.error('Failed to save products to localStorage:', error);
     }
   }, [products, currentUserId]);
 
   React.useEffect(() => {
-    // Save user-specific sales history to localStorage
-    if (currentUserId) {
-      try {
-        const userHistoryKey = getUserStorageKey('salesHistory', currentUserId);
-        localStorage.setItem(userHistoryKey, JSON.stringify(salesHistory));
-      } catch (error) {
-        console.error('Failed to save sales history to localStorage:', error);
-      }
+    // Persist sales history for the current context
+    try {
+      const key = getUserStorageKey('salesHistory', currentUserId);
+      localStorage.setItem(key, JSON.stringify(salesHistory));
+    } catch (error) {
+      console.error('Failed to save sales history to localStorage:', error);
     }
   }, [salesHistory, currentUserId]);
+
+  // Persist sales baseline (to compute per-transaction deltas and avoid double counting)
+  React.useEffect(() => {
+    try {
+      const key = getUserStorageKey('salesBaseline', currentUserId);
+      localStorage.setItem(key, JSON.stringify(salesBaseline));
+    } catch (error) {
+      console.error('Failed to save sales baseline to localStorage:', error);
+    }
+  }, [salesBaseline, currentUserId]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
@@ -150,63 +171,71 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const addToHistory = () => {
     if (products.length === 0) return;
-    
+
     const todayFormatted = new Date().toISOString().split('T')[0];
-    
-    // Only include products that have actual sales or discarded quantities
-    const productsWithSales = products.filter(product => 
-      (product.quantitySold || 0) > 0 || (product.quantityDiscarded || 0) > 0
-    );
-    
-    if (productsWithSales.length === 0) return;
-    
-    const todayTotalProfit = productsWithSales.reduce((sum, product) => {
-      const profit = product.quantitySold * 
-        (product.sellingPrice - 
-         (product.buyingPrice + 
-          (product.transportCost / product.quantityBought) + 
-          (product.stallFee / product.quantityBought)));
-      return sum + profit;
+
+    // Compute per-product deltas since last baseline to avoid double counting
+    const entries = products.map(product => {
+      const baseline = salesBaseline[product.id] || { sold: 0, discarded: 0 };
+      const deltaSold = (product.quantitySold || 0) - baseline.sold;
+      const deltaDiscarded = (product.quantityDiscarded || 0) - baseline.discarded;
+      return { product, deltaSold, deltaDiscarded };
+    }).filter(e => e.deltaSold > 0 || e.deltaDiscarded > 0);
+
+    if (entries.length === 0) return;
+
+    // Calculate profit using ONLY the delta quantities
+    const todayTotalProfit = entries.reduce((sum, { product, deltaSold }) => {
+      const costPerUnit = product.buyingPrice + (product.transportCost / product.quantityBought) + (product.stallFee / product.quantityBought);
+      const sellingPrice = product.sellingPrice || (costPerUnit * (1 + product.markupPercentage / 100));
+      const profitPerUnit = sellingPrice - costPerUnit;
+      return sum + (deltaSold * profitPerUnit);
     }, 0);
 
     setSalesHistory(prev => {
-      // Check if there's already a record for today
       const existingRecordIndex = prev.findIndex(record => record.date === todayFormatted);
-      
+
       if (existingRecordIndex >= 0) {
-        // Update existing record by merging products
+        // Merge deltas into today's record
         const existingRecord = prev[existingRecordIndex];
         const updatedProducts = [...existingRecord.products];
-        
-        // Add or update products in the existing record
-        productsWithSales.forEach(newProduct => {
-          const existingProductIndex = updatedProducts.findIndex(p => p.id === newProduct.id);
-          if (existingProductIndex >= 0) {
-            // Update existing product by adding quantities
-            const existingProduct = updatedProducts[existingProductIndex];
-            updatedProducts[existingProductIndex] = {
+
+        entries.forEach(({ product, deltaSold, deltaDiscarded }) => {
+          const idx = updatedProducts.findIndex(p => p.id === product.id);
+          if (idx >= 0) {
+            const existingProduct = updatedProducts[idx];
+            updatedProducts[idx] = {
               ...existingProduct,
-              quantitySold: (existingProduct.quantitySold || 0) + (newProduct.quantitySold || 0),
-              quantityDiscarded: (existingProduct.quantityDiscarded || 0) + (newProduct.quantityDiscarded || 0)
+              quantitySold: (existingProduct.quantitySold || 0) + deltaSold,
+              quantityDiscarded: (existingProduct.quantityDiscarded || 0) + deltaDiscarded
             };
           } else {
-            // Add new product
-            updatedProducts.push(JSON.parse(JSON.stringify(newProduct)));
+            // Store only the delta quantities in history
+            updatedProducts.push({
+              ...JSON.parse(JSON.stringify(product)),
+              quantitySold: deltaSold,
+              quantityDiscarded: deltaDiscarded
+            });
           }
         });
-        
+
         const updatedRecord = {
           ...existingRecord,
           products: updatedProducts,
           totalProfit: existingRecord.totalProfit + todayTotalProfit
         };
-        
+
         const newHistory = [...prev];
         newHistory[existingRecordIndex] = updatedRecord;
         return newHistory;
       } else {
-        // Create new record
-        const productsCopy = JSON.parse(JSON.stringify(productsWithSales));
+        // Create new record for today with delta quantities only
+        const productsCopy = entries.map(({ product, deltaSold, deltaDiscarded }) => ({
+          ...JSON.parse(JSON.stringify(product)),
+          quantitySold: deltaSold,
+          quantityDiscarded: deltaDiscarded
+        }));
+
         const newRecord: SalesRecord = {
           date: todayFormatted,
           products: productsCopy,
@@ -215,14 +244,27 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return [...prev, newRecord];
       }
     });
-    
-    console.log("History Saved: Today's sales have been added to history");
+
+    // Update baseline to the current absolute totals so next save captures only new deltas
+    setSalesBaseline(prev => {
+      const next = { ...prev };
+      entries.forEach(({ product }) => {
+        next[product.id] = {
+          sold: product.quantitySold || 0,
+          discarded: product.quantityDiscarded || 0
+        };
+      });
+      return next;
+    });
+
+    console.log("History Saved: Today's sales deltas have been added to history");
   };
 
   const clearAllData = () => {
-    // Clear everything including products
+    // Clear everything including products and baselines
     setProducts([]);
     setSalesHistory([]);
+    setSalesBaseline({});
   };
 
   const clearSalesData = () => {

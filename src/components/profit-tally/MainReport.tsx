@@ -60,6 +60,7 @@ export const MainReport: React.FC<MainReportProps> = ({
               value={saleDate}
               onChange={(e) => setSaleDate(e.target.value)}
               type="date"
+              max={new Date().toISOString().split('T')[0]}
               className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
             />
           </div>
