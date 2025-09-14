@@ -55,20 +55,32 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
       
       if (startDate && endDate) {
         return (
-          (isAfter(recordDate, startOfDay(startDate)) || isEqual(recordDate, startDate)) && 
-          (isBefore(recordDate, endOfDay(endDate)) || isEqual(recordDate, endDate))
+          (isAfter(recordDate, startOfDay(startDate)) || 
+           isEqual(startOfDay(recordDate), startOfDay(startDate))) && 
+          (isBefore(recordDate, endOfDay(endDate)) || 
+           isEqual(startOfDay(recordDate), startOfDay(endDate)))
         );
       }
       
       if (startDate && !endDate) {
-        return isAfter(recordDate, startOfDay(startDate)) || isEqual(recordDate, startDate);
+        return isAfter(recordDate, startOfDay(startDate)) || 
+               isEqual(startOfDay(recordDate), startOfDay(startDate));
       }
       
       if (!startDate && endDate) {
-        return isBefore(recordDate, endOfDay(endDate)) || isEqual(recordDate, endDate);
+        return isBefore(recordDate, endOfDay(endDate)) || 
+               isEqual(startOfDay(recordDate), startOfDay(endDate));
       }
       
       return true;
+    });
+    
+    console.log('Date filter applied:', { 
+      startDate: startDate?.toISOString(), 
+      endDate: endDate?.toISOString(),
+      originalCount: salesHistory.length,
+      filteredCount: filtered.length,
+      filteredDates: filtered.map(r => r.date)
     });
     
     setFilteredHistory(filtered);

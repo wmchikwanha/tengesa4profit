@@ -61,17 +61,21 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
         
         if (filters.startDate && filters.endDate) {
           return (
-            (isAfter(recordDate, startOfDay(filters.startDate)) || isEqual(recordDate, filters.startDate)) && 
-            (isBefore(recordDate, endOfDay(filters.endDate)) || isEqual(recordDate, filters.endDate))
+            (isAfter(recordDate, startOfDay(filters.startDate)) || 
+             isEqual(startOfDay(recordDate), startOfDay(filters.startDate))) && 
+            (isBefore(recordDate, endOfDay(filters.endDate)) || 
+             isEqual(startOfDay(recordDate), startOfDay(filters.endDate)))
           );
         }
         
         if (filters.startDate && !filters.endDate) {
-          return isAfter(recordDate, startOfDay(filters.startDate)) || isEqual(recordDate, filters.startDate);
+          return isAfter(recordDate, startOfDay(filters.startDate)) || 
+                 isEqual(startOfDay(recordDate), startOfDay(filters.startDate));
         }
         
         if (!filters.startDate && filters.endDate) {
-          return isBefore(recordDate, endOfDay(filters.endDate)) || isEqual(recordDate, filters.endDate);
+          return isBefore(recordDate, endOfDay(filters.endDate)) || 
+                 isEqual(startOfDay(recordDate), startOfDay(filters.endDate));
         }
         
         return true;

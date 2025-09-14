@@ -20,6 +20,10 @@ export const TraderMarketplace: React.FC = () => {
   const { canContactSuppliers, showUpgradePrompt } = useSubscriptionPermissions();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
+  const [locationFilter, setLocationFilter] = React.useState('');
+  const [supplierFilter, setSupplierFilter] = React.useState('');
+  const [sortBy, setSortBy] = React.useState<'price_asc' | 'price_desc' | 'name_asc' | 'name_desc'>('name_asc');
+  const [expandedProducts, setExpandedProducts] = React.useState<Set<string>>(new Set());
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
   const [isContactModalOpen, setIsContactModalOpen] = React.useState(false);
   const [showUpgradePromptModal, setShowUpgradePromptModal] = React.useState(false);
@@ -49,16 +53,30 @@ export const TraderMarketplace: React.FC = () => {
     const matchesSearch = searchTerm === '' || 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.businessName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.contactPerson?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.address?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.email?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (product.supplierProfile?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase()));
+      (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+    
+    const matchesLocation = locationFilter === '' || 
+      (product.supplierProfile?.address?.toLowerCase().includes(locationFilter.toLowerCase()));
+    
+    const matchesSupplier = supplierFilter === '' ||
+      (product.supplierProfile?.businessName?.toLowerCase().includes(supplierFilter.toLowerCase())) ||
+      (product.supplierProfile?.contactPerson?.toLowerCase().includes(supplierFilter.toLowerCase()));
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory && matchesLocation && matchesSupplier;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'price_asc':
+        return a.price - b.price;
+      case 'price_desc':
+        return b.price - a.price;
+      case 'name_desc':
+        return b.name.localeCompare(a.name);
+      case 'name_asc':
+      default:
+        return a.name.localeCompare(b.name);
+    }
   }) : [];
 
   const handleContactSupplier = (product: any) => {
@@ -69,24 +87,38 @@ export const TraderMarketplace: React.FC = () => {
     setSelectedProduct(product);
     setIsContactModalOpen(true);
   };
+  
+  const toggleProductExpansion = (productId: string) => {
+    const newExpanded = new Set(expandedProducts);
+    if (newExpanded.has(productId)) {
+      newExpanded.delete(productId);
+    } else {
+      newExpanded.add(productId);
+    }
+    setExpandedProducts(newExpanded);
+  };
 
   return (
     <>
       <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
         <CardHeader>
           <CardTitle className="text-base sm:text-lg break-words">{t.marketplace} - {t.findProducts}</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder={t.searchProductsPlaceholder || "Search products, brands, or suppliers..."}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 trader-input"
-              />
-            </div>
+          
+          {/* Main search bar */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search products and brands..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 trader-input"
+            />
+          </div>
+          
+          {/* Filter row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full sm:w-48 trader-input">
+              <SelectTrigger className="trader-input">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -94,6 +126,32 @@ export const TraderMarketplace: React.FC = () => {
                 {Object.entries(getAllCategoryTranslations(t)).map(([key, label]) => (
                   <SelectItem key={key} value={key}>{label}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            
+            <Input
+              placeholder="Location (e.g., city, area)"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              className="trader-input"
+            />
+            
+            <Input
+              placeholder="Supplier name"
+              value={supplierFilter}
+              onChange={(e) => setSupplierFilter(e.target.value)}
+              className="trader-input"
+            />
+            
+            <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+              <SelectTrigger className="trader-input">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name_asc">Name A-Z</SelectItem>
+                <SelectItem value="name_desc">Name Z-A</SelectItem>
+                <SelectItem value="price_asc">Price Low to High</SelectItem>
+                <SelectItem value="price_desc">Price High to Low</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -118,94 +176,116 @@ export const TraderMarketplace: React.FC = () => {
               </p>
               
               <div className="grid gap-4">
-                {filteredProducts.map((product) => (
-                  <Card key={product.id} className="border border-gray-200 hover:border-zimbabwe-green transition-colors">
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h4 className="font-semibold text-lg">{product.name}</h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary">{getAllCategoryTranslations(t)[product.category]}</Badge>
-                            {product.brand && (
-                              <Badge variant="outline">{product.brand}</Badge>
-                            )}
+                {filteredProducts.map((product) => {
+                  const isExpanded = expandedProducts.has(product.id);
+                  return (
+                    <Card key={product.id} className="border border-gray-200 hover:border-zimbabwe-green transition-colors">
+                      <CardContent className="p-4">
+                        {/* Compact product view */}
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-semibold text-lg">{product.name}</h4>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleProductExpansion(product.id)}
+                                className="h-6 w-6 p-0"
+                              >
+                                {isExpanded ? '−' : '+'}
+                              </Button>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="text-xs">{getAllCategoryTranslations(t)[product.category]}</Badge>
+                              {product.brand && (
+                                <Badge variant="outline" className="text-xs">{product.brand}</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-zimbabwe-green">
+                              ${product.price}
+                            </p>
+                            <p className="text-sm text-gray-500">per {product.unit}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xl font-bold text-zimbabwe-green">
-                            ${product.price}
-                          </p>
-                          <p className="text-sm text-gray-500">per {product.unit}</p>
-                        </div>
-                      </div>
 
-                      {product.description && (
-                        <p className="text-gray-600 mb-3">{product.description}</p>
-                      )}
+                        {/* Expanded details */}
+                        {isExpanded && (
+                          <div className="space-y-3">
+                            {product.description && (
+                              <div>
+                                <h5 className="font-medium text-sm mb-1">Description</h5>
+                                <p className="text-gray-600 text-sm">{product.description}</p>
+                              </div>
+                            )}
 
-                      {/* Show supplier info only if user can contact suppliers */}
-                      {canContactSuppliers && product.supplierProfile && (
-                        <div className="border-t pt-3 mt-3">
-                          <h5 className="font-medium mb-2 flex items-center gap-2">
-                            <Building className="w-4 h-4" />
-                            Supplier Information
-                          </h5>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                            {product.supplierProfile.showBusinessName && (
-                              <div className="flex items-center gap-2">
-                                <Building className="w-3 h-3 text-gray-400" />
-                                <span>{product.supplierProfile.businessName}</span>
-                              </div>
-                            )}
-                            {product.supplierProfile.showContactPerson && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-gray-400">Contact:</span>
-                                <span>{product.supplierProfile.contactPerson}</span>
-                              </div>
-                            )}
-                            {product.supplierProfile.showPhoneNumber && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="w-3 h-3 text-gray-400" />
-                                <span>{product.supplierProfile.phoneNumber}</span>
-                              </div>
-                            )}
-                            {product.supplierProfile.showEmail && (
-                              <div className="flex items-center gap-2">
-                                <Mail className="w-3 h-3 text-gray-400" />
-                                <span>{product.supplierProfile.email}</span>
-                              </div>
-                            )}
-                            {product.supplierProfile.showAddress && (
-                              <div className="flex items-center gap-2">
-                                <MapPin className="w-3 h-3 text-gray-400" />
-                                <span>{product.supplierProfile.address}</span>
+                            {/* Show supplier info only if user can contact suppliers */}
+                            {canContactSuppliers && product.supplierProfile && (
+                              <div className="border-t pt-3">
+                                <h5 className="font-medium mb-2 flex items-center gap-2">
+                                  <Building className="w-4 h-4" />
+                                  Supplier Information
+                                </h5>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                  {product.supplierProfile.showBusinessName && (
+                                    <div className="flex items-center gap-2">
+                                      <Building className="w-3 h-3 text-gray-400" />
+                                      <span>{product.supplierProfile.businessName}</span>
+                                    </div>
+                                  )}
+                                  {product.supplierProfile.showContactPerson && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-gray-400">Contact:</span>
+                                      <span>{product.supplierProfile.contactPerson}</span>
+                                    </div>
+                                  )}
+                                  {product.supplierProfile.showPhoneNumber && (
+                                    <div className="flex items-center gap-2">
+                                      <Phone className="w-3 h-3 text-gray-400" />
+                                      <span>{product.supplierProfile.phoneNumber}</span>
+                                    </div>
+                                  )}
+                                  {product.supplierProfile.showEmail && (
+                                    <div className="flex items-center gap-2">
+                                      <Mail className="w-3 h-3 text-gray-400" />
+                                      <span>{product.supplierProfile.email}</span>
+                                    </div>
+                                  )}
+                                  {product.supplierProfile.showAddress && (
+                                    <div className="flex items-center gap-2">
+                                      <MapPin className="w-3 h-3 text-gray-400" />
+                                      <span>{product.supplierProfile.address}</span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
-                        </div>
-                      )}
-                      
-                      {/* Contact button - always visible but functionality depends on subscription */}
-                      <div className="border-t pt-3 mt-3">
-                        <Button
-                          className={`mt-2 ${canContactSuppliers 
-                            ? 'bg-zimbabwe-green hover:bg-zimbabwe-darkGreen' 
-                            : 'bg-gray-400 cursor-not-allowed'}`}
-                          size="sm"
-                          onClick={() => handleContactSupplier(product)}
-                          disabled={!canContactSuppliers}
-                        >
-                          Contact Supplier
-                        </Button>
-                        {!canContactSuppliers && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Upgrade to view supplier details
-                          </p>
                         )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        
+                        {/* Contact button */}
+                        <div className={`${isExpanded ? 'border-t pt-3 mt-3' : 'mt-3'}`}>
+                          <Button
+                            className={`w-full ${canContactSuppliers 
+                              ? 'bg-zimbabwe-green hover:bg-zimbabwe-darkGreen' 
+                              : 'bg-gray-400 cursor-not-allowed'}`}
+                            size="sm"
+                            onClick={() => handleContactSupplier(product)}
+                            disabled={!canContactSuppliers}
+                          >
+                            Contact Supplier
+                          </Button>
+                          {!canContactSuppliers && (
+                            <p className="text-xs text-gray-500 mt-1 text-center">
+                              Upgrade to view supplier details
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}
