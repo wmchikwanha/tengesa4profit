@@ -196,50 +196,72 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const existingRecordIndex = prev.findIndex(record => record.date === todayFormatted);
 
       if (existingRecordIndex >= 0) {
-        // Merge deltas into today's record
+        // Update today's record with running totals (not deltas)
         const existingRecord = prev[existingRecordIndex];
         const updatedProducts = [...existingRecord.products];
 
         entries.forEach(({ product, deltaSold, deltaDiscarded }) => {
           const idx = updatedProducts.findIndex(p => p.id === product.id);
           if (idx >= 0) {
-            const existingProduct = updatedProducts[idx];
+            // Update with current absolute totals for the day
             updatedProducts[idx] = {
-              ...existingProduct,
-              quantitySold: (existingProduct.quantitySold || 0) + deltaSold,
-              quantityDiscarded: (existingProduct.quantityDiscarded || 0) + deltaDiscarded
+              ...updatedProducts[idx],
+              quantitySold: product.quantitySold || 0,
+              quantityDiscarded: product.quantityDiscarded || 0
             };
           } else {
-            // Store only the delta quantities in history
+            // Add new product with current absolute totals
             updatedProducts.push({
               ...JSON.parse(JSON.stringify(product)),
-              quantitySold: deltaSold,
-              quantityDiscarded: deltaDiscarded
+              quantitySold: product.quantitySold || 0,
+              quantityDiscarded: product.quantityDiscarded || 0
             });
           }
         });
 
+        // Recalculate total profit based on all products for the day
+        const recalculatedProfit = updatedProducts.reduce((sum, historyProduct) => {
+          const costPerUnit = historyProduct.buyingPrice + 
+            (historyProduct.transportCost / historyProduct.quantityBought) + 
+            (historyProduct.stallFee / historyProduct.quantityBought);
+          const sellingPrice = historyProduct.sellingPrice || 
+            (costPerUnit * (1 + historyProduct.markupPercentage / 100));
+          const profitPerUnit = sellingPrice - costPerUnit;
+          return sum + ((historyProduct.quantitySold || 0) * profitPerUnit);
+        }, 0);
+
         const updatedRecord = {
           ...existingRecord,
           products: updatedProducts,
-          totalProfit: existingRecord.totalProfit + todayTotalProfit
+          totalProfit: recalculatedProfit
         };
 
         const newHistory = [...prev];
         newHistory[existingRecordIndex] = updatedRecord;
         return newHistory;
       } else {
-        // Create new record for today with delta quantities only
-        const productsCopy = entries.map(({ product, deltaSold, deltaDiscarded }) => ({
+        // Create new record for today with current absolute totals
+        const productsCopy = entries.map(({ product }) => ({
           ...JSON.parse(JSON.stringify(product)),
-          quantitySold: deltaSold,
-          quantityDiscarded: deltaDiscarded
+          quantitySold: product.quantitySold || 0,
+          quantityDiscarded: product.quantityDiscarded || 0
         }));
+
+        // Calculate total profit for all products
+        const totalProfitForDay = productsCopy.reduce((sum, historyProduct) => {
+          const costPerUnit = historyProduct.buyingPrice + 
+            (historyProduct.transportCost / historyProduct.quantityBought) + 
+            (historyProduct.stallFee / historyProduct.quantityBought);
+          const sellingPrice = historyProduct.sellingPrice || 
+            (costPerUnit * (1 + historyProduct.markupPercentage / 100));
+          const profitPerUnit = sellingPrice - costPerUnit;
+          return sum + ((historyProduct.quantitySold || 0) * profitPerUnit);
+        }, 0);
 
         const newRecord: SalesRecord = {
           date: todayFormatted,
           products: productsCopy,
-          totalProfit: todayTotalProfit
+          totalProfit: totalProfitForDay
         };
         return [...prev, newRecord];
       }
