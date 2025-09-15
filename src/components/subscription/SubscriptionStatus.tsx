@@ -10,11 +10,36 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 export const SubscriptionStatus: React.FC = () => {
-  const { user, subscriptionStatus, refreshSubscription } = useAuth();
+  const { user, subscriptionStatus } = useAuth();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  // removed manual refresh to prevent incorrect state toggles
   const { toast } = useToast();
+
+  const [effectiveTrialEnd, setEffectiveTrialEnd] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const storageKey = `t4p:${user.id}:trialEnd`;
+    let end = subscriptionStatus.trialEnd;
+
+    if (!end) {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        end = stored;
+      } else {
+        const oneDayFromNow = new Date();
+        oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
+        end = oneDayFromNow.toISOString();
+        localStorage.setItem(storageKey, end);
+      }
+    } else {
+      localStorage.setItem(storageKey, end);
+    }
+
+    setEffectiveTrialEnd(end);
+  }, [user?.id, subscriptionStatus.trialEnd]);
 
   const calculateDaysLeft = (endDate: string | null) => {
     if (!endDate) return 0;
@@ -85,31 +110,8 @@ export const SubscriptionStatus: React.FC = () => {
     }
   };
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    toast({
-      title: "Refreshing",
-      description: t.updatingStatus || "Please wait while we update your subscription status...",
-    });
-    
-    try {
-      await refreshSubscription();
-      toast({
-        title: "Updated",
-        description: t.statusRefreshed || "Subscription status has been refreshed.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to refresh subscription status.",
-        variant: "destructive",
-      });
-    } finally {
-      setRefreshing(false);
-    }
-  };
 
-  const trialDaysLeft = calculateDaysLeft(subscriptionStatus.trialEnd);
+  const trialDaysLeft = calculateDaysLeft(effectiveTrialEnd);
   const subscriptionDaysLeft = calculateDaysLeft(subscriptionStatus.subscriptionEnd);
 
   const plans = [
@@ -134,22 +136,6 @@ export const SubscriptionStatus: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between flex-wrap gap-2">
             <span className="break-words">{t.subscriptionStatus}</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="text-xs sm:text-sm"
-            >
-              {refreshing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  <span className="break-words">{t.updatingStatus || "Updating..."}</span>
-                </>
-              ) : (
-                <span className="break-words">{t.refreshSubscription || "Refresh"}</span>
-              )}
-            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -17,7 +17,7 @@ interface AppDataContextType {
   getProduct: (id: string) => Product | undefined;
   clearAllData: () => void;
   clearSalesData: () => void;
-  addToHistory: (date?: string) => void;
+  addToHistory: (date: string, productId: string, deltaSold: number, deltaDiscarded: number) => void;
 }
 
 const AppDataContext = React.createContext<AppDataContextType>({
@@ -29,7 +29,7 @@ const AppDataContext = React.createContext<AppDataContextType>({
   getProduct: () => undefined,
   clearAllData: () => {},
   clearSalesData: () => {},
-  addToHistory: () => {},
+  addToHistory: (..._args: any[]) => {},
 });
 
 export const useAppData = () => React.useContext(AppDataContext);
@@ -151,8 +151,9 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addToHistory = (date?: string) => {
     if (products.length === 0) return;
 
-    const todayFormatted = (date && !isNaN(Date.parse(date)))
-      ? new Date(date).toISOString().split('T')[0]
+    // Use the provided date string (YYYY-MM-DD) as-is to avoid timezone shifts
+    const todayFormatted = (date && /^\d{4}-\d{2}-\d{2}$/.test(date))
+      ? date
       : new Date().toISOString().split('T')[0];
 
     // Compute per-product deltas since last baseline to avoid double counting

@@ -71,7 +71,7 @@ export function useProductForm() {
     return newInvalidFields.size === 0;
   };
   
-  const handleCalculate = (addToHistoryFn?: () => void) => {
+  const handleCalculate = (addToHistoryFn?: (args: { productId: string; soldQty: number; discardedQty: number }) => void) => {
     if (!selectedProduct) return;
     
     if (!validateForm()) {
@@ -105,7 +105,7 @@ export function useProductForm() {
     // Automatically save to history after updating the product
     if (addToHistoryFn && (soldQty > 0 || discardedQty > 0)) {
       // Use setTimeout to ensure the product state is updated first
-      setTimeout(addToHistoryFn, 0);
+      setTimeout(() => addToHistoryFn({ productId: selectedProductId!, soldQty, discardedQty }), 0);
     }
     
     // Reset form inputs after successful calculation

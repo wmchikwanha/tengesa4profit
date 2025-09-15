@@ -68,7 +68,9 @@ const TallyProfit: React.FC = () => {
   };
 
   const handleAddSale = () => {
-    handleCalculate(() => addToHistory(saleDate));
+    handleCalculate(({ productId, soldQty, discardedQty }) => {
+      addToHistory(saleDate, productId, soldQty, discardedQty);
+    });
   };
   
   return (
