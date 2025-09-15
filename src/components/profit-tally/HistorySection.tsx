@@ -67,6 +67,10 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
 
   if (!viewingHistory) return null;
 
+  const displayedHistory = React.useMemo(() => {
+    return [...salesHistory].sort((a, b) => b.date.localeCompare(a.date)); // newest first
+  }, [salesHistory]);
+
   return (
     <Card className="bg-white border border-zimbabwe-green">
       <CardHeader className="pb-3">
@@ -133,7 +137,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
         {salesHistory.length === 0 ? (
           <p className="text-gray-500">{t.noHistory}</p>
         ) : (
-          salesHistory.map((record, index) => (
+          displayedHistory.map((record, index) => (
             <div key={index} className="border border-zimbabwe-green rounded-lg p-4 bg-zimbabwe-lightGreen">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-bold">

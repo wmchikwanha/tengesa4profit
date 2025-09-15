@@ -41,22 +41,6 @@ export const SubscriptionStatus: React.FC = () => {
     setEffectiveTrialEnd(end);
   }, [user?.id, subscriptionStatus.trialEnd]);
 
-  // Auto-refresh subscription when returning focus or tab becomes visible
-  useEffect(() => {
-    if (!user) return;
-    const onFocus = () => { refreshSubscription(); };
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        refreshSubscription();
-      }
-    };
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => {
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [user?.id]);
 
   const calculateDaysLeft = (endDate: string | null) => {
     if (!endDate) return 0;

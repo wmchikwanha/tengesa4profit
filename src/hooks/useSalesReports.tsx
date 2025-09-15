@@ -51,33 +51,26 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
   });
   const [generatedReport, setGeneratedReport] = useState<SalesReportData | null>(null);
 
+  const toDateKey = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
   const generateReport = (filters: ReportFilters): SalesReportData => {
-    // Filter sales history by date range
+    // Filter sales history by date range using YYYY-MM-DD string comparisons (timezone-safe)
     let filteredHistory = salesHistory;
     
     if (filters.startDate || filters.endDate) {
+      const startKey = filters.startDate ? toDateKey(filters.startDate) : null;
+      const endKey = filters.endDate ? toDateKey(filters.endDate) : null;
+
       filteredHistory = salesHistory.filter(record => {
-        const recordDate = parseISO(record.date);
-        
-        if (filters.startDate && filters.endDate) {
-          return (
-            (isAfter(recordDate, startOfDay(filters.startDate)) || 
-             isEqual(startOfDay(recordDate), startOfDay(filters.startDate))) && 
-            (isBefore(recordDate, endOfDay(filters.endDate)) || 
-             isEqual(startOfDay(recordDate), startOfDay(filters.endDate)))
-          );
-        }
-        
-        if (filters.startDate && !filters.endDate) {
-          return isAfter(recordDate, startOfDay(filters.startDate)) || 
-                 isEqual(startOfDay(recordDate), startOfDay(filters.startDate));
-        }
-        
-        if (!filters.startDate && filters.endDate) {
-          return isBefore(recordDate, endOfDay(filters.endDate)) || 
-                 isEqual(startOfDay(recordDate), startOfDay(filters.endDate));
-        }
-        
+        const key = record.date; // already YYYY-MM-DD
+        if (startKey && endKey) return key >= startKey && key <= endKey;
+        if (startKey) return key >= startKey;
+        if (endKey) return key <= endKey;
         return true;
       });
     }

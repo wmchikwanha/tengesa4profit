@@ -42,6 +42,13 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
     }
   };
   
+  const toDateKey = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
   const applyDateFilter = (data: DateFilterForm) => {
     const { startDate, endDate } = data;
     
@@ -49,35 +56,21 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
       setFilteredHistory(salesHistory);
       return;
     }
+
+    const startKey = startDate ? toDateKey(startDate) : null;
+    const endKey = endDate ? toDateKey(endDate) : null;
     
     const filtered = salesHistory.filter(record => {
-      const recordDate = parseISO(record.date);
-      
-      if (startDate && endDate) {
-        return (
-          (isAfter(recordDate, startOfDay(startDate)) || 
-           isEqual(startOfDay(recordDate), startOfDay(startDate))) && 
-          (isBefore(recordDate, endOfDay(endDate)) || 
-           isEqual(startOfDay(recordDate), startOfDay(endDate)))
-        );
-      }
-      
-      if (startDate && !endDate) {
-        return isAfter(recordDate, startOfDay(startDate)) || 
-               isEqual(startOfDay(recordDate), startOfDay(startDate));
-      }
-      
-      if (!startDate && endDate) {
-        return isBefore(recordDate, endOfDay(endDate)) || 
-               isEqual(startOfDay(recordDate), startOfDay(endDate));
-      }
-      
+      const key = record.date; // already YYYY-MM-DD
+      if (startKey && endKey) return key >= startKey && key <= endKey;
+      if (startKey) return key >= startKey;
+      if (endKey) return key <= endKey;
       return true;
     });
     
-    console.log('Date filter applied:', { 
-      startDate: startDate?.toISOString(), 
-      endDate: endDate?.toISOString(),
+    console.log('Date filter applied (string compare):', { 
+      startKey, 
+      endKey,
       originalCount: salesHistory.length,
       filteredCount: filtered.length,
       filteredDates: filtered.map(r => r.date)

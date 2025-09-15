@@ -17,9 +17,20 @@ export interface SubscriptionPermissions {
 export const useSubscriptionPermissions = (): SubscriptionPermissions => {
   const { subscriptionStatus, user } = useAuth();
   
-  // Determine effective trial end: prefer backend value, fallback to local per-user key
-  const localTrialEnd = user ? localStorage.getItem(`t4p:${user.id}:trialEnd`) : null;
-  const effectiveTrialEnd = subscriptionStatus.trialEnd ?? localTrialEnd;
+  // Determine effective trial end with robust fallback that does not rely on visiting the subscription screen
+  const storageKey = user ? `t4p:${user.id}:trialEnd` : null;
+  let localTrialEnd = storageKey ? localStorage.getItem(storageKey) : null;
+  const serverTrialEnd = subscriptionStatus.trialEnd;
+
+  // If neither server nor local value exists (new account), start a 1-day trial and persist it
+  if (!serverTrialEnd && !localTrialEnd && user) {
+    const oneDayFromNow = new Date();
+    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
+    localTrialEnd = oneDayFromNow.toISOString();
+    localStorage.setItem(storageKey!, localTrialEnd);
+  }
+
+  const effectiveTrialEnd = serverTrialEnd ?? localTrialEnd;
 
   const isSubscribed = subscriptionStatus.subscribed === true;
   const isPremium = isSubscribed && subscriptionStatus.tier === 'premium';
