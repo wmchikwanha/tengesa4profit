@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Product } from '@/lib/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface SalesRecord {
   date: string;
@@ -16,7 +17,7 @@ interface AppDataContextType {
   getProduct: (id: string) => Product | undefined;
   clearAllData: () => void;
   clearSalesData: () => void;
-  addToHistory: () => void;
+  addToHistory: (date?: string) => void;
 }
 
 const AppDataContext = React.createContext<AppDataContextType>({
@@ -39,43 +40,21 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [salesHistory, setSalesHistory] = React.useState<SalesRecord[]>([]);
   const [salesBaseline, setSalesBaseline] = React.useState<Record<string, { sold: number; discarded: number }>>({});
   const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
-
+  const { user } = useAuth();
+  
   // Helper function to get user-specific storage keys
   const getUserStorageKey = (key: string, userId: string | null) => {
-    return key; // Use global keys to ensure persistence across refresh/login
+    const uid = userId ?? 'guest';
+    return `t4p:${uid}:${key}`;
   };
 
   React.useEffect(() => {
-    // Get current user ID from auth context
-    const getCurrentUserId = () => {
-      try {
-        // Try to get user from various possible auth storage locations
-        const authKeys = Object.keys(localStorage).filter(key => 
-          key.includes('supabase.auth') && key.includes('user')
-        );
-        
-        for (const key of authKeys) {
-          try {
-            const authData = JSON.parse(localStorage.getItem(key) || '{}');
-            if (authData.user?.id) {
-              return authData.user.id;
-            }
-          } catch (e) {
-            continue;
-          }
-        }
-        return null;
-      } catch (error) {
-        return null;
-      }
-    };
-
-    const userId = getCurrentUserId();
-    setCurrentUserId(userId);
+    const uid = user?.id ?? null;
+    setCurrentUserId(uid);
 
     // Load user-specific products from localStorage
     try {
-      const userProductsKey = getUserStorageKey('products', userId);
+      const userProductsKey = getUserStorageKey('products', uid);
       const savedProducts = localStorage.getItem(userProductsKey);
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
@@ -89,7 +68,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // Load user-specific sales history from localStorage
     try {
-      const userHistoryKey = getUserStorageKey('salesHistory', userId);
+      const userHistoryKey = getUserStorageKey('salesHistory', uid);
       const savedHistory = localStorage.getItem(userHistoryKey);
       if (savedHistory) {
         setSalesHistory(JSON.parse(savedHistory));
@@ -103,7 +82,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // Load user-specific sales baseline from localStorage (to avoid double-counting)
     try {
-      const userBaselineKey = getUserStorageKey('salesBaseline', userId);
+      const userBaselineKey = getUserStorageKey('salesBaseline', uid);
       const savedBaseline = localStorage.getItem(userBaselineKey);
       if (savedBaseline) {
         setSalesBaseline(JSON.parse(savedBaseline));
@@ -114,7 +93,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       console.error('Failed to load sales baseline from localStorage:', error);
       setSalesBaseline({});
     }
-  }, []);
+  }, [user?.id]);
 
   React.useEffect(() => {
     // Persist products for the current context (user-specific if logged in, otherwise global)
@@ -169,10 +148,12 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return products.find((p) => p.id === id);
   };
 
-  const addToHistory = () => {
+  const addToHistory = (date?: string) => {
     if (products.length === 0) return;
 
-    const todayFormatted = new Date().toISOString().split('T')[0];
+    const todayFormatted = (date && !isNaN(Date.parse(date)))
+      ? new Date(date).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0];
 
     // Compute per-product deltas since last baseline to avoid double counting
     const entries = products.map(product => {

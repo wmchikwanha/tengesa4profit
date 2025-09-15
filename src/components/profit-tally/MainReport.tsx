@@ -21,6 +21,8 @@ interface MainReportProps {
   onQuantitySoldChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onQuantityDiscardedChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCalculate: () => void;
+  saleDate: string;
+  onSaleDateChange: (value: string) => void;
 }
 
 export const MainReport: React.FC<MainReportProps> = ({
@@ -35,9 +37,10 @@ export const MainReport: React.FC<MainReportProps> = ({
   onQuantitySoldChange,
   onQuantityDiscardedChange,
   onCalculate,
+  saleDate,
+  onSaleDateChange,
 }) => {
   const { t } = useLanguage();
-  const [saleDate, setSaleDate] = React.useState(new Date().toISOString().split('T')[0]);
   
   if (products.length === 0) {
     return (
@@ -58,7 +61,7 @@ export const MainReport: React.FC<MainReportProps> = ({
             <Input
               id="saleDate"
               value={saleDate}
-              onChange={(e) => setSaleDate(e.target.value)}
+              onChange={(e) => onSaleDateChange(e.target.value)}
               type="date"
               max={new Date().toISOString().split('T')[0]}
               className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"

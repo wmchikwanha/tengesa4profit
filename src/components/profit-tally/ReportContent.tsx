@@ -60,6 +60,8 @@ interface ReportContentProps {
     totalCostValue: number;
     totalDiscardedValue: number;
   };
+  saleDate: string;
+  setSaleDate: (val: string) => void;
 }
 
 export const ReportContent: React.FC<ReportContentProps> = (props) => {
@@ -79,6 +81,8 @@ export const ReportContent: React.FC<ReportContentProps> = (props) => {
         onQuantitySoldChange={props.handleQuantitySoldChange}
         onQuantityDiscardedChange={props.handleQuantityDiscardedChange}
         onCalculate={props.handleCalculate}
+        saleDate={props.saleDate}
+        onSaleDateChange={props.setSaleDate}
       />
       
       {/* Removed Daily Summary section for cleaner UI */}

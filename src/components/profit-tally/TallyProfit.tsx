@@ -14,6 +14,7 @@ const TallyProfit: React.FC = () => {
   const { salesHistory, clearSalesData, addToHistory } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   const { toast } = useToast();
+  const [saleDate, setSaleDate] = React.useState<string>(new Date().toISOString().split('T')[0]);
   
   const {
     products,
@@ -67,7 +68,7 @@ const TallyProfit: React.FC = () => {
   };
 
   const handleAddSale = () => {
-    handleCalculate(addToHistory);
+    handleCalculate(() => addToHistory(saleDate));
   };
   
   return (
@@ -115,6 +116,8 @@ const TallyProfit: React.FC = () => {
         applyDateFilter={applyDateFilter}
         resetDateFilter={resetDateFilter}
         calculateTotalSalesPerProduct={calculateTotalSalesPerProduct}
+        saleDate={saleDate}
+        setSaleDate={setSaleDate}
       />
     </div>
   );
