@@ -15,18 +15,23 @@ export interface SubscriptionPermissions {
 }
 
 export const useSubscriptionPermissions = (): SubscriptionPermissions => {
-  const { subscriptionStatus } = useAuth();
+  const { subscriptionStatus, user } = useAuth();
   
-  const tier = subscriptionStatus.tier;
-  const isSubscribed = subscriptionStatus.subscribed;
+  // Determine effective trial end: prefer backend value, fallback to local per-user key
+  const localTrialEnd = user ? localStorage.getItem(`t4p:${user.id}:trialEnd`) : null;
+  const effectiveTrialEnd = subscriptionStatus.trialEnd ?? localTrialEnd;
+
+  const isSubscribed = subscriptionStatus.subscribed === true;
+  const isPremium = isSubscribed && subscriptionStatus.tier === 'premium';
+
+  // Calculate if trial has expired using effective trial end
+  const trialExpired = effectiveTrialEnd ? new Date() > new Date(effectiveTrialEnd) : false;
+
+  // Treat as trial if not premium and we have a non-expired trial window
+  const isTrial = !isPremium && !!effectiveTrialEnd && !trialExpired;
   
-  // Calculate if trial has expired
-  const trialExpired = subscriptionStatus.trialEnd ? 
-    new Date() > new Date(subscriptionStatus.trialEnd) : false;
-  
-  const isTrial = tier === 'trial' && !trialExpired;
-  const isFree = tier === 'free' || (tier === 'trial' && trialExpired && !isSubscribed);
-  const isPremium = tier === 'premium' && isSubscribed;
+  // Free when not premium and not within active trial
+  const isFree = !isPremium && !isTrial;
   
   return {
     // Trial and Premium get full access

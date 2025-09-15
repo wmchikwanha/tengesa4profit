@@ -148,61 +148,22 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return products.find((p) => p.id === id);
   };
 
-  const addToHistory = (date?: string) => {
-    if (products.length === 0) return;
+  const addToHistory = (date: string, productId: string, deltaSold: number, deltaDiscarded: number) => {
+    if (!productId) return;
 
     // Use the provided date string (YYYY-MM-DD) as-is to avoid timezone shifts
-    const todayFormatted = (date && /^\d{4}-\d{2}-\d{2}$/.test(date))
+    const recordDate = (date && /^\d{4}-\d{2}-\d{2}$/.test(date))
       ? date
       : new Date().toISOString().split('T')[0];
 
-    // Compute per-product deltas since last baseline to avoid double counting
-    const entries = products.map(product => {
-      const baseline = salesBaseline[product.id] || { sold: 0, discarded: 0 };
-      const deltaSold = (product.quantitySold || 0) - baseline.sold;
-      const deltaDiscarded = (product.quantityDiscarded || 0) - baseline.discarded;
-      return { product, deltaSold, deltaDiscarded };
-    }).filter(e => e.deltaSold > 0 || e.deltaDiscarded > 0);
-
-    if (entries.length === 0) return;
-
-    // Calculate profit using ONLY the delta quantities
-    const todayTotalProfit = entries.reduce((sum, { product, deltaSold }) => {
-      const costPerUnit = product.buyingPrice + (product.transportCost / product.quantityBought) + (product.stallFee / product.quantityBought);
-      const sellingPrice = product.sellingPrice || (costPerUnit * (1 + product.markupPercentage / 100));
-      const profitPerUnit = sellingPrice - costPerUnit;
-      return sum + (deltaSold * profitPerUnit);
-    }, 0);
+    const product = getProduct(productId);
+    if (!product) return;
 
     setSalesHistory(prev => {
-      const existingRecordIndex = prev.findIndex(record => record.date === todayFormatted);
+      const existingRecordIndex = prev.findIndex(record => record.date === recordDate);
 
-      if (existingRecordIndex >= 0) {
-        // Update today's record with running totals (not deltas)
-        const existingRecord = prev[existingRecordIndex];
-        const updatedProducts = [...existingRecord.products];
-
-        entries.forEach(({ product, deltaSold, deltaDiscarded }) => {
-          const idx = updatedProducts.findIndex(p => p.id === product.id);
-          if (idx >= 0) {
-            // Update with current absolute totals for the day
-            updatedProducts[idx] = {
-              ...updatedProducts[idx],
-              quantitySold: product.quantitySold || 0,
-              quantityDiscarded: product.quantityDiscarded || 0
-            };
-          } else {
-            // Add new product with current absolute totals
-            updatedProducts.push({
-              ...JSON.parse(JSON.stringify(product)),
-              quantitySold: product.quantitySold || 0,
-              quantityDiscarded: product.quantityDiscarded || 0
-            });
-          }
-        });
-
-        // Recalculate total profit based on all products for the day
-        const recalculatedProfit = updatedProducts.reduce((sum, historyProduct) => {
+      const calcProfitForProducts = (prods: Product[]) => {
+        return prods.reduce((sum, historyProduct) => {
           const costPerUnit = historyProduct.buyingPrice + 
             (historyProduct.transportCost / historyProduct.quantityBought) + 
             (historyProduct.stallFee / historyProduct.quantityBought);
@@ -211,6 +172,30 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
           const profitPerUnit = sellingPrice - costPerUnit;
           return sum + ((historyProduct.quantitySold || 0) * profitPerUnit);
         }, 0);
+      };
+
+      if (existingRecordIndex >= 0) {
+        // Update existing record for the date by adding deltas ONLY to that date
+        const existingRecord = prev[existingRecordIndex];
+        const updatedProducts = [...existingRecord.products];
+
+        const idx = updatedProducts.findIndex(p => p.id === productId);
+        if (idx >= 0) {
+          const existing = updatedProducts[idx];
+          updatedProducts[idx] = {
+            ...existing,
+            quantitySold: (existing.quantitySold || 0) + (deltaSold || 0),
+            quantityDiscarded: (existing.quantityDiscarded || 0) + (deltaDiscarded || 0)
+          };
+        } else {
+          updatedProducts.push({
+            ...JSON.parse(JSON.stringify(product)),
+            quantitySold: deltaSold || 0,
+            quantityDiscarded: deltaDiscarded || 0
+          });
+        }
+
+        const recalculatedProfit = calcProfitForProducts(updatedProducts);
 
         const updatedRecord = {
           ...existingRecord,
@@ -222,46 +207,23 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         newHistory[existingRecordIndex] = updatedRecord;
         return newHistory;
       } else {
-        // Create new record for today with current absolute totals
-        const productsCopy = entries.map(({ product }) => ({
+        // Create new record for the date with the delta quantities
+        const productsCopy: Product[] = [{
           ...JSON.parse(JSON.stringify(product)),
-          quantitySold: product.quantitySold || 0,
-          quantityDiscarded: product.quantityDiscarded || 0
-        }));
+          quantitySold: deltaSold || 0,
+          quantityDiscarded: deltaDiscarded || 0
+        }];
 
-        // Calculate total profit for all products
-        const totalProfitForDay = productsCopy.reduce((sum, historyProduct) => {
-          const costPerUnit = historyProduct.buyingPrice + 
-            (historyProduct.transportCost / historyProduct.quantityBought) + 
-            (historyProduct.stallFee / historyProduct.quantityBought);
-          const sellingPrice = historyProduct.sellingPrice || 
-            (costPerUnit * (1 + historyProduct.markupPercentage / 100));
-          const profitPerUnit = sellingPrice - costPerUnit;
-          return sum + ((historyProduct.quantitySold || 0) * profitPerUnit);
-        }, 0);
+        const totalProfitForDay = calcProfitForProducts(productsCopy);
 
         const newRecord: SalesRecord = {
-          date: todayFormatted,
+          date: recordDate,
           products: productsCopy,
           totalProfit: totalProfitForDay
         };
         return [...prev, newRecord];
       }
     });
-
-    // Update baseline to the current absolute totals so next save captures only new deltas
-    setSalesBaseline(prev => {
-      const next = { ...prev };
-      entries.forEach(({ product }) => {
-        next[product.id] = {
-          sold: product.quantitySold || 0,
-          discarded: product.quantityDiscarded || 0
-        };
-      });
-      return next;
-    });
-
-    console.log("History Saved: Today's sales deltas have been added to history");
   };
 
   const clearAllData = () => {
