@@ -53,6 +53,11 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
     }
   });
 
+  // Keep hooks order stable across renders
+  const displayedHistory = React.useMemo(() => {
+    return [...salesHistory].sort((a, b) => b.date.localeCompare(a.date)); // newest first
+  }, [salesHistory]);
+
   const handleApplyFilter = () => {
     onApplyDateFilter({ startDate, endDate });
     setIsDateFilterOpen(false);
@@ -66,10 +71,6 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
   };
 
   if (!viewingHistory) return null;
-
-  const displayedHistory = React.useMemo(() => {
-    return [...salesHistory].sort((a, b) => b.date.localeCompare(a.date)); // newest first
-  }, [salesHistory]);
 
   return (
     <Card className="bg-white border border-zimbabwe-green">
