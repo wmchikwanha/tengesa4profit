@@ -5,6 +5,7 @@ import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from './ProductCard';
 import { type MarketplaceProduct } from '@/lib/marketplace-types';
+import { getCategoryTranslation } from '@/lib/categoryTranslations';
 
 interface ProductListProps {
   products: MarketplaceProduct[];
@@ -16,7 +17,6 @@ interface ProductListProps {
 export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, canEdit = true }) => {
   const { t } = useLanguage();
   const { canListProducts } = useSubscriptionPermissions();
-  const { getCategoryTranslation } = require('@/lib/categoryTranslations');
 
   if (products.length === 0) {
     return (
