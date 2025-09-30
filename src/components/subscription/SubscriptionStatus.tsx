@@ -63,7 +63,25 @@ export const SubscriptionStatus: React.FC = () => {
       if (error) throw error;
       
       if (data?.url) {
-        window.open(data.url, '_blank');
+        // Open payment page
+        const paymentWindow = window.open(data.url, '_blank');
+        
+        // Poll for subscription status after opening payment page
+        const pollInterval = setInterval(async () => {
+          await refreshSubscription();
+          
+          // Check if subscribed
+          if (subscriptionStatus.subscribed) {
+            clearInterval(pollInterval);
+            toast({
+              title: "Success",
+              description: "Your subscription has been activated!",
+            });
+          }
+        }, 3000); // Check every 3 seconds
+        
+        // Stop polling after 5 minutes
+        setTimeout(() => clearInterval(pollInterval), 300000);
       }
     } catch (error) {
       console.error('Checkout error:', error);

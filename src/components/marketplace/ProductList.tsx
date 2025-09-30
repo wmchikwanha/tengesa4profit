@@ -16,6 +16,7 @@ interface ProductListProps {
 export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDelete, canEdit = true }) => {
   const { t } = useLanguage();
   const { canListProducts } = useSubscriptionPermissions();
+  const { getCategoryTranslation } = require('@/lib/categoryTranslations');
 
   if (products.length === 0) {
     return (
@@ -33,15 +34,28 @@ export const ProductList: React.FC<ProductListProps> = ({ products, onEdit, onDe
   const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="grid gap-4">
-      {sortedProducts.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+    <div className="space-y-4">
+      {/* Table Headers */}
+      <div className="grid grid-cols-12 gap-2 px-4 py-2 bg-zimbabwe-lightGreen border border-zimbabwe-green rounded-lg font-semibold text-sm">
+        <div className="col-span-3">Product</div>
+        <div className="col-span-2">Category</div>
+        <div className="col-span-2">Brand</div>
+        <div className="col-span-2">Price/Unit</div>
+        <div className="col-span-2">Status</div>
+        <div className="col-span-1">Actions</div>
+      </div>
+      
+      {/* Product Cards */}
+      <div className="grid gap-4">
+        {sortedProducts.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
     </div>
   );
 };

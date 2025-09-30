@@ -210,7 +210,7 @@ export const TraderMarketplace: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* Expanded details */}
+                         {/* Expanded details */}
                         {isExpanded && (
                           <div className="space-y-3">
                             {product.description && (
@@ -220,68 +220,55 @@ export const TraderMarketplace: React.FC = () => {
                               </div>
                             )}
 
-                            {/* Show supplier info only if user can contact suppliers */}
-                            {canContactSuppliers && product.supplierProfile && (
+                            {/* Show supplier info by default if user is on trial or premium */}
+                            {product.supplierProfile && (
                               <div className="border-t pt-3">
                                 <h5 className="font-medium mb-2 flex items-center gap-2">
                                   <Building className="w-4 h-4" />
                                   Supplier Information
                                 </h5>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                  {product.supplierProfile.showBusinessName && (
-                                    <div className="flex items-center gap-2">
-                                      <Building className="w-3 h-3 text-gray-400" />
-                                      <span>{product.supplierProfile.businessName}</span>
-                                    </div>
-                                  )}
-                                  {product.supplierProfile.showContactPerson && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-gray-400">Contact:</span>
-                                      <span>{product.supplierProfile.contactPerson}</span>
-                                    </div>
-                                  )}
-                                  {product.supplierProfile.showPhoneNumber && (
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="w-3 h-3 text-gray-400" />
-                                      <span>{product.supplierProfile.phoneNumber}</span>
-                                    </div>
-                                  )}
-                                  {product.supplierProfile.showEmail && (
-                                    <div className="flex items-center gap-2">
-                                      <Mail className="w-3 h-3 text-gray-400" />
-                                      <span>{product.supplierProfile.email}</span>
-                                    </div>
-                                  )}
-                                  {product.supplierProfile.showAddress && (
-                                    <div className="flex items-center gap-2">
-                                      <MapPin className="w-3 h-3 text-gray-400" />
-                                      <span>{product.supplierProfile.address}</span>
-                                    </div>
-                                  )}
-                                </div>
+                                {canContactSuppliers ? (
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                    {product.supplierProfile.showBusinessName && (
+                                      <div className="flex items-center gap-2">
+                                        <Building className="w-3 h-3 text-gray-400" />
+                                        <span>{product.supplierProfile.businessName}</span>
+                                      </div>
+                                    )}
+                                    {product.supplierProfile.showContactPerson && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-gray-400">Contact:</span>
+                                        <span>{product.supplierProfile.contactPerson}</span>
+                                      </div>
+                                    )}
+                                    {product.supplierProfile.showPhoneNumber && (
+                                      <div className="flex items-center gap-2">
+                                        <Phone className="w-3 h-3 text-gray-400" />
+                                        <span>{product.supplierProfile.phoneNumber}</span>
+                                      </div>
+                                    )}
+                                    {product.supplierProfile.showEmail && (
+                                      <div className="flex items-center gap-2">
+                                        <Mail className="w-3 h-3 text-gray-400" />
+                                        <span>{product.supplierProfile.email}</span>
+                                      </div>
+                                    )}
+                                    {product.supplierProfile.showAddress && (
+                                      <div className="flex items-center gap-2">
+                                        <MapPin className="w-3 h-3 text-gray-400" />
+                                        <span>{product.supplierProfile.address}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-gray-500 italic">
+                                    Upgrade to premium to view supplier contact details
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
                         )}
-                        
-                        {/* Contact button */}
-                        <div className={`${isExpanded ? 'border-t pt-3 mt-3' : 'mt-3'}`}>
-                          <Button
-                            className={`w-full ${canContactSuppliers 
-                              ? 'bg-zimbabwe-green hover:bg-zimbabwe-darkGreen' 
-                              : 'bg-gray-400 cursor-not-allowed'}`}
-                            size="sm"
-                            onClick={() => handleContactSupplier(product)}
-                            disabled={!canContactSuppliers}
-                          >
-                            Contact Supplier
-                          </Button>
-                          {!canContactSuppliers && (
-                            <p className="text-xs text-gray-500 mt-1 text-center">
-                              Upgrade to view supplier details
-                            </p>
-                          )}
-                        </div>
                       </CardContent>
                     </Card>
                   );

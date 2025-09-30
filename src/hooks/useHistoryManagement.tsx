@@ -17,12 +17,10 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
   const [filteredHistory, setFilteredHistory] = useState<SalesRecord[]>([]);
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   
-  // Sync filteredHistory with salesHistory when not viewing history
+  // Always sync filteredHistory with salesHistory
   useEffect(() => {
-    if (!viewingHistory) {
-      setFilteredHistory(salesHistory);
-    }
-  }, [salesHistory, viewingHistory]);
+    setFilteredHistory(salesHistory);
+  }, [salesHistory]);
   
   const handleToggleHistory = () => {
     setViewingHistory(!viewingHistory);
@@ -54,6 +52,7 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
     
     if (!startDate && !endDate) {
       setFilteredHistory(salesHistory);
+      setIsDateFilterOpen(false);
       return;
     }
 
@@ -73,7 +72,8 @@ export function useHistoryManagement(salesHistory: SalesRecord[]) {
       endKey,
       originalCount: salesHistory.length,
       filteredCount: filtered.length,
-      filteredDates: filtered.map(r => r.date)
+      filteredDates: filtered.map(r => r.date),
+      allDates: salesHistory.map(r => r.date)
     });
     
     setFilteredHistory(filtered);

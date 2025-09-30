@@ -30,57 +30,67 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDel
   return (
     <Card className="border-zimbabwe-green">
       <CardContent className="p-4">
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <h4 className="font-semibold break-words">{product.name}</h4>
-              <Badge variant={
-                !canListProducts ? 'destructive' : 
-                product.isPubliclyVisible ? 'default' : 'secondary'
-              }>
-                {!canListProducts ? 'Delisted' : 
-                 product.isPubliclyVisible ? 'Public' : 'Private'}
-              </Badge>
-            </div>
-            <p className="text-sm text-gray-600 mb-2 break-words">{product.description}</p>
-            <div className="flex flex-wrap gap-2 text-sm">
-              <span className="font-medium">
-                {getCurrencySymbol()} {convertPrice(product.price).toFixed(2)}/{product.unit}
-              </span>
-              <span className="text-gray-500">•</span>
-              <span className="break-words">{getCategoryTranslation(product.category, t)}</span>
-              {product.brand && (
-                <>
-                  <span className="text-gray-500">•</span>
-                  <span className="break-words">{product.brand}</span>
-                </>
-              )}
-            </div>
+        {/* Grid layout matching the headers */}
+        <div className="grid grid-cols-12 gap-2 items-center">
+          {/* Product Name - 3 cols */}
+          <div className="col-span-3">
+            <h4 className="font-semibold break-words text-sm">{product.name}</h4>
+            <p className="text-xs text-gray-600 break-words line-clamp-2">{product.description}</p>
           </div>
-          <div className="flex gap-2 flex-col">
-            <div className="flex gap-2">
-              {canListProducts && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onEdit(product)}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-              )}
+          
+          {/* Category - 2 cols */}
+          <div className="col-span-2">
+            <span className="text-sm break-words">{getCategoryTranslation(product.category, t)}</span>
+          </div>
+          
+          {/* Brand - 2 cols */}
+          <div className="col-span-2">
+            <span className="text-sm break-words">{product.brand || '-'}</span>
+          </div>
+          
+          {/* Price/Unit - 2 cols */}
+          <div className="col-span-2">
+            <span className="font-medium text-sm">
+              {getCurrencySymbol()} {convertPrice(product.price).toFixed(2)}/{product.unit}
+            </span>
+          </div>
+          
+          {/* Status - 2 cols */}
+          <div className="col-span-2">
+            <Badge variant={
+              !canListProducts ? 'destructive' : 
+              product.isPubliclyVisible ? 'default' : 'secondary'
+            } className="text-xs">
+              {!canListProducts ? 'Delisted' : 
+               product.isPubliclyVisible ? 'Public' : 'Private'}
+            </Badge>
+            {!canListProducts && (
+              <p className="text-xs text-red-500 mt-1">
+                Upgrade to re-list
+              </p>
+            )}
+          </div>
+          
+          {/* Actions - 1 col */}
+          <div className="col-span-1 flex gap-1 justify-end">
+            {canListProducts && (
               <Button
                 size="sm"
                 variant="outline"
-                onClick={handleDelete}
+                onClick={() => onEdit(product)}
+                className="h-8 w-8 p-0"
               >
-                <Trash2 className="w-4 h-4" />
+                <Edit className="w-3 h-3" />
               </Button>
-            </div>
-            {!canListProducts && (
-              <p className="text-xs text-red-500 text-right">
-                Delisted - upgrade to re-list
-              </p>
             )}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleDelete}
+              className="h-8 w-8 p-0"
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
           </div>
         </div>
       </CardContent>
