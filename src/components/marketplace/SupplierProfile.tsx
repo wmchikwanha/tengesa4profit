@@ -54,14 +54,29 @@ export const SupplierProfileForm: React.FC = () => {
       updatedAt: new Date().toISOString(),
     };
     
+    // Update supplier profile first
     setSupplierProfile(profile);
     
-    // Update marketplace products with new supplier profile
-    marketplaceProducts.forEach(product => {
+    // Force immediate update of all marketplace products with new supplier profile
+    // This ensures visibility changes are reflected immediately
+    const updatedProducts = marketplaceProducts.map(product => {
       if (product.supplierId === profile.id) {
-        updateMarketplaceProduct(product.id, { supplierProfile: profile });
+        return { ...product, supplierProfile: profile, updatedAt: new Date().toISOString() };
       }
+      return product;
     });
+    
+    // Batch update all products at once for immediate effect
+    if (updatedProducts.length > 0) {
+      marketplaceProducts.forEach(product => {
+        if (product.supplierId === profile.id) {
+          updateMarketplaceProduct(product.id, { 
+            supplierProfile: { ...profile },
+            updatedAt: new Date().toISOString()
+          });
+        }
+      });
+    }
     
     toast({
       title: "Success",

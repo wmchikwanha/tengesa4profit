@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { UserRole, SupplierProfile, MarketplaceProduct, ProductInquiry, InquiryResponse } from '@/lib/marketplace-types';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MarketplaceContextType {
   userRole: UserRole;
@@ -30,6 +31,7 @@ export const useMarketplace = () => {
 };
 
 export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [userRole, setUserRole] = React.useState<UserRole>('trader');
   const [supplierProfile, setSupplierProfile] = React.useState<SupplierProfile | null>(null);
   const [marketplaceProducts, setMarketplaceProducts] = React.useState<MarketplaceProduct[]>([]);
@@ -37,47 +39,22 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [inquiryResponses, setInquiryResponses] = React.useState<InquiryResponse[]>([]);
 
   // Get current user ID for user-specific data
-  const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
+  const currentUserId = user?.id ?? null;
 
   // Helper function to get user-specific storage keys
   const getUserStorageKey = (key: string, userId: string | null) => {
-    return userId ? `${key}_${userId}` : key;
+    const uid = userId ?? 'guest';
+    return `marketplace:${uid}:${key}`;
   };
 
   // Load data from localStorage on mount
   React.useEffect(() => {
-    // Get current user ID from auth context
-    const getCurrentUserId = () => {
-      try {
-        const authKeys = Object.keys(localStorage).filter(key => 
-          key.includes('supabase.auth') && key.includes('user')
-        );
-        
-        for (const key of authKeys) {
-          try {
-            const authData = JSON.parse(localStorage.getItem(key) || '{}');
-            if (authData.user?.id) {
-              return authData.user.id;
-            }
-          } catch (e) {
-            continue;
-          }
-        }
-        return null;
-      } catch (error) {
-        return null;
-      }
-    };
-
-    const userId = getCurrentUserId();
-    setCurrentUserId(userId);
-
-    const savedRole = localStorage.getItem(getUserStorageKey('userRole', userId)) as UserRole;
+    const savedRole = localStorage.getItem(getUserStorageKey('userRole', currentUserId)) as UserRole;
     if (savedRole && ['trader', 'supplier', 'both'].includes(savedRole)) {
       setUserRole(savedRole);
     }
 
-    const savedProfile = localStorage.getItem(getUserStorageKey('supplierProfile', userId));
+    const savedProfile = localStorage.getItem(getUserStorageKey('supplierProfile', currentUserId));
     if (savedProfile) {
       try {
         setSupplierProfile(JSON.parse(savedProfile));
@@ -86,7 +63,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedProducts = localStorage.getItem(getUserStorageKey('marketplaceProducts', userId));
+    const savedProducts = localStorage.getItem(getUserStorageKey('marketplaceProducts', currentUserId));
     if (savedProducts) {
       try {
         setMarketplaceProducts(JSON.parse(savedProducts));
@@ -95,7 +72,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedInquiries = localStorage.getItem(getUserStorageKey('productInquiries', userId));
+    const savedInquiries = localStorage.getItem(getUserStorageKey('productInquiries', currentUserId));
     if (savedInquiries) {
       try {
         setInquiries(JSON.parse(savedInquiries));
@@ -104,7 +81,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     }
 
-    const savedResponses = localStorage.getItem(getUserStorageKey('inquiryResponses', userId));
+    const savedResponses = localStorage.getItem(getUserStorageKey('inquiryResponses', currentUserId));
     if (savedResponses) {
       try {
         setInquiryResponses(JSON.parse(savedResponses));
@@ -112,7 +89,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
         console.error('Error loading inquiry responses:', error);
       }
     }
-  }, []);
+  }, [currentUserId]);
 
   // Save to localStorage when data changes
   React.useEffect(() => {

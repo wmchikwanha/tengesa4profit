@@ -140,24 +140,45 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
         ) : (
           displayedHistory.map((record, index) => (
             <div key={index} className="border border-zimbabwe-green rounded-lg p-4 bg-zimbabwe-lightGreen">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold">
-                  {format(parseISO(record.date), 'PPP')}
-                </h3>
-                <span className="font-bold text-zimbabwe-darkGreen">
-                  {formatPrice(record.totalProfit)}
-                </span>
+              <div className="mb-3 space-y-2">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold">
+                    {format(parseISO(record.date), 'PPP')}
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm bg-white/50 p-2 rounded">
+                  <div>
+                    <span className="font-semibold">Total Sales:</span>
+                    <span className="ml-2">
+                      {formatPrice(record.products.reduce((sum, p) => {
+                        const calc = calculateProduct(p);
+                        return sum + (calc.sellingPrice * p.quantitySold);
+                      }, 0))}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold">Total Profit:</span>
+                    <span className="ml-2 text-zimbabwe-darkGreen font-bold">
+                      {formatPrice(record.totalProfit)}
+                    </span>
+                  </div>
+                </div>
               </div>
               
               <div className="space-y-2">
                 {record.products.map(product => {
                   const calc = calculateProduct(product);
+                  const salesValue = calc.sellingPrice * product.quantitySold;
                   return (
-                    <div key={product.id} className="flex justify-between text-sm">
-                      <span>{product.name}</span>
-                      <span>
-                        {t.sold}: {product.quantitySold} | {formatPrice(calc.dailyProfit)}
-                      </span>
+                    <div key={product.id} className="border-t pt-2">
+                      <div className="flex justify-between font-medium">
+                        <span>{product.name}</span>
+                        <span className="text-zimbabwe-darkGreen">{formatPrice(calc.dailyProfit)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>Qty: {product.quantitySold} sold, {product.quantityDiscarded} discarded</span>
+                        <span>Sales: {formatPrice(salesValue)}</span>
+                      </div>
                     </div>
                   );
                 })}
