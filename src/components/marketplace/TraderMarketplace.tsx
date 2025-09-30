@@ -45,10 +45,10 @@ export const TraderMarketplace: React.FC = () => {
     return hasVisibleInfo;
   });
 
-  // Only show products if there's an active search term or category filter
-  const hasActiveSearch = searchTerm.trim() !== '' || selectedCategory !== 'all';
+  // Only show products if there's any active filter
+  const hasActiveSearch = searchTerm.trim() !== '' || selectedCategory !== 'all' || locationFilter.trim() !== '' || supplierFilter.trim() !== '';
 
-  // Apply search and category filters
+  // Apply all filters
   const filteredProducts = hasActiveSearch ? publicProducts.filter(product => {
     const matchesSearch = searchTerm === '' || 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
