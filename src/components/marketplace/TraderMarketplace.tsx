@@ -171,9 +171,18 @@ export const TraderMarketplace: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-sm text-zimbabwe-darkGreen">
+              <p className="text-sm text-zimbabwe-darkGreen mb-2">
                 Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
               </p>
+              
+              {/* Column Headers - Hidden on mobile */}
+              <div className="hidden md:grid md:grid-cols-12 gap-2 px-4 py-2 bg-zimbabwe-lightGreen border border-zimbabwe-green rounded-lg font-semibold text-sm">
+                <div className="col-span-3">Product</div>
+                <div className="col-span-2">Category</div>
+                <div className="col-span-2">Brand</div>
+                <div className="col-span-2">Price/Unit</div>
+                <div className="col-span-3">Supplier</div>
+              </div>
               
               <div className="grid gap-4">
                 {filteredProducts.map((product) => {
