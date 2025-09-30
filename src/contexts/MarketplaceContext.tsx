@@ -137,8 +137,8 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
           ...product, 
           ...updates, 
           updatedAt: new Date().toISOString(),
-          // Ensure supplier profile is updated if it exists
-          supplierProfile: supplierProfile || product.supplierProfile
+          // Use the profile from updates if provided, otherwise keep existing
+          supplierProfile: updates.supplierProfile || product.supplierProfile
         } : product
       )
     );

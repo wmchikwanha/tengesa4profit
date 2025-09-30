@@ -358,7 +358,7 @@ const ProductForm: React.FC = () => {
 
         <div>
           <label htmlFor="description" className="trader-label">
-            Product Description <span className="text-sm text-trader-neutral">({t.optional})</span>
+            {t.description} <span className="text-sm text-trader-neutral">({t.optional})</span>
           </label>
           <Input
             id="description"
@@ -366,7 +366,7 @@ const ProductForm: React.FC = () => {
             value={formData.description || ''}
             onChange={handleChange}
             className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
-            placeholder="Optional product description"
+            placeholder={t.description}
           />
         </div>
         

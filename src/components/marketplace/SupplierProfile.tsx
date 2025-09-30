@@ -58,25 +58,15 @@ export const SupplierProfileForm: React.FC = () => {
     setSupplierProfile(profile);
     
     // Force immediate update of all marketplace products with new supplier profile
-    // This ensures visibility changes are reflected immediately
-    const updatedProducts = marketplaceProducts.map(product => {
+    // Pass the profile directly to ensure it's the latest version
+    marketplaceProducts.forEach(product => {
       if (product.supplierId === profile.id) {
-        return { ...product, supplierProfile: profile, updatedAt: new Date().toISOString() };
+        updateMarketplaceProduct(product.id, { 
+          supplierProfile: profile,
+          updatedAt: new Date().toISOString()
+        });
       }
-      return product;
     });
-    
-    // Batch update all products at once for immediate effect
-    if (updatedProducts.length > 0) {
-      marketplaceProducts.forEach(product => {
-        if (product.supplierId === profile.id) {
-          updateMarketplaceProduct(product.id, { 
-            supplierProfile: { ...profile },
-            updatedAt: new Date().toISOString()
-          });
-        }
-      });
-    }
     
     toast({
       title: "Success",
