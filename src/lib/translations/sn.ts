@@ -144,6 +144,13 @@ export const sn: TranslationDictionary = {
   noAccount: "Hauna account?",
   haveAccount: "Unetova account?",
   
+  // Social Auth
+  continueWith: "Kana uenderere ne",
+  signInWithGoogle: "Enderera ne-Google",
+  signInWithFacebook: "Enderera ne-Facebook",
+  signInWithApple: "Enderera ne-Apple",
+  socialAuthNote: "Pinda nekukurumidza ne-account yako",
+  
   // Marketplace
   marketplace: "Musika",
   selectYourRole: "Sarudza Basa Rako",
@@ -173,6 +180,10 @@ export const sn: TranslationDictionary = {
   saveProfile: "Chengetedza Profile",
   searchProductsPlaceholder: "Tsvaga zvinhu, mabrand, kana vatengesi...",
   searchInstruction: "Shandisa search bar kana sarudza category kuti uwane zvinhu kubva kuvatengesi.",
+  contactSupplier: "Bata Mupi",
+  contactViaWhatsApp: "Bata ne-WhatsApp",
+  whatsappMessage: "Mhoro, ndinofarira zvinhu zvenyu pa-Zim Market Trader",
+  phoneContact: "Nhamba Yefoni",
   subscriptionStatus: "Mamiriro eSubscription",
   subscriptionPlan: "Subscription Plan",
   subscriptionExpired: "Subscription Yapera",

@@ -1,6 +1,9 @@
 
-// Service Worker for Trader Profit Buddy
-const CACHE_NAME = 'trader-profit-buddy-v2';
+// Service Worker for Zim Market Trader - Optimized for low data usage
+const CACHE_NAME = 'zim-market-trader-v3';
+const DYNAMIC_CACHE = 'zim-market-trader-dynamic-v3';
+
+// Essential assets to cache - minimal for low data
 const urlsToCache = [
   '/',
   '/index.html',
@@ -31,7 +34,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
+          if (cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE) {
             return caches.delete(cacheName);
           }
         })
@@ -40,57 +43,89 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - network-first strategy for HTML and app logic, cache-first for assets
+// Fetch event - Optimized for low-data environments
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  
+  // Skip cross-origin requests
+  if (url.origin !== location.origin) {
+    return;
+  }
   
   // Check if it's a navigation request (HTML document)
   const isNavigationRequest = event.request.mode === 'navigate';
   
-  // For HTML documents, use network-first strategy to always get fresh content
+  // For HTML documents, use cache-first with network fallback (better for low data)
   if (isNavigationRequest) {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request);
+      caches.match(event.request)
+        .then(cachedResponse => {
+          if (cachedResponse) {
+            // Return cached version immediately, then update cache in background
+            event.waitUntil(
+              fetch(event.request)
+                .then(response => {
+                  if (response && response.status === 200) {
+                    caches.open(CACHE_NAME).then(cache => {
+                      cache.put(event.request, response);
+                    });
+                  }
+                })
+                .catch(() => {}) // Silently fail background update
+            );
+            return cachedResponse;
+          }
+          // No cache, fetch from network
+          return fetch(event.request)
+            .then(response => {
+              if (response && response.status === 200) {
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then(cache => {
+                  cache.put(event.request, responseClone);
+                });
+              }
+              return response;
+            });
         })
     );
     return;
   }
   
-  // For other assets, try the cache first, then the network
+  // For API requests and other assets - cache first, then network
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return the response from cache
-        if (response) {
-          return response;
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
         
-        // Clone the request because it's a one-time use
-        const fetchRequest = event.request.clone();
-        
-        return fetch(fetchRequest).then(
+        return fetch(event.request).then(
           (response) => {
-            // Check if valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            // Only cache successful responses
+            if (!response || response.status !== 200) {
               return response;
             }
             
-            // Clone the response because it's a one-time use
-            const responseToCache = response.clone();
-            
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
+            // Don't cache API responses or large files
+            const contentType = response.headers.get('content-type');
+            if (contentType && (
+              contentType.includes('application/json') ||
+              contentType.includes('text/html')
+            )) {
+              const responseClone = response.clone();
+              caches.open(DYNAMIC_CACHE).then((cache) => {
+                cache.put(event.request, responseClone);
               });
+            }
               
             return response;
           }
-        );
+        ).catch(() => {
+          // Return offline page for failed navigation requests
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+        });
       })
   );
 });

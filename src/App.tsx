@@ -10,6 +10,7 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { AppDataProvider } from '@/contexts/AppDataContext';
 import { MarketplaceProvider } from '@/contexts/MarketplaceContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -26,6 +27,7 @@ const App = () => (
               <MarketplaceProvider>
                 <TooltipProvider>
                   <ToastProvider>
+                    <OfflineIndicator />
                     <Routes>
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/" element={<Index />} />

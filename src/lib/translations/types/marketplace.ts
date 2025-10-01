@@ -25,4 +25,10 @@ export interface MarketplaceTranslations {
   saveProfile: string;
   searchProductsPlaceholder: string;
   searchInstruction: string;
+  
+  // Contact & Communication
+  contactSupplier: string;
+  contactViaWhatsApp: string;
+  whatsappMessage: string;
+  phoneContact: string;
 }

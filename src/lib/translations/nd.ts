@@ -144,6 +144,13 @@ export const nd: TranslationDictionary = {
   noAccount: "Awuna-akhawunti?",
   haveAccount: "Usunayo i-akhawunti?",
   
+  // Social Auth
+  continueWith: "Noma qhubeka nge",
+  signInWithGoogle: "Qhubeka nge-Google",
+  signInWithFacebook: "Qhubeka nge-Facebook",
+  signInWithApple: "Qhubeka nge-Apple",
+  socialAuthNote: "Ngena ngokushesha nge-akhawunti yakho",
+  
   // Marketplace
   marketplace: "Indawo Yokuthengisa",
   selectYourRole: "Khetha Indima Yakho",
@@ -173,6 +180,10 @@ export const nd: TranslationDictionary = {
   saveProfile: "Gcina Iphrofayili",
   searchProductsPlaceholder: "Sesha imikhiqizo, amabrand, noma abahlinzeki...",
   searchInstruction: "Sebenzisa ibha yokusesha noma khetha isigaba ukuze uthole imikhiqizo evela kubahlinzeki.",
+  contactSupplier: "Xhumana Nomhlinzeki",
+  contactViaWhatsApp: "Xhumana nge-WhatsApp",
+  whatsappMessage: "Sawubona, nginomdlandla wemikhiqizo yakho ku-Zim Market Trader",
+  phoneContact: "Inombolo Yocingo",
   subscriptionStatus: "Isimo Sokubhalisela",
   subscriptionPlan: "Iphilani Yokubhalisela",
   subscriptionExpired: "Ukubhalisela Kuphelelwe",

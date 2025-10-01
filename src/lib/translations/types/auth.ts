@@ -14,4 +14,11 @@ export interface AuthTranslations {
   // Auth Flow
   noAccount: string;
   haveAccount: string;
+  
+  // Social Auth
+  continueWith: string;
+  signInWithGoogle: string;
+  signInWithFacebook: string;
+  signInWithApple: string;
+  socialAuthNote: string;
 }

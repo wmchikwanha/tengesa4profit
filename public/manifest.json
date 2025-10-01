@@ -2,7 +2,7 @@
 {
   "name": "Zim Market Trader",
   "short_name": "Market Trader",
-  "description": "A simple profit calculator for Zimbabwean traders",
+  "description": "Connect vendors with suppliers. Track profit, find products, list inventory - optimized for low data usage",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#EBF5FF",

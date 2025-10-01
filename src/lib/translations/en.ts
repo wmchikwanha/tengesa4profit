@@ -145,6 +145,13 @@ export const en: TranslationDictionary = {
   noAccount: "Don't have an account?",
   haveAccount: "Already have an account?",
   
+  // Social Auth
+  continueWith: "Or continue with",
+  signInWithGoogle: "Continue with Google",
+  signInWithFacebook: "Continue with Facebook",
+  signInWithApple: "Continue with Apple",
+  socialAuthNote: "Quick sign-in with your social account",
+  
   // Marketplace
   marketplace: "Marketplace",
   selectYourRole: "Select Your Role",
@@ -174,6 +181,10 @@ export const en: TranslationDictionary = {
   saveProfile: "Save Profile",
   searchProductsPlaceholder: "Search products, brands, or suppliers...",
   searchInstruction: "Use the search bar or select a category to find products from suppliers.",
+  contactSupplier: "Contact Supplier",
+  contactViaWhatsApp: "Contact via WhatsApp",
+  whatsappMessage: "Hello, I'm interested in your products on Zim Market Trader",
+  phoneContact: "Phone Contact",
   subscriptionStatus: "Subscription Status",
   subscriptionPlan: "Subscription Plan",
   subscriptionExpired: "Subscription Expired",
