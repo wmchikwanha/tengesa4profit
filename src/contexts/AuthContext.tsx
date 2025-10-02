@@ -68,7 +68,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!session?.user) return;
     
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession?.access_token) {
+        console.error('No access token available');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${currentSession.access_token}`
+        }
+      });
       if (error) throw error;
       
       setSubscriptionStatus({

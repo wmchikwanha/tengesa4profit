@@ -162,11 +162,11 @@ export const SubscriptionStatus: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="default" className="bg-green-500">Active</Badge>
-                <span className="font-medium break-words">{subscriptionStatus.tier} Plan</span>
+                <span className="font-medium break-words capitalize">{subscriptionStatus.tier || 'Premium'} Subscription</span>
               </div>
               <p className="text-sm text-gray-600 break-words">
                 {subscriptionDaysLeft > 0 
-                  ? `${subscriptionDaysLeft} days remaining`
+                  ? `${subscriptionDaysLeft} ${t.daysLeft}`
                   : 'Subscription expired'
                 }
               </p>
@@ -194,13 +194,19 @@ export const SubscriptionStatus: React.FC = () => {
                   {trialDaysLeft > 0 ? `${trialDaysLeft} ${t.daysLeft}` : t.trialExpired}
                 </span>
               </div>
-              {trialDaysLeft <= 7 && (
+              {trialDaysLeft === 0 ? (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-sm text-red-800 break-words">
+                    {t.trialMessage || 'Your trial has ended. Upgrade to continue using premium features.'}
+                  </p>
+                </div>
+              ) : trialDaysLeft <= 7 ? (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                   <p className="text-sm text-yellow-800 break-words">
                     {t.trialExpiresSoon}
                   </p>
                 </div>
-              )}
+              ) : null}
             </div>
           )}
         </CardContent>
