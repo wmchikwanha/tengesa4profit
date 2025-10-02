@@ -80,11 +80,16 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
   const ProductSummaryCard: React.FC<{ product: ProductReportData }> = ({ product }) => (
     <Card className="border border-zimbabwe-green">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-zimbabwe-darkGreen flex items-center justify-between">
-          <span>{product.productName}</span>
-          <Badge variant={product.profitMargin > 20 ? "default" : "secondary"}>
-            {product.profitMargin.toFixed(1)}% margin
-          </Badge>
+        <CardTitle className="text-lg font-semibold text-zimbabwe-darkGreen">
+          <div className="flex items-center justify-between">
+            <span>{product.productName}</span>
+            <div className="flex flex-col items-end gap-1">
+              <Badge variant={product.profitMargin > 20 ? "default" : "secondary"}>
+                {product.profitMargin.toFixed(1)}% margin
+              </Badge>
+              <span className="text-xs text-gray-500 font-normal">Profit ÷ Sales</span>
+            </div>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

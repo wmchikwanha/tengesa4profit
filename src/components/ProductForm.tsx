@@ -487,6 +487,9 @@ const ProductForm: React.FC = () => {
                 onValueChange={handleMarkupChange}
                 className="py-4"
               />
+              <p className="text-xs text-gray-600 mt-1">
+                Note: Markup % = Profit ÷ Cost. Report margin % = Profit ÷ Sales (always lower)
+              </p>
             </div>
             
             <div>

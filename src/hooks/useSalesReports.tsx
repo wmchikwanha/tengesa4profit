@@ -126,8 +126,8 @@ export function useSalesReports(salesHistory: SalesRecord[], products: Product[]
       });
 
       const averageDailyProfit = productInstances.length > 0 ? totalProfit / productInstances.length : 0;
-      // Calculate weighted average margin based on actual sales quantities and their markups
-      // profitMargin = (totalProfit / totalSalesValue) * 100
+      // Profit margin = (profit / sales) * 100
+      // Note: This is different from markup which is (profit / cost) * 100
       const profitMargin = totalSalesValue > 0 ? (totalProfit / totalSalesValue) * 100 : 0;
 
       productReports.push({
