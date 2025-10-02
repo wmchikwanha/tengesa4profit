@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,12 @@ export const SubscriptionStatus: React.FC = () => {
   const { toast } = useToast();
 
   const [effectiveTrialEnd, setEffectiveTrialEnd] = useState<string | null>(null);
+
+  // Track latest subscribed state to avoid stale closure inside polling interval
+  const subscribedRef = useRef(subscriptionStatus.subscribed);
+  useEffect(() => {
+    subscribedRef.current = subscriptionStatus.subscribed;
+  }, [subscriptionStatus.subscribed]);
 
   useEffect(() => {
     if (!user) return;
@@ -41,6 +47,13 @@ export const SubscriptionStatus: React.FC = () => {
     setEffectiveTrialEnd(end);
   }, [user?.id, subscriptionStatus.trialEnd]);
 
+  // Ensure we refresh subscription once when component mounts or user changes
+  useEffect(() => {
+    if (user) {
+      refreshSubscription();
+    }
+  }, [user?.id]);
+
 
   const calculateDaysLeft = (endDate: string | null) => {
     if (!endDate) return 0;
@@ -56,32 +69,45 @@ export const SubscriptionStatus: React.FC = () => {
     
     setLoading(true);
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { tier, price }
+        body: { tier, price },
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
       
       if (error) throw error;
       
       if (data?.url) {
-        // Open payment page
-        const paymentWindow = window.open(data.url, '_blank');
-        
-        // Poll for subscription status after opening payment page
+        // Open payment page in a new tab
+        window.open(data.url, '_blank');
+
+        // Also refresh when user returns focus to the app
+        const onFocus = async () => {
+          await refreshSubscription();
+        };
+        window.addEventListener('focus', onFocus);
+
+        // Poll for subscription status while checkout is in progress
         const pollInterval = setInterval(async () => {
           await refreshSubscription();
-          
-          // Check if subscribed
-          if (subscriptionStatus.subscribed) {
+
+          // Check latest subscribed state via ref to avoid stale closure
+          if (subscribedRef.current) {
             clearInterval(pollInterval);
+            window.removeEventListener('focus', onFocus);
             toast({
               title: "Success",
               description: "Your subscription has been activated!",
             });
           }
         }, 3000); // Check every 3 seconds
-        
-        // Stop polling after 5 minutes
-        setTimeout(() => clearInterval(pollInterval), 300000);
+
+        // Stop polling after 5 minutes (cleanup)
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          window.removeEventListener('focus', onFocus);
+        }, 300000);
       }
     } catch (error) {
       console.error('Checkout error:', error);
