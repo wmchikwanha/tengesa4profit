@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FeedbackForm } from './FeedbackForm';
+import { SettingsDialog } from './SettingsDialog';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -63,6 +65,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             {marketplaceContent}
           </TabsContent>
         </Tabs>
+        
+        <footer className="mt-8 pb-4 flex justify-center gap-3">
+          <FeedbackForm />
+          <SettingsDialog />
+        </footer>
       </main>
     </div>
   );
