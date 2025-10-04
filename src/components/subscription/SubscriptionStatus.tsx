@@ -47,10 +47,17 @@ export const SubscriptionStatus: React.FC = () => {
     setEffectiveTrialEnd(end);
   }, [user?.id, subscriptionStatus.trialEnd]);
 
-  // Ensure we refresh subscription once when component mounts or user changes
+  // Refresh subscription when component mounts and periodically
   useEffect(() => {
     if (user) {
       refreshSubscription();
+      
+      // Also refresh every 30 seconds to catch status changes
+      const interval = setInterval(() => {
+        refreshSubscription();
+      }, 30000);
+      
+      return () => clearInterval(interval);
     }
   }, [user?.id]);
 
@@ -215,15 +222,20 @@ export const SubscriptionStatus: React.FC = () => {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="secondary">Trial</Badge>
+                <Badge variant={trialDaysLeft === 0 ? "destructive" : "secondary"}>
+                  {trialDaysLeft === 0 ? "Trial Expired" : "Trial"}
+                </Badge>
                 <span className="font-medium break-words">
-                  {trialDaysLeft > 0 ? `${trialDaysLeft} ${t.daysLeft}` : t.trialExpired}
+                  {trialDaysLeft > 0 ? `${trialDaysLeft} ${t.daysLeft}` : "Subscribe to continue"}
                 </span>
               </div>
               {trialDaysLeft === 0 ? (
-                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                  <p className="text-sm font-semibold text-red-900 mb-2 break-words">
+                    Trial Expired - Subscribe Now
+                  </p>
                   <p className="text-sm text-red-800 break-words">
-                    {t.trialMessage || 'Your trial has ended. Upgrade to continue using premium features.'}
+                    {t.trialMessage || 'Your trial has ended. Upgrade to premium to continue using all features.'}
                   </p>
                 </div>
               ) : trialDaysLeft <= 7 ? (

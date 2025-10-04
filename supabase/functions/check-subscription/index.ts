@@ -109,20 +109,27 @@ serve(async (req) => {
       // Check if trial has expired to determine tier
       const now = new Date();
       const trialEnd = existingSubscriber.trial_end ? new Date(existingSubscriber.trial_end) : null;
-      let tier = existingSubscriber.subscription_tier;
+      let tier = existingSubscriber.subscription_tier || "trial";
       
       if (trialEnd && now > trialEnd) {
         tier = "free";
         logStep("No customer found, trial expired, setting to free tier");
         
-        // Update database to reflect free tier
+        // Update database to reflect free tier - FORCE subscribed to false
         await supabaseClient.from("subscribers").update({
           subscription_tier: "free",
           subscribed: false,
+          stripe_customer_id: null,
+          subscription_end: null,
           updated_at: new Date().toISOString(),
         }).eq("email", user.email);
       } else {
         logStep("No customer found, returning trial status");
+        // Ensure trial users are marked as not subscribed
+        await supabaseClient.from("subscribers").update({
+          subscribed: false,
+          updated_at: new Date().toISOString(),
+        }).eq("email", user.email);
       }
       
       return new Response(JSON.stringify({
