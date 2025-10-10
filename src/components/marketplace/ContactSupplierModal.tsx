@@ -1,5 +1,6 @@
 
 import * as React from 'react';
+import { z } from 'zod';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -9,6 +10,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Building, User, Mail, MessageCircle, Phone } from 'lucide-react';
 import { MarketplaceProduct, ProductInquiry } from '@/lib/marketplace-types';
+import { useToast } from '@/hooks/use-toast';
+
+const contactSchema = z.object({
+  traderName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100, 'Name must be less than 100 characters'),
+  traderEmail: z.string().trim().email('Invalid email address').max(255, 'Email must be less than 255 characters'),
+  traderPhone: z.string().trim().max(20, 'Phone number must be less than 20 characters').optional().or(z.literal('')),
+  message: z.string().trim().min(10, 'Message must be at least 10 characters').max(1000, 'Message must be less than 1000 characters'),
+  quantity: z.string().optional().refine((val) => {
+    if (!val || val === '') return true;
+    const num = parseInt(val);
+    return !isNaN(num) && num > 0 && num <= 1000000;
+  }, 'Quantity must be between 1 and 1,000,000')
+});
 
 interface ContactSupplierModalProps {
   isOpen: boolean;
@@ -23,6 +37,7 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
 }) => {
   const { addInquiry } = useMarketplace();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [formData, setFormData] = React.useState({
     traderName: '',
     traderEmail: '',
@@ -30,21 +45,43 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
     message: '',
     quantity: '',
   });
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form data
+    const validation = contactSchema.safeParse(formData);
+    if (!validation.success) {
+      const fieldErrors: Record<string, string> = {};
+      validation.error.errors.forEach(err => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0].toString()] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      toast({
+        title: 'Validation Error',
+        description: 'Please fix the errors in the form',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Clear errors
+    setErrors({});
     
     const inquiry: ProductInquiry = {
       id: crypto.randomUUID(),
       productId: product.id,
       productName: product.name,
       traderId: 'current-trader', // In real app, this would be from auth
-      traderName: formData.traderName,
-      traderEmail: formData.traderEmail,
-      traderPhone: formData.traderPhone,
+      traderName: validation.data.traderName,
+      traderEmail: validation.data.traderEmail,
+      traderPhone: validation.data.traderPhone || '',
       supplierId: product.supplierId,
-      message: formData.message,
-      quantity: formData.quantity ? parseInt(formData.quantity) : undefined,
+      message: validation.data.message,
+      quantity: validation.data.quantity ? parseInt(validation.data.quantity) : undefined,
       status: 'pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -60,10 +97,14 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
       message: '',
       quantity: '',
     });
+    setErrors({});
     onClose();
     
     // Show success message
-    alert('Your inquiry has been sent to the supplier!');
+    toast({
+      title: 'Inquiry Sent',
+      description: 'Your inquiry has been sent to the supplier!'
+    });
   };
 
   const handleWhatsAppContact = () => {
@@ -172,10 +213,14 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
               <label className="trader-label">Your Name *</label>
               <Input
                 value={formData.traderName}
-                onChange={(e) => setFormData(prev => ({ ...prev, traderName: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, traderName: e.target.value }));
+                  if (errors.traderName) setErrors(prev => ({ ...prev, traderName: '' }));
+                }}
                 className="trader-input"
                 required
               />
+              {errors.traderName && <p className="text-xs text-red-600 mt-1">{errors.traderName}</p>}
             </div>
 
             <div>
@@ -183,19 +228,27 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
               <Input
                 type="email"
                 value={formData.traderEmail}
-                onChange={(e) => setFormData(prev => ({ ...prev, traderEmail: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, traderEmail: e.target.value }));
+                  if (errors.traderEmail) setErrors(prev => ({ ...prev, traderEmail: '' }));
+                }}
                 className="trader-input"
                 required
               />
+              {errors.traderEmail && <p className="text-xs text-red-600 mt-1">{errors.traderEmail}</p>}
             </div>
 
             <div>
               <label className="trader-label">Your Phone</label>
               <Input
                 value={formData.traderPhone}
-                onChange={(e) => setFormData(prev => ({ ...prev, traderPhone: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, traderPhone: e.target.value }));
+                  if (errors.traderPhone) setErrors(prev => ({ ...prev, traderPhone: '' }));
+                }}
                 className="trader-input"
               />
+              {errors.traderPhone && <p className="text-xs text-red-600 mt-1">{errors.traderPhone}</p>}
             </div>
 
             <div>
@@ -203,22 +256,30 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
               <Input
                 type="number"
                 value={formData.quantity}
-                onChange={(e) => setFormData(prev => ({ ...prev, quantity: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, quantity: e.target.value }));
+                  if (errors.quantity) setErrors(prev => ({ ...prev, quantity: '' }));
+                }}
                 className="trader-input"
                 placeholder={`e.g., 50 ${product.unit}`}
               />
+              {errors.quantity && <p className="text-xs text-red-600 mt-1">{errors.quantity}</p>}
             </div>
 
             <div>
               <label className="trader-label">Message *</label>
               <Textarea
                 value={formData.message}
-                onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, message: e.target.value }));
+                  if (errors.message) setErrors(prev => ({ ...prev, message: '' }));
+                }}
                 className="trader-input"
                 rows={4}
                 placeholder="Hi, I'm interested in your product. Please provide more details..."
                 required
               />
+              {errors.message && <p className="text-xs text-red-600 mt-1">{errors.message}</p>}
             </div>
 
             <div className="flex gap-2">
