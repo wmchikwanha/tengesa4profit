@@ -31,4 +31,11 @@ export interface MarketplaceTranslations {
   contactViaWhatsApp: string;
   whatsappMessage: string;
   phoneContact: string;
+  
+  // Search and Filter
+  searchProductsAndBrands: string;
+  locationPlaceholder: string;
+  supplierNamePlaceholder: string;
+  sortByNameAZ: string;
+  sortByPriceLowHigh: string;
 }
