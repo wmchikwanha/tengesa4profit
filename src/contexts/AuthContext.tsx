@@ -10,7 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signUpWithPhone: (phone: string, password: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signInWithPhone: (phone: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   subscriptionStatus: {
@@ -205,7 +205,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe: boolean = true) => {
     try {
       // Force complete cleanup before sign in
       cleanupAuthState();
@@ -229,6 +229,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data.user) {
+        // Store remember me preference
+        if (!rememberMe) {
+          sessionStorage.setItem('auth-no-persist', 'true');
+          // Add event listener to clear session on browser close
+          window.addEventListener('beforeunload', () => {
+            if (sessionStorage.getItem('auth-no-persist') === 'true') {
+              supabase.auth.signOut({ scope: 'local' });
+            }
+          });
+        } else {
+          sessionStorage.removeItem('auth-no-persist');
+        }
+        
         // Force complete page reload to ensure clean state
         window.location.replace('/');
       }

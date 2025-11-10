@@ -19,6 +19,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function Auth() {
 
     try {
       const result = isLogin 
-        ? await signIn(email, password)
+        ? await signIn(email, password, rememberMe)
         : await signUp(email, password);
 
       if (result.error) {
@@ -116,6 +117,22 @@ export default function Auth() {
               </div>
             </div>
             
+            {isLogin && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <label
+                  htmlFor="remember"
+                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                >
+                  Remember me
+                </label>
+              </div>
+            )}
+            
             {!isLogin && (
               <div className="flex items-start space-x-2">
                 <Checkbox
@@ -140,7 +157,7 @@ export default function Auth() {
               </div>
             )}
             
-            <Button 
+            <Button
               type="submit" 
               className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
               disabled={loading}
