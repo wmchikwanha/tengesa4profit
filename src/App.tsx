@@ -13,6 +13,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
                     <OfflineIndicator />
                     <Routes>
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/" element={<Index />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
