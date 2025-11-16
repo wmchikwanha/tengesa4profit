@@ -73,15 +73,31 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const result = isLogin 
-        ? await signIn(email, password, rememberMe)
-        : await signUp(email, password);
+      let result;
+      
+      if (isLogin) {
+        result = await signIn(email, password, rememberMe);
+      } else {
+        const redirectUrl = `${window.location.origin}/verify-email`;
+        result = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: redirectUrl
+          }
+        });
+      }
 
       if (result.error) {
         toast({
           title: "Error",
           description: result.error.message,
           variant: "destructive",
+        });
+      } else if (!isLogin) {
+        toast({
+          title: "Check your email",
+          description: "We've sent you a verification link.",
         });
       }
     } catch (error) {

@@ -4,7 +4,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FeedbackForm } from './FeedbackForm';
-import { SettingsDialog } from './SettingsDialog';
+import { Button } from '@/components/ui/button';
+import { Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -20,6 +22,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = React.useState('addProduct');
+  const navigate = useNavigate();
 
   return (
     <div className="trader-container min-h-screen">
@@ -68,7 +71,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         
         <footer className="mt-8 pb-4 flex justify-center gap-3">
           <FeedbackForm />
-          <SettingsDialog />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/settings')}
+            className="gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Button>
         </footer>
       </main>
     </div>
