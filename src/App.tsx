@@ -14,6 +14,8 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
                     <Routes>
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/verify-email" element={<VerifyEmail />} />
+                      <Route path="/settings" element={<Settings />} />
                       <Route path="/" element={<Index />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
