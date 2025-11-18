@@ -5,7 +5,7 @@ import LanguageToggle from './LanguageToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FeedbackForm } from './FeedbackForm';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { Settings, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AppLayoutProps {
@@ -71,6 +71,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         
         <footer className="mt-8 pb-4 flex justify-center gap-3">
           <FeedbackForm />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/profile')}
+            className="gap-2"
+          >
+            <User className="h-4 w-4" />
+            Profile
+          </Button>
           <Button
             variant="outline"
             size="sm"
