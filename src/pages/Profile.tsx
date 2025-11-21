@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { AppFooter } from "@/components/AppFooter";
+import { AboutDialog } from "@/components/AboutDialog";
 
 interface ProfileData {
   display_name: string;
@@ -110,6 +111,7 @@ export default function Profile() {
 
   return (
     <div className="container max-w-2xl mx-auto py-8 px-4">
+      <AboutDialog />
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>

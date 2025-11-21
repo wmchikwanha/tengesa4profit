@@ -9,6 +9,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 import { AppFooter } from '@/components/AppFooter';
+import { AboutDialog } from '@/components/AboutDialog';
 
 const passwordSchema = z.object({
   password: z.string()
@@ -94,6 +95,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex items-center justify-center p-4">
+      <AboutDialog />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-zimbabwe-darkGreen">

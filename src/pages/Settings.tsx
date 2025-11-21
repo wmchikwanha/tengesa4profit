@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ArrowLeft, Trash2, Key, Mail } from 'lucide-react';
 import { AppFooter } from '@/components/AppFooter';
+import { AboutDialog } from '@/components/AboutDialog';
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -132,6 +133,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AboutDialog />
       <div className="container max-w-2xl py-8">
         <Button
           variant="ghost"
