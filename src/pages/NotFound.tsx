@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { AppFooter } from "@/components/AppFooter";
+import { AboutDialog } from "@/components/AboutDialog";
 
 const NotFound = () => {
   const location = useLocation();
@@ -14,6 +15,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <AboutDialog />
       <div className="flex-1 flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">404</h1>

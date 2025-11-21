@@ -12,6 +12,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { TermsDialog } from '@/components/TermsDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { AppFooter } from '@/components/AppFooter';
+import { AboutDialog } from '@/components/AboutDialog';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -115,6 +116,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex items-center justify-center p-4">
+      <AboutDialog />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-zimbabwe-darkGreen">
