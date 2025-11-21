@@ -7,6 +7,8 @@ import { FeedbackForm } from './FeedbackForm';
 import { Button } from '@/components/ui/button';
 import { Settings, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { AboutDialog } from './AboutDialog';
+import { AppFooter } from './AppFooter';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -26,6 +28,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="trader-container min-h-screen">
+      <AboutDialog />
+      
       <header className="text-center mb-6">
         <h1 className="text-3xl app-title">Tengesa4Profit</h1>
         <p className="text-lg text-zimbabwe-darkGreen mt-2 font-medium">{t.appTagline}</p>
@@ -69,7 +73,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           </TabsContent>
         </Tabs>
         
-        <footer className="mt-8 pb-4 flex justify-center gap-3">
+        <div className="mt-8 pb-4 flex justify-center gap-3">
           <FeedbackForm />
           <Button
             variant="outline"
@@ -89,7 +93,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             <Settings className="h-4 w-4" />
             Settings
           </Button>
-        </footer>
+        </div>
+        
+        <AppFooter />
       </main>
     </div>
   );

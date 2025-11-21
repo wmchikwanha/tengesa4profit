@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
+import { AppFooter } from '@/components/AppFooter';
 
 const passwordSchema = z.object({
   password: z.string()
@@ -174,6 +175,7 @@ export default function ResetPassword() {
           </div>
         </CardContent>
       </Card>
+      <AppFooter />
     </div>
   );
 }

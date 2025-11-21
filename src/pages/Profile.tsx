@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { AppFooter } from "@/components/AppFooter";
 
 interface ProfileData {
   display_name: string;
@@ -176,6 +177,7 @@ export default function Profile() {
           </form>
         </CardContent>
       </Card>
+      <AppFooter />
     </div>
   );
 }

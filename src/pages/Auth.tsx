@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { TermsDialog } from '@/components/TermsDialog';
 import { supabase } from '@/integrations/supabase/client';
+import { AppFooter } from '@/components/AppFooter';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -249,6 +250,7 @@ export default function Auth() {
       </Card>
       
       <TermsDialog isOpen={showTerms} onOpenChange={setShowTerms} />
+      <AppFooter />
     </div>
   );
 }

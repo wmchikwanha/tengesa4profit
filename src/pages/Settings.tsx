@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ArrowLeft, Trash2, Key, Mail } from 'lucide-react';
+import { AppFooter } from '@/components/AppFooter';
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -289,6 +290,7 @@ export default function Settings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <AppFooter />
     </div>
   );
 }
