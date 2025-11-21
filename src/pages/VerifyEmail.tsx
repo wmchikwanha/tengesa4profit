@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { AppFooter } from '@/components/AppFooter';
 
 export default function VerifyEmail() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -71,6 +72,7 @@ export default function VerifyEmail() {
           )}
         </CardContent>
       </Card>
+      <AppFooter />
     </div>
   );
 }
