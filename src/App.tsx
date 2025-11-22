@@ -10,6 +10,7 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { AppDataProvider } from '@/contexts/AppDataContext';
 import { MarketplaceProvider } from '@/contexts/MarketplaceContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -29,21 +30,23 @@ const App = () => (
           <CurrencyProvider>
             <AppDataProvider>
               <MarketplaceProvider>
-                <TooltipProvider>
-                  <ToastProvider>
-                    <OfflineIndicator />
-                    <Routes>
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/reset-password" element={<ResetPassword />} />
-                      <Route path="/verify-email" element={<VerifyEmail />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/" element={<Index />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                    <Toaster />
-                  </ToastProvider>
-                </TooltipProvider>
+                <NotificationProvider>
+                  <TooltipProvider>
+                    <ToastProvider>
+                      <OfflineIndicator />
+                      <Routes>
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/verify-email" element={<VerifyEmail />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/" element={<Index />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                      <Toaster />
+                    </ToastProvider>
+                  </TooltipProvider>
+                </NotificationProvider>
               </MarketplaceProvider>
             </AppDataProvider>
           </CurrencyProvider>

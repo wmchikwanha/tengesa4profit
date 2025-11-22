@@ -3,6 +3,9 @@ project_id = "wtvglsneskjzhfudqpgv"
 [functions.ai-business-assistant]
 verify_jwt = false
 
+[functions.ai-proactive-alerts]
+verify_jwt = false
+
 [functions.check-subscription]
 verify_jwt = true
 
