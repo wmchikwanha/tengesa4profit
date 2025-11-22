@@ -9,6 +9,7 @@ import { Settings, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AboutDialog } from './AboutDialog';
 import { AppFooter } from './AppFooter';
+import { AIAssistant } from './AIAssistant';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -29,6 +30,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="trader-container min-h-screen">
       <AboutDialog />
+      <AIAssistant />
       
       <header className="text-center mb-6">
         <h1 className="text-3xl app-title">Tengesa4Profit</h1>
