@@ -22,11 +22,11 @@ export const useSubscriptionPermissions = (): SubscriptionPermissions => {
   let localTrialEnd = storageKey ? localStorage.getItem(storageKey) : null;
   const serverTrialEnd = subscriptionStatus.trialEnd;
 
-  // If neither server nor local value exists (new account), start a 1-day trial and persist it
+  // If neither server nor local value exists (new account), start a 30-day trial and persist it
   if (!serverTrialEnd && !localTrialEnd && user) {
-    const oneDayFromNow = new Date();
-    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
-    localTrialEnd = oneDayFromNow.toISOString();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+    localTrialEnd = thirtyDaysFromNow.toISOString();
     localStorage.setItem(storageKey!, localTrialEnd);
   }
 
