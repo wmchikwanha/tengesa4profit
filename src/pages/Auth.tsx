@@ -115,7 +115,7 @@ export default function Auth() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex items-center justify-center p-4 pb-20">
       <AboutDialog />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
