@@ -28,7 +28,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = React.useState('addProduct');
   const navigate = useNavigate();
-  useProactiveAlerts(); // Initialize proactive alerts
+  // useProactiveAlerts(); // Disabled during testing to prevent automatic AI credit usage
 
   return (
     <div className="trader-container min-h-screen">
