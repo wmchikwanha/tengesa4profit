@@ -115,8 +115,18 @@ export default function Auth() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex items-center justify-center p-4 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex flex-col items-center justify-center p-4 pb-20 gap-8">
       <AboutDialog />
+      
+      <div className="text-center">
+        <h1 className="text-3xl sm:text-4xl app-title mb-2 text-zimbabwe-darkGreen">
+          Tengesa4Profit
+        </h1>
+        <p className="text-base sm:text-lg text-zimbabwe-darkGreen/80 font-medium">
+          Smart Business Management for Traders
+        </p>
+      </div>
+      
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-zimbabwe-darkGreen">
