@@ -16,6 +16,9 @@ import {
 } from 'lucide-react';
 import { AppFooter } from '@/components/AppFooter';
 import { AboutDialog } from '@/components/AboutDialog';
+import installAndroidChrome from '@/assets/install-android-chrome.jpg';
+import installIosSafari from '@/assets/install-ios-safari.jpg';
+import installDesktopChrome from '@/assets/install-desktop-chrome.jpg';
 
 export default function Install() {
   const navigate = useNavigate();
@@ -141,6 +144,15 @@ export default function Install() {
                   <p className="text-sm text-muted-foreground">The app icon will appear on your home screen!</p>
                 </div>
               </div>
+
+              {/* Visual Guide */}
+              <div className="mt-4 rounded-lg overflow-hidden border">
+                <img 
+                  src={installAndroidChrome} 
+                  alt="Android Chrome installation visual guide" 
+                  className="w-full h-auto"
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -196,6 +208,15 @@ export default function Install() {
                   <p className="text-sm text-muted-foreground">The app will appear on your home screen</p>
                 </div>
               </div>
+
+              {/* Visual Guide */}
+              <div className="mt-4 rounded-lg overflow-hidden border">
+                <img 
+                  src={installIosSafari} 
+                  alt="iPhone Safari installation visual guide" 
+                  className="w-full h-auto"
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -242,6 +263,15 @@ export default function Install() {
                   <p className="font-medium">App opens in its own window</p>
                   <p className="text-sm text-muted-foreground">Works like a desktop application!</p>
                 </div>
+              </div>
+
+              {/* Visual Guide */}
+              <div className="mt-4 rounded-lg overflow-hidden border">
+                <img 
+                  src={installDesktopChrome} 
+                  alt="Desktop Chrome installation visual guide" 
+                  className="w-full h-auto"
+                />
               </div>
             </CardContent>
           </Card>
