@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ArrowLeft, Trash2, Key, Mail } from 'lucide-react';
 import { AppFooter } from '@/components/AppFooter';
 import { AboutDialog } from '@/components/AboutDialog';
+import { DataSavingsWidget } from '@/components/DataSavingsWidget';
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -169,6 +170,9 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Data Savings */}
+          <DataSavingsWidget />
 
           {/* Change Password */}
           <Card>
