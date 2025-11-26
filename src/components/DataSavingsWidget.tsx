@@ -3,9 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useDataUsageTracker } from '@/hooks/useDataUsageTracker';
 import { TrendingDown, Wifi, Calendar, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export const DataSavingsWidget: React.FC = () => {
   const { stats, formatDataSize, getDaysSinceInstall, isPWAInstalled } = useDataUsageTracker();
+  const navigate = useNavigate();
 
   if (!isPWAInstalled) {
     return (
@@ -19,6 +22,14 @@ export const DataSavingsWidget: React.FC = () => {
             Install the app to start tracking your data savings!
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <Button 
+            onClick={() => navigate('/install')}
+            className="w-full"
+          >
+            Learn How to Install
+          </Button>
+        </CardContent>
       </Card>
     );
   }

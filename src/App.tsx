@@ -20,6 +20,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Install from "./pages/Install";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
                         <Route path="/verify-email" element={<VerifyEmail />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/install" element={<Install />} />
                         <Route path="/" element={<Index />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
