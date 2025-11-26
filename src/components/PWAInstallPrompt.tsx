@@ -75,7 +75,15 @@ export const PWAInstallPrompt: React.FC = () => {
               size="sm"
               className="flex-1"
             >
-              Install
+              Install Now
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/install'}
+              variant="ghost"
+              size="sm"
+              className="text-primary-foreground hover:text-primary-foreground hover:bg-primary-foreground/10"
+            >
+              Learn More
             </Button>
             <Button 
               onClick={handleDismiss}
