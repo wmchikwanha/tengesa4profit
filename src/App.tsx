@@ -12,6 +12,7 @@ import { MarketplaceProvider } from '@/contexts/MarketplaceContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -34,6 +35,7 @@ const App = () => (
                   <TooltipProvider>
                     <ToastProvider>
                       <OfflineIndicator />
+                      <PWAInstallPrompt />
                       <Routes>
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
