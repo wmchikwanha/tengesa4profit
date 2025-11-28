@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
+import { useAppData } from '@/contexts/AppDataContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Share, Download, History, Save } from 'lucide-react';
@@ -39,8 +40,14 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   const { t } = useLanguage();
   const { formatPrice, settings } = useCurrency();
   const permissions = useSubscriptionPermissions();
+  const { lastClearDate } = useAppData();
 
   const displayRate = settings.currentCurrency === 'USD' ? 1 : settings.exchangeRate;
+  
+  // Determine profit label based on lastClearDate
+  const profitLabel = lastClearDate 
+    ? `Total Profit (Since ${lastClearDate})` 
+    : 'Total Profit (All Time)';
 
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
@@ -56,11 +63,11 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         {/* Key Business Metrics - Prominent Display */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b-2 border-zimbabwe-green">
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-sm text-muted-foreground mb-1">{t.totalProfit}</div>
+            <div className="text-sm text-muted-foreground mb-1">{profitLabel}</div>
             <div className="font-bold text-2xl text-green-600">{formatPrice(totalProfit)}</div>
           </div>
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-sm text-muted-foreground mb-1">{t.totalStockRemaining}</div>
+            <div className="text-sm text-muted-foreground mb-1">Stock Value on Hand</div>
             <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
           </div>
         </div>

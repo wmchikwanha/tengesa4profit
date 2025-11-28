@@ -11,6 +11,7 @@ export interface SalesRecord {
 interface AppDataContextType {
   products: Product[];
   salesHistory: SalesRecord[];
+  lastClearDate: string | null;
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
@@ -23,6 +24,7 @@ interface AppDataContextType {
 const AppDataContext = React.createContext<AppDataContextType>({
   products: [],
   salesHistory: [],
+  lastClearDate: null,
   addProduct: () => {},
   updateProduct: () => {},
   deleteProduct: () => {},
@@ -39,6 +41,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [products, setProducts] = React.useState<Product[]>([]);
   const [salesHistory, setSalesHistory] = React.useState<SalesRecord[]>([]);
   const [salesBaseline, setSalesBaseline] = React.useState<Record<string, { sold: number; discarded: number }>>({});
+  const [lastClearDate, setLastClearDate] = React.useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
   const { user } = useAuth();
   
@@ -93,6 +96,20 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       console.error('Failed to load sales baseline from localStorage:', error);
       setSalesBaseline({});
     }
+
+    // Load user-specific lastClearDate from localStorage
+    try {
+      const userClearDateKey = getUserStorageKey('lastClearDate', uid);
+      const savedClearDate = localStorage.getItem(userClearDateKey);
+      if (savedClearDate) {
+        setLastClearDate(savedClearDate);
+      } else {
+        setLastClearDate(null);
+      }
+    } catch (error) {
+      console.error('Failed to load last clear date from localStorage:', error);
+      setLastClearDate(null);
+    }
   }, [user?.id]);
 
   React.useEffect(() => {
@@ -124,6 +141,20 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       console.error('Failed to save sales baseline to localStorage:', error);
     }
   }, [salesBaseline, currentUserId]);
+
+  // Persist lastClearDate
+  React.useEffect(() => {
+    try {
+      const key = getUserStorageKey('lastClearDate', currentUserId);
+      if (lastClearDate) {
+        localStorage.setItem(key, lastClearDate);
+      } else {
+        localStorage.removeItem(key);
+      }
+    } catch (error) {
+      console.error('Failed to save last clear date to localStorage:', error);
+    }
+  }, [lastClearDate, currentUserId]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct = {
@@ -231,6 +262,10 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProducts([]);
     setSalesHistory([]);
     setSalesBaseline({});
+    // Set lastClearDate to current date in dd/MM/yyyy format
+    const today = new Date();
+    const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+    setLastClearDate(formattedDate);
   };
 
   const clearSalesData = () => {
@@ -242,6 +277,10 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       quantityDiscarded: 0
       // quantityBought, buyingPrice, transportCost, stallFee remain unchanged
     })));
+    // Set lastClearDate to current date in dd/MM/yyyy format
+    const today = new Date();
+    const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+    setLastClearDate(formattedDate);
   };
 
   return (
@@ -249,6 +288,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         products,
         salesHistory,
+        lastClearDate,
         addProduct,
         updateProduct,
         deleteProduct,
