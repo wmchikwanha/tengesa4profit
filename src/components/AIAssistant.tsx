@@ -239,10 +239,11 @@ export const AIAssistant: React.FC = () => {
       <SheetTrigger asChild>
         <Button
           size="lg"
-          className="fixed bottom-4 right-4 z-50 rounded-full h-14 w-14 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 animate-pulse hover:animate-none"
+          className="fixed bottom-4 right-4 z-50 rounded-full h-16 w-16 shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 ai-pulse hover:animate-none flex flex-col items-center justify-center gap-0.5"
           aria-label="AI Business Assistant"
         >
-          <Sparkles className="h-6 w-6" />
+          <Sparkles className="h-5 w-5" />
+          <span className="text-[10px] font-semibold">AI</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:w-[400px] p-0 flex flex-col">
