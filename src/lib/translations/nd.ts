@@ -242,6 +242,18 @@ export const nd: TranslationDictionary = {
   totalProfitAllTime: "Inzuzo Yonke (Yonke Inkathi)",
   stockValueOnHand: "Inani Lesitoko Esandleni",
   
+  // About dialog translations
+  aboutTagline: "Isixazululo Sakho Esigcwele Sokuthengisa & Indawo Yokuthengisa",
+  aboutProductMgmt: "Ukuphathwa Kwemikhiqizo",
+  aboutProductMgmtDesc: "Landelela isitoko, izindleko, namanani ezindleko ngemali ehlukene.",
+  aboutProfitCalc: "Isibali Senzuzo",
+  aboutProfitCalcDesc: "Bala inzuzo, khiqiza imibiko yansuku zonke, futhi hlole ukusebenza kokuthengisa.",
+  aboutMarketplace: "Indawo Yokuthengisa",
+  aboutMarketplaceDesc: "Xhuma abathengisi nabahlinzeki, hlola imikhiqizo, futhi phathe imibuzo.",
+  aboutMultiLang: "Ukwesekwa Kwezilimi Eziningi",
+  aboutMultiLangDesc: "Kutholakala ngesiNgisi, Shona, ne-Ndebele.",
+  aboutFooter: "Kwakhiwe ukuze abathengisi nabahlinzeki benze izinto zisebenze kahle futhi bandise inzuzo.",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Khiqiza futhi ulandise imibiko ecacileyo ye-PDF",
