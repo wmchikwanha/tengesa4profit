@@ -304,6 +304,14 @@ const ProductForm: React.FC = () => {
     return sum + calc.dailyProfit;
   }, 0);
 
+  // Get lastClearDate from context
+  const { lastClearDate } = useAppData();
+  
+  // Determine profit label based on lastClearDate
+  const profitLabel = lastClearDate 
+    ? `Total Profit (Since ${lastClearDate})` 
+    : 'Total Profit (All Time)';
+
   return (
     <div className="space-y-6">
       {/* Date Display and Currency Selector */}
@@ -322,13 +330,13 @@ const ProductForm: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="bg-white border-2 border-blue-500">
             <CardContent className="pt-4">
-              <div className="text-sm text-muted-foreground mb-1">{t.totalStockRemaining}</div>
+              <div className="text-sm text-muted-foreground mb-1">Stock Value on Hand</div>
               <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
             </CardContent>
           </Card>
           <Card className="bg-white border-2 border-green-500">
             <CardContent className="pt-4">
-              <div className="text-sm text-muted-foreground mb-1">{t.totalProfit}</div>
+              <div className="text-sm text-muted-foreground mb-1">{profitLabel}</div>
               <div className="font-bold text-2xl text-green-600">{formatPrice(totalProfit)}</div>
             </CardContent>
           </Card>
