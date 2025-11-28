@@ -70,7 +70,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                   {t.supplier}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
-                  Description
+                  {t.productDescription}
                 </TableHead>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
                   {t.stockQty}

@@ -239,6 +239,8 @@ export const sn: TranslationDictionary = {
   // UI translations
   allCategories: "Zvese Zvikamu",
   productDescription: "Tsanangudzo Yechinhu",
+  totalProfitAllTime: "Purofiti Yese (Nguva Yese)",
+  stockValueOnHand: "Kukosha Kwestock Iripamuoko",
   
   // Premium benefits translations
   premiumBenefits: [

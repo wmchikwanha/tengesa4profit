@@ -46,8 +46,8 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   
   // Determine profit label based on lastClearDate
   const profitLabel = lastClearDate 
-    ? `Total Profit (Since ${lastClearDate})` 
-    : 'Total Profit (All Time)';
+    ? `${t.totalProfit} (Since ${lastClearDate})` 
+    : t.totalProfitAllTime;
 
   return (
     <Card className="bg-zimbabwe-lightGreen border border-zimbabwe-green">
@@ -67,7 +67,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
             <div className="font-bold text-2xl text-green-600">{formatPrice(totalProfit)}</div>
           </div>
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="text-sm text-muted-foreground mb-1">Stock Value on Hand</div>
+            <div className="text-sm text-muted-foreground mb-1">{t.stockValueOnHand}</div>
             <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
           </div>
         </div>

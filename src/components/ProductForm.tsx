@@ -309,8 +309,8 @@ const ProductForm: React.FC = () => {
   
   // Determine profit label based on lastClearDate
   const profitLabel = lastClearDate 
-    ? `Total Profit (Since ${lastClearDate})` 
-    : 'Total Profit (All Time)';
+    ? `${t.totalProfit} (Since ${lastClearDate})` 
+    : t.totalProfitAllTime;
 
   return (
     <div className="space-y-6">
@@ -330,7 +330,7 @@ const ProductForm: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="bg-white border-2 border-blue-500">
             <CardContent className="pt-4">
-              <div className="text-sm text-muted-foreground mb-1">Stock Value on Hand</div>
+              <div className="text-sm text-muted-foreground mb-1">{t.stockValueOnHand}</div>
               <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
             </CardContent>
           </Card>

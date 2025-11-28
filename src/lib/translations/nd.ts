@@ -239,6 +239,8 @@ export const nd: TranslationDictionary = {
   // UI translations
   allCategories: "Zonke Izigaba",
   productDescription: "Incazelo Yomkhiqizo",
+  totalProfitAllTime: "Inzuzo Yonke (Yonke Inkathi)",
+  stockValueOnHand: "Inani Lesitoko Esandleni",
   
   // Premium benefits translations
   premiumBenefits: [

@@ -239,6 +239,8 @@ export const en: TranslationDictionary = {
   // UI translations
   allCategories: "All Categories",
   productDescription: "Product Description",
+  totalProfitAllTime: "Total Profit (All Time)",
+  stockValueOnHand: "Stock Value on Hand",
   
   // Premium benefits translations
   premiumBenefits: [

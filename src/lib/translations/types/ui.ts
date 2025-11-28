@@ -69,4 +69,6 @@ export interface UITranslations {
   // Additional UI translations
   allCategories?: string;
   productDescription?: string;
+  totalProfitAllTime?: string;
+  stockValueOnHand?: string;
 }
