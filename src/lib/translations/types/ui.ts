@@ -71,4 +71,16 @@ export interface UITranslations {
   productDescription?: string;
   totalProfitAllTime?: string;
   stockValueOnHand?: string;
+  
+  // About dialog translations
+  aboutTagline?: string;
+  aboutProductMgmt?: string;
+  aboutProductMgmtDesc?: string;
+  aboutProfitCalc?: string;
+  aboutProfitCalcDesc?: string;
+  aboutMarketplace?: string;
+  aboutMarketplaceDesc?: string;
+  aboutMultiLang?: string;
+  aboutMultiLangDesc?: string;
+  aboutFooter?: string;
 }

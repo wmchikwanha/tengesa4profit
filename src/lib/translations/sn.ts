@@ -242,6 +242,18 @@ export const sn: TranslationDictionary = {
   totalProfitAllTime: "Purofiti Yese (Nguva Yese)",
   stockValueOnHand: "Kukosha Kwestock Iripamuoko",
   
+  // About dialog translations
+  aboutTagline: "Yako Yakazara Yekutengeserana & Musika",
+  aboutProductMgmt: "Kubata Zvinhu",
+  aboutProductMgmtDesc: "Tarisa stock, mutengo, uye kutengesera mune mari dzakasiyana.",
+  aboutProfitCalc: "Kuverenga Purofiti",
+  aboutProfitCalcDesc: "Verenga purofiti, gadzira mishumo yezuva nezuva, uye tarisa maitiro ekutengesa.",
+  aboutMarketplace: "Musika",
+  aboutMarketplaceDesc: "Batanidza vatengesi nevatengesi, tsvaga zvinhu, uye bata mibvunzo.",
+  aboutMultiLang: "Tsigiro Yemitauro Yakawanda",
+  aboutMultiLangDesc: "Inowanikwa muChirungu, Shona, uye Ndebele.",
+  aboutFooter: "Yakavakwa kuti vatengesi nevatengesi vawedzere kushanda uye kuwedzera purofiti.",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Gadzira uye dhaunirodha mapurisa akajeka ePDF",

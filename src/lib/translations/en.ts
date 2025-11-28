@@ -242,6 +242,18 @@ export const en: TranslationDictionary = {
   totalProfitAllTime: "Total Profit (All Time)",
   stockValueOnHand: "Stock Value on Hand",
   
+  // About dialog translations
+  aboutTagline: "Your Complete Trading & Marketplace Solution",
+  aboutProductMgmt: "Product Management",
+  aboutProductMgmtDesc: "Track inventory, costs, and pricing across multiple currencies.",
+  aboutProfitCalc: "Profit Calculator",
+  aboutProfitCalcDesc: "Calculate profits, generate daily reports, and monitor sales performance.",
+  aboutMarketplace: "Marketplace",
+  aboutMarketplaceDesc: "Connect traders with suppliers, browse products, and manage inquiries.",
+  aboutMultiLang: "Multi-Language Support",
+  aboutMultiLangDesc: "Available in English, Shona, and Ndebele.",
+  aboutFooter: "Built for traders and suppliers to streamline operations and maximize profitability.",
+  
   // Premium benefits translations
   premiumBenefits: [
     "Generate and download detailed PDF reports",
