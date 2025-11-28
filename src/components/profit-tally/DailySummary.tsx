@@ -53,11 +53,19 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex justify-between font-bold text-xl">
-          <span>{t.totalProfit}:</span>
-          <span>{formatPrice(totalProfit)}</span>
+        {/* Key Business Metrics - Prominent Display */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b-2 border-zimbabwe-green">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-sm text-muted-foreground mb-1">{t.totalProfit}</div>
+            <div className="font-bold text-2xl text-green-600">{formatPrice(totalProfit)}</div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-sm text-muted-foreground mb-1">{t.totalStockRemaining}</div>
+            <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
+          </div>
         </div>
         
+        {/* Secondary Metrics */}
         <div className="flex justify-between text-lg">
           <span>{t.totalSalesValue}:</span>
           <span>{formatPrice(totalSalesValue)}</span>
@@ -66,11 +74,6 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
         <div className="flex justify-between text-lg">
           <span>{t.totalCostValue}:</span>
           <span>{formatPrice(totalCostValue)}</span>
-        </div>
-        
-        <div className="flex justify-between text-lg">
-          <span>{t.totalStockRemaining}:</span>
-          <span>{formatPrice(totalStockValue)}</span>
         </div>
 
         <div className="flex justify-between text-lg">
