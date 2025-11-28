@@ -35,7 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Product, UnitOfMeasurement } from '@/lib/types';
+import { Product, UnitOfMeasurement, calculateProduct } from '@/lib/types';
 import { Info, Calendar, Save, Plus, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { 
@@ -292,6 +292,18 @@ const ProductForm: React.FC = () => {
   const calculatedSellingPrice = formData.sellingPrice || 
     costPerUnit * (1 + formData.markupPercentage / 100);
 
+  // Calculate total stock value across all products
+  const totalStockValue = products.reduce((sum, product) => {
+    const calc = calculateProduct(product);
+    return sum + (calc.stockRemaining * calc.sellingPrice);
+  }, 0);
+
+  // Calculate total profit
+  const totalProfit = products.reduce((sum, product) => {
+    const calc = calculateProduct(product);
+    return sum + calc.dailyProfit;
+  }, 0);
+
   return (
     <div className="space-y-6">
       {/* Date Display and Currency Selector */}
@@ -304,6 +316,24 @@ const ProductForm: React.FC = () => {
       </div>
       
       <CurrencySelector />
+
+      {/* Running Stock Value & Profit Display */}
+      {products.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card className="bg-white border-2 border-blue-500">
+            <CardContent className="pt-4">
+              <div className="text-sm text-muted-foreground mb-1">{t.totalStockRemaining}</div>
+              <div className="font-bold text-2xl text-blue-600">{formatPrice(totalStockValue)}</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white border-2 border-green-500">
+            <CardContent className="pt-4">
+              <div className="text-sm text-muted-foreground mb-1">{t.totalProfit}</div>
+              <div className="font-bold text-2xl text-green-600">{formatPrice(totalProfit)}</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
