@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBusiness } from '@/contexts/BusinessContext';
+import { useAppData } from '@/contexts/AppDataContext';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
@@ -15,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 export default function Index() {
   const { user, loading, signOut } = useAuth();
   const { hasBusiness, loading: businessLoading, isOwner, isEmployee, businessInfo, permissions } = useBusiness();
+  const { loading: dataLoading } = useAppData();
   const navigate = useNavigate();
 
   useEffect(() => {
