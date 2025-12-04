@@ -259,6 +259,7 @@ export const sn: TranslationDictionary = {
   newPurchasePrice: "Mutengo mutsva wekutenga",
   newCostPerItemWillBe: "Mutengo mutsva wechinhu chimwe unenge uri",
   stockAddedNewAverage: "Stock yawedzerwa. Mutengo wapakati mutsva",
+  addStock: "Wedzera Stock",
 
   // Premium benefits translations
   premiumBenefits: [

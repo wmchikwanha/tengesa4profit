@@ -638,6 +638,7 @@ const ProductForm: React.FC = () => {
         products={products}
         onEditProduct={handleSelectProduct}
         onDeleteProduct={confirmDelete}
+        onAddStock={openAddStockDialog}
       />
 
       {/* Add Stock Dialog */}

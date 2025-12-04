@@ -259,6 +259,7 @@ export const en: TranslationDictionary = {
   newPurchasePrice: "New Purchase Price",
   newCostPerItemWillBe: "New cost per item will be",
   stockAddedNewAverage: "Stock added. New average cost",
+  addStock: "Add Stock",
 
   // Premium benefits translations
   premiumBenefits: [

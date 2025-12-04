@@ -12,13 +12,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Plus } from 'lucide-react';
 import { Product, calculateProduct } from '@/lib/types';
 
 interface ProductsTableProps {
   products: Product[];
   onEditProduct: (id: string) => void;
   onDeleteProduct: (id: string) => void;
+  onAddStock?: (id: string) => void;
   showTitle?: boolean;
   readOnly?: boolean;
 }
@@ -27,6 +28,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   products,
   onEditProduct,
   onDeleteProduct,
+  onAddStock,
   showTitle = true,
   readOnly = false
 }) => {
@@ -135,6 +137,17 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                     {!isReadOnly && (
                       <TableCell className="text-center">
                         <div className="flex gap-1 justify-center">
+                          {onAddStock && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onAddStock(product.id)}
+                              className="h-8 w-8 p-0 border-zimbabwe-green hover:bg-zimbabwe-green hover:text-white text-zimbabwe-green"
+                              title={t.addStock || 'Add Stock'}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"
