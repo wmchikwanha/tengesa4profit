@@ -30,4 +30,5 @@ export interface ProductTranslations {
   newPurchasePrice?: string;
   newCostPerItemWillBe?: string;
   stockAddedNewAverage?: string;
+  addStock?: string;
 }

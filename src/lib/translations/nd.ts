@@ -259,6 +259,7 @@ export const nd: TranslationDictionary = {
   newPurchasePrice: "Intengo entsha yokuthenga",
   newCostPerItemWillBe: "Intengo entsha ngenyutha izoba",
   stockAddedNewAverage: "Isitoko sengezwe. Intengo entsha yemaphakathi",
+  addStock: "Faka Isitoko",
 
   // Premium benefits translations
   premiumBenefits: [
