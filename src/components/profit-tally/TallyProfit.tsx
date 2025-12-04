@@ -9,11 +9,13 @@ import { useHistoryManagement } from '@/hooks/useHistoryManagement';
 import { useSalesReports } from '@/hooks/useSalesReports';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useToast } from '@/hooks/use-toast';
+import { useBusiness } from '@/contexts/BusinessContext';
 
 const TallyProfit: React.FC = () => {
   const { salesHistory, clearSalesData, addToHistory } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   const { toast } = useToast();
+  const { permissions: businessPermissions } = useBusiness();
   const [saleDate, setSaleDate] = React.useState<string>(new Date().toISOString().split('T')[0]);
   
   const {
@@ -54,7 +56,7 @@ const TallyProfit: React.FC = () => {
     exportToCSV,
     shareReport,
     generatedReport,
-    permissions
+    permissions: reportPermissions
   } = useSalesReports(salesHistory, products);
   
   const handleClearAllData = async () => {
@@ -77,14 +79,16 @@ const TallyProfit: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <ReportHeader />
-        <SalesReportDialog
-          products={products}
-          onGenerateReport={handleGenerateReport}
-          onExportCSV={exportToCSV}
-          onShareReport={shareReport}
-          generatedReport={generatedReport}
-          permissions={permissions}
-        />
+        {businessPermissions.canAccessReports && (
+          <SalesReportDialog
+            products={products}
+            onGenerateReport={handleGenerateReport}
+            onExportCSV={exportToCSV}
+            onShareReport={shareReport}
+            generatedReport={generatedReport}
+            permissions={reportPermissions}
+          />
+        )}
       </div>
       
       <ReportContent
