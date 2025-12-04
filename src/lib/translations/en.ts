@@ -254,6 +254,12 @@ export const en: TranslationDictionary = {
   aboutMultiLangDesc: "Available in English, Shona, and Ndebele.",
   aboutFooter: "Built for traders and suppliers to streamline operations and maximize profitability.",
   
+  // Smart Autocomplete & Weighted Average translations
+  selectFromYourProducts: "Select from your products",
+  newPurchasePrice: "New Purchase Price",
+  newCostPerItemWillBe: "New cost per item will be",
+  stockAddedNewAverage: "Stock added. New average cost",
+
   // Premium benefits translations
   premiumBenefits: [
     "Generate and download detailed PDF reports",

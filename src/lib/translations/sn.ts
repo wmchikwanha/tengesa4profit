@@ -254,6 +254,12 @@ export const sn: TranslationDictionary = {
   aboutMultiLangDesc: "Inowanikwa muChirungu, Shona, uye Ndebele.",
   aboutFooter: "Yakavakwa kuti vatengesi nevatengesi vawedzere kushanda uye kuwedzera purofiti.",
   
+  // Smart Autocomplete & Weighted Average translations
+  selectFromYourProducts: "Sarudza kubva kuzvigadzirwa zvako",
+  newPurchasePrice: "Mutengo mutsva wekutenga",
+  newCostPerItemWillBe: "Mutengo mutsva wechinhu chimwe unenge uri",
+  stockAddedNewAverage: "Stock yawedzerwa. Mutengo wapakati mutsva",
+
   // Premium benefits translations
   premiumBenefits: [
     "Gadzira uye dhaunirodha mapurisa akajeka ePDF",

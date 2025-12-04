@@ -24,4 +24,10 @@ export interface ProductTranslations {
   makeProductVisible?: string;
   noProductsListed?: string;
   pleaseWaitUpdating?: string;
+  
+  // Smart Autocomplete & Weighted Average
+  selectFromYourProducts?: string;
+  newPurchasePrice?: string;
+  newCostPerItemWillBe?: string;
+  stockAddedNewAverage?: string;
 }

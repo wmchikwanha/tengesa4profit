@@ -254,6 +254,12 @@ export const nd: TranslationDictionary = {
   aboutMultiLangDesc: "Kutholakala ngesiNgisi, Shona, ne-Ndebele.",
   aboutFooter: "Kwakhiwe ukuze abathengisi nabahlinzeki benze izinto zisebenze kahle futhi bandise inzuzo.",
   
+  // Smart Autocomplete & Weighted Average translations
+  selectFromYourProducts: "Khetha emikheqizweni yakho",
+  newPurchasePrice: "Intengo entsha yokuthenga",
+  newCostPerItemWillBe: "Intengo entsha ngenyutha izoba",
+  stockAddedNewAverage: "Isitoko sengezwe. Intengo entsha yemaphakathi",
+
   // Premium benefits translations
   premiumBenefits: [
     "Khiqiza futhi ulandise imibiko ecacileyo ye-PDF",
