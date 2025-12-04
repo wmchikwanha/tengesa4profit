@@ -270,8 +270,8 @@ const ProductForm: React.FC = () => {
       return;
     }
     
-    // Calculate weighted average cost
-    const existingQty = product.quantityBought;
+    // Calculate weighted average cost using remaining stock (not total bought)
+    const existingQty = product.quantityBought - product.quantitySold - product.quantityDiscarded;
     const existingPrice = product.buyingPrice;
     const weightedAveragePrice = 
       (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
@@ -314,7 +314,8 @@ const ProductForm: React.FC = () => {
     
     if (quantityToAdd <= 0 || newPrice <= 0) return null;
     
-    const existingQty = product.quantityBought;
+    // Use remaining stock for accurate weighted average
+    const existingQty = product.quantityBought - product.quantitySold - product.quantityDiscarded;
     const existingPrice = product.buyingPrice;
     return (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
   }, [targetProductId, stockQuantityToAdd, newPurchasePrice, getProduct]);
