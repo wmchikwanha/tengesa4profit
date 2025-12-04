@@ -14,6 +14,133 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_members: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["business_role"]
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["business_role"]
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["business_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_members_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          created_at: string
+          id: string
+          invite_code: string | null
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_code?: string | null
+          name?: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_code?: string | null
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          business_id: string
+          buying_price: number
+          created_at: string | null
+          description: string | null
+          id: string
+          markup_percentage: number | null
+          name: string
+          purchase_date: string | null
+          quantity_bought: number
+          quantity_discarded: number | null
+          quantity_sold: number | null
+          selling_price: number | null
+          stall_fee: number | null
+          supplier: string | null
+          transport_cost: number | null
+          unit_of_measurement: string
+          updated_at: string | null
+        }
+        Insert: {
+          business_id: string
+          buying_price?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          markup_percentage?: number | null
+          name: string
+          purchase_date?: string | null
+          quantity_bought?: number
+          quantity_discarded?: number | null
+          quantity_sold?: number | null
+          selling_price?: number | null
+          stall_fee?: number | null
+          supplier?: string | null
+          transport_cost?: number | null
+          unit_of_measurement?: string
+          updated_at?: string | null
+        }
+        Update: {
+          business_id?: string
+          buying_price?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          markup_percentage?: number | null
+          name?: string
+          purchase_date?: string | null
+          quantity_bought?: number
+          quantity_discarded?: number | null
+          quantity_sold?: number | null
+          selling_price?: number | null
+          stall_fee?: number | null
+          supplier?: string | null
+          transport_cost?: number | null
+          unit_of_measurement?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -46,6 +173,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sales_history: {
+        Row: {
+          business_id: string
+          created_at: string | null
+          date: string
+          id: string
+          products: Json
+          recorded_by: string
+          total_profit: number
+        }
+        Insert: {
+          business_id: string
+          created_at?: string | null
+          date: string
+          id?: string
+          products?: Json
+          recorded_by: string
+          total_profit?: number
+        }
+        Update: {
+          business_id?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          products?: Json
+          recorded_by?: string
+          total_profit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_history_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscribers: {
         Row: {
@@ -94,10 +259,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_business_id: { Args: { p_user_id: string }; Returns: string }
+      get_user_business_role: {
+        Args: { p_user_id: string }
+        Returns: Database["public"]["Enums"]["business_role"]
+      }
+      is_business_member: {
+        Args: { p_business_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      is_business_owner: {
+        Args: { p_business_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      join_business_by_code: {
+        Args: { p_invite_code: string; p_user_id: string }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      business_role: "owner" | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -224,6 +405,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      business_role: ["owner", "employee"],
+    },
   },
 } as const
