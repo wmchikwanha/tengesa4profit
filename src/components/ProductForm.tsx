@@ -5,6 +5,7 @@ import { useAppData } from '@/contexts/AppDataContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
+import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { 
@@ -94,6 +95,7 @@ const ProductForm: React.FC = () => {
   const [activeProductId, setActiveProductId] = React.useState<string | null>(null);
   const [isAddStockDialogOpen, setIsAddStockDialogOpen] = React.useState(false);
   const [stockQuantityToAdd, setStockQuantityToAdd] = React.useState<string>('');
+  const [newPurchasePrice, setNewPurchasePrice] = React.useState<string>('');
   const [targetProductId, setTargetProductId] = React.useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [productToDelete, setProductToDelete] = React.useState<string | null>(null);
@@ -236,8 +238,10 @@ const ProductForm: React.FC = () => {
   };
 
   const openAddStockDialog = (id: string) => {
+    const product = getProduct(id);
     setTargetProductId(id);
     setStockQuantityToAdd('');
+    setNewPurchasePrice(product?.buyingPrice?.toString() || '');
     setIsAddStockDialogOpen(true);
   };
 
@@ -246,6 +250,8 @@ const ProductForm: React.FC = () => {
     if (!product) return;
     
     const quantityToAdd = Number(stockQuantityToAdd);
+    const newPrice = Number(newPurchasePrice);
+    
     if (isNaN(quantityToAdd) || quantityToAdd <= 0) {
       toast({
         title: "Error",
@@ -255,13 +261,29 @@ const ProductForm: React.FC = () => {
       return;
     }
     
+    if (isNaN(newPrice) || newPrice <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid price",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Calculate weighted average cost
+    const existingQty = product.quantityBought;
+    const existingPrice = product.buyingPrice;
+    const weightedAveragePrice = 
+      (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
+    
     updateProduct(targetProductId!, {
-      quantityBought: product.quantityBought + quantityToAdd
+      quantityBought: product.quantityBought + quantityToAdd,
+      buyingPrice: Number(weightedAveragePrice.toFixed(2))
     });
     
     toast({
       title: "Success",
-      description: "Stock added successfully",
+      description: `${t.stockAddedNewAverage}: ${formatPrice(weightedAveragePrice)}`,
     });
     
     // Close the dialog
@@ -270,6 +292,32 @@ const ProductForm: React.FC = () => {
     // Select the product we just added stock to
     handleSelectProduct(targetProductId!);
   };
+
+  // Extract unique product names and supplier names for autocomplete
+  const uniqueProductNames = React.useMemo(() => 
+    [...new Set(products.map(p => p.name).filter(Boolean))],
+    [products]
+  );
+  
+  const uniqueSupplierNames = React.useMemo(() => 
+    [...new Set(products.map(p => p.supplier).filter(Boolean))],
+    [products]
+  );
+  
+  // Calculate weighted average preview for Add Stock dialog
+  const weightedAveragePreview = React.useMemo(() => {
+    const product = targetProductId ? getProduct(targetProductId) : null;
+    if (!product) return null;
+    
+    const quantityToAdd = Number(stockQuantityToAdd) || 0;
+    const newPrice = Number(newPurchasePrice) || 0;
+    
+    if (quantityToAdd <= 0 || newPrice <= 0) return null;
+    
+    const existingQty = product.quantityBought;
+    const existingPrice = product.buyingPrice;
+    return (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
+  }, [targetProductId, stockQuantityToAdd, newPurchasePrice, getProduct]);
 
   const resetForm = () => {
     setFormData(DEFAULT_PRODUCT);
@@ -366,11 +414,12 @@ const ProductForm: React.FC = () => {
               <AlertCircle className="h-4 w-4 text-red-500" />
             )}
           </div>
-          <Input
+          <AutocompleteInput
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
+            suggestions={uniqueProductNames}
             className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('name') ? 'border-red-500' : ''}`}
             placeholder="e.g. Tomatoes"
           />
@@ -384,11 +433,12 @@ const ProductForm: React.FC = () => {
               <AlertCircle className="h-4 w-4 text-red-500" />
             )}
           </div>
-          <Input
+          <AutocompleteInput
             id="supplier"
             name="supplier"
             value={formData.supplier}
             onChange={handleChange}
+            suggestions={uniqueSupplierNames}
             className={`trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen ${invalidFields.has('supplier') ? 'border-red-500' : ''}`}
             placeholder="e.g. ABC Farm"
           />
@@ -610,6 +660,27 @@ const ProductForm: React.FC = () => {
                 className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
               />
             </div>
+            <div className="space-y-2">
+              <label htmlFor="newPurchasePrice" className="trader-label">
+                {t.newPurchasePrice} ({getCurrencySymbol()})
+              </label>
+              <Input
+                id="newPurchasePrice"
+                value={newPurchasePrice}
+                onChange={(e) => setNewPurchasePrice(e.target.value)}
+                type="number"
+                min="0"
+                step="0.01"
+                className="trader-input border-zimbabwe-green focus:border-zimbabwe-darkGreen"
+              />
+            </div>
+            {weightedAveragePreview !== null && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-sm text-green-700 font-medium">
+                  {t.newCostPerItemWillBe}: {formatPrice(weightedAveragePreview)}
+                </p>
+              </div>
+            )}
           </div>
           <DialogFooter className="flex justify-between sm:justify-between">
             <Button 
