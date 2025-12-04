@@ -57,9 +57,9 @@ const TallyProfit: React.FC = () => {
     permissions
   } = useSalesReports(salesHistory, products);
   
-  const handleClearAllData = () => {
+  const handleClearAllData = async () => {
     if (window.confirm("Are you sure you want to clear all data? This will delete all products and sales history.")) {
-      clearSalesData();
+      await clearSalesData();
       toast({
         title: "Success",
         description: "All data has been cleared",
@@ -67,9 +67,9 @@ const TallyProfit: React.FC = () => {
     }
   };
 
-  const handleAddSale = () => {
-    handleCalculate(({ productId, soldQty, discardedQty }) => {
-      addToHistory(saleDate, productId, soldQty, discardedQty);
+  const handleAddSale = async () => {
+    await handleCalculate(async ({ productId, soldQty, discardedQty }) => {
+      await addToHistory(saleDate, productId, soldQty, discardedQty);
     });
   };
   

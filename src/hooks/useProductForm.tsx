@@ -71,7 +71,7 @@ export function useProductForm() {
     return newInvalidFields.size === 0;
   };
   
-  const handleCalculate = (addToHistoryFn?: (args: { productId: string; soldQty: number; discardedQty: number }) => void) => {
+  const handleCalculate = async (addToHistoryFn?: (args: { productId: string; soldQty: number; discardedQty: number }) => void | Promise<void>) => {
     if (!selectedProduct) return;
     
     if (!validateForm()) {
@@ -96,26 +96,33 @@ export function useProductForm() {
       }
     }
     
-    // Add to existing quantities instead of replacing
-    updateProduct(selectedProductId!, {
-      quantitySold: selectedProduct.quantitySold + soldQty,
-      quantityDiscarded: selectedProduct.quantityDiscarded + discardedQty
-    });
-    
-    // Automatically save to history after updating the product
-    if (addToHistoryFn && (soldQty > 0 || discardedQty > 0)) {
-      // Use setTimeout to ensure the product state is updated first
-      setTimeout(() => addToHistoryFn({ productId: selectedProductId!, soldQty, discardedQty }), 0);
+    try {
+      // Add to existing quantities instead of replacing
+      await updateProduct(selectedProductId!, {
+        quantitySold: selectedProduct.quantitySold + soldQty,
+        quantityDiscarded: selectedProduct.quantityDiscarded + discardedQty
+      });
+      
+      // Automatically save to history after updating the product
+      if (addToHistoryFn && (soldQty > 0 || discardedQty > 0)) {
+        await addToHistoryFn({ productId: selectedProductId!, soldQty, discardedQty });
+      }
+      
+      // Reset form inputs after successful calculation
+      setQuantitySold(0);
+      setQuantityDiscarded(0);
+      
+      toast({
+        title: "Success",
+        description: "Sale added successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to record sale",
+        variant: "destructive",
+      });
     }
-    
-    // Reset form inputs after successful calculation
-    setQuantitySold(0);
-    setQuantityDiscarded(0);
-    
-    toast({
-      title: "Success",
-      description: "Sale added successfully",
-    });
   };
   
   return {

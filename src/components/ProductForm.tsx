@@ -147,22 +147,30 @@ const ProductForm: React.FC = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (!productToDelete) return;
     
-    deleteProduct(productToDelete);
-    if (activeProductId === productToDelete) {
-      setFormData(DEFAULT_PRODUCT);
-      setActiveProductId(null);
+    try {
+      await deleteProduct(productToDelete);
+      if (activeProductId === productToDelete) {
+        setFormData(DEFAULT_PRODUCT);
+        setActiveProductId(null);
+      }
+      
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete product",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setProductToDelete(null);
     }
-    
-    setIsDeleteDialogOpen(false);
-    setProductToDelete(null);
-    
-    toast({
-      title: "Success",
-      description: "Product deleted successfully",
-    });
   };
 
   const validateForm = (): boolean => {
@@ -188,7 +196,7 @@ const ProductForm: React.FC = () => {
     return newInvalidFields.size === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -200,39 +208,48 @@ const ProductForm: React.FC = () => {
       return;
     }
     
-    if (activeProductId) {
-      // Update existing product, preserving quantitySold/Discarded
-      const existingProduct = getProduct(activeProductId);
-      if (existingProduct) {
-        // If quantity is reduced, ensure it doesn't go below what's been sold/discarded
-        const totalUsed = existingProduct.quantitySold + existingProduct.quantityDiscarded;
-        if (formData.quantityBought < totalUsed) {
-          toast({
-            title: "Error",
-            description: "Quantity cannot be less than what has already been sold or discarded",
-            variant: "destructive",
+    try {
+      if (activeProductId) {
+        // Update existing product, preserving quantitySold/Discarded
+        const existingProduct = getProduct(activeProductId);
+        if (existingProduct) {
+          // If quantity is reduced, ensure it doesn't go below what's been sold/discarded
+          const totalUsed = existingProduct.quantitySold + existingProduct.quantityDiscarded;
+          if (formData.quantityBought < totalUsed) {
+            toast({
+              title: "Error",
+              description: "Quantity cannot be less than what has already been sold or discarded",
+              variant: "destructive",
+            });
+            return;
+          }
+          
+          // Update product while preserving quantitySold and quantityDiscarded
+          await updateProduct(activeProductId, {
+            ...formData,
+            quantitySold: existingProduct.quantitySold,
+            quantityDiscarded: existingProduct.quantityDiscarded
           });
-          return;
+          
+          toast({
+            title: "Success",
+            description: "Product updated successfully",
+          });
         }
-        
-        // Update product while preserving quantitySold and quantityDiscarded
-        updateProduct(activeProductId, {
-          ...formData,
-          quantitySold: existingProduct.quantitySold,
-          quantityDiscarded: existingProduct.quantityDiscarded
-        });
-        
+      } else {
+        // Add new product
+        await addProduct(formData);
         toast({
           title: "Success",
-          description: "Product updated successfully",
+          description: "Product saved successfully",
         });
+        resetForm();
       }
-    } else {
-      // Add new product
-      addProduct(formData);
+    } catch (error) {
       toast({
-        title: "Success",
-        description: "Product saved successfully",
+        title: "Error",
+        description: "Failed to save product",
+        variant: "destructive",
       });
     }
   };
@@ -245,7 +262,7 @@ const ProductForm: React.FC = () => {
     setIsAddStockDialogOpen(true);
   };
 
-  const handleAddStock = () => {
+  const handleAddStock = async () => {
     const product = getProduct(targetProductId!);
     if (!product) return;
     
@@ -270,27 +287,35 @@ const ProductForm: React.FC = () => {
       return;
     }
     
-    // Calculate weighted average cost using remaining stock (not total bought)
-    const existingQty = product.quantityBought - product.quantitySold - product.quantityDiscarded;
-    const existingPrice = product.buyingPrice;
-    const weightedAveragePrice = 
-      (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
-    
-    updateProduct(targetProductId!, {
-      quantityBought: product.quantityBought + quantityToAdd,
-      buyingPrice: Number(weightedAveragePrice.toFixed(2))
-    });
-    
-    toast({
-      title: "Success",
-      description: `${t.stockAddedNewAverage}: ${formatPrice(weightedAveragePrice)}`,
-    });
-    
-    // Close the dialog
-    setIsAddStockDialogOpen(false);
-    
-    // Select the product we just added stock to
-    handleSelectProduct(targetProductId!);
+    try {
+      // Calculate weighted average cost using remaining stock (not total bought)
+      const existingQty = product.quantityBought - product.quantitySold - product.quantityDiscarded;
+      const existingPrice = product.buyingPrice;
+      const weightedAveragePrice = 
+        (existingQty * existingPrice + quantityToAdd * newPrice) / (existingQty + quantityToAdd);
+      
+      await updateProduct(targetProductId!, {
+        quantityBought: product.quantityBought + quantityToAdd,
+        buyingPrice: Number(weightedAveragePrice.toFixed(2))
+      });
+      
+      toast({
+        title: "Success",
+        description: `${t.stockAddedNewAverage}: ${formatPrice(weightedAveragePrice)}`,
+      });
+      
+      // Close the dialog
+      setIsAddStockDialogOpen(false);
+      
+      // Select the product we just added stock to
+      handleSelectProduct(targetProductId!);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add stock",
+        variant: "destructive",
+      });
+    }
   };
 
   // Extract unique product names and supplier names for autocomplete
