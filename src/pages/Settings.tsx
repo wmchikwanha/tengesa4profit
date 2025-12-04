@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBusiness } from '@/contexts/BusinessContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,7 @@ import { ArrowLeft, Trash2, Key, Mail } from 'lucide-react';
 import { AppFooter } from '@/components/AppFooter';
 import { AboutDialog } from '@/components/AboutDialog';
 import { DataSavingsWidget } from '@/components/DataSavingsWidget';
+import { ManageStaff } from '@/components/staff/ManageStaff';
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -173,6 +175,9 @@ export default function Settings() {
 
           {/* Data Savings */}
           <DataSavingsWidget />
+
+          {/* Manage Staff - Owner only */}
+          <ManageStaff />
 
           {/* Change Password */}
           <Card>

@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useBusiness } from '@/contexts/BusinessContext';
 import LanguageToggle from './LanguageToggle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FeedbackForm } from './FeedbackForm';
@@ -15,9 +16,9 @@ import { useProactiveAlerts } from '@/hooks/useProactiveAlerts';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
-  addProductContent: React.ReactNode;
+  addProductContent: React.ReactNode | null;
   tallyProfitContent: React.ReactNode;
-  marketplaceContent: React.ReactNode;
+  marketplaceContent: React.ReactNode | null;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
@@ -26,14 +27,26 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   marketplaceContent,
 }) => {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = React.useState('addProduct');
+  const { permissions, isOwner } = useBusiness();
   const navigate = useNavigate();
   // useProactiveAlerts(); // Disabled during testing to prevent automatic AI credit usage
+
+  // Determine default tab based on permissions
+  const defaultTab = addProductContent ? 'addProduct' : 'tallyProfit';
+  const [activeTab, setActiveTab] = React.useState(defaultTab);
+
+  // Calculate number of visible tabs for grid columns
+  const visibleTabs = [
+    addProductContent !== null,
+    true, // tallyProfit always visible
+    marketplaceContent !== null,
+  ].filter(Boolean).length;
 
   return (
     <div className="trader-container min-h-screen">
       <AboutDialog />
-      <AIAssistant />
+      {/* Only show AI Assistant for users with permission */}
+      {permissions.canUseAIAssistant && <AIAssistant />}
       
       <header className="text-center mb-6 relative">
         <div className="absolute top-0 right-4">
@@ -46,43 +59,54 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       <LanguageToggle />
       
       <main>
-        <Tabs defaultValue="addProduct" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full mb-6 grid grid-cols-3 bg-zimbabwe-lightGreen border border-zimbabwe-green h-16">
-            <TabsTrigger 
-              value="addProduct" 
-              className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
-            >
-              <span className="text-center">{t.addProduct}</span>
-            </TabsTrigger>
+        <Tabs defaultValue={defaultTab} value={activeTab} onValueChange={setActiveTab}>
+          <TabsList 
+            className="w-full mb-6 bg-zimbabwe-lightGreen border border-zimbabwe-green h-16"
+            style={{ display: 'grid', gridTemplateColumns: `repeat(${visibleTabs}, 1fr)` }}
+          >
+            {addProductContent !== null && (
+              <TabsTrigger 
+                value="addProduct" 
+                className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
+              >
+                <span className="text-center">{t.addProduct}</span>
+              </TabsTrigger>
+            )}
             <TabsTrigger 
               value="tallyProfit" 
               className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
             >
               <span className="text-center">{t.tallyProfit}</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="marketplace" 
-              className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
-            >
-              <span className="text-center">{t.marketplace}</span>
-            </TabsTrigger>
+            {marketplaceContent !== null && (
+              <TabsTrigger 
+                value="marketplace" 
+                className="text-sm sm:text-base text-zimbabwe-darkGreen data-[state=active]:bg-white data-[state=active]:text-zimbabwe-darkGreen data-[state=active]:shadow-sm h-14 flex items-center justify-center px-1 sm:px-2 text-center leading-tight whitespace-normal break-words"
+              >
+                <span className="text-center">{t.marketplace}</span>
+              </TabsTrigger>
+            )}
           </TabsList>
           
-          <TabsContent value="addProduct">
-            {addProductContent}
-          </TabsContent>
+          {addProductContent !== null && (
+            <TabsContent value="addProduct">
+              {addProductContent}
+            </TabsContent>
+          )}
           
           <TabsContent value="tallyProfit">
             {tallyProfitContent}
           </TabsContent>
           
-          <TabsContent value="marketplace">
-            {marketplaceContent}
-          </TabsContent>
+          {marketplaceContent !== null && (
+            <TabsContent value="marketplace">
+              {marketplaceContent}
+            </TabsContent>
+          )}
         </Tabs>
         
         <div className="mt-8 pb-4 flex justify-center gap-3">
-          <FeedbackForm />
+          {isOwner && <FeedbackForm />}
           <Button
             variant="outline"
             size="sm"
