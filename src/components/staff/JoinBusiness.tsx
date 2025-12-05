@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Building2, UserPlus, Briefcase } from 'lucide-react';
+import { Building2, UserPlus, Briefcase, Lock } from 'lucide-react';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface JoinBusinessProps {
   onComplete?: () => void;
@@ -14,6 +16,8 @@ interface JoinBusinessProps {
 export function JoinBusiness({ onComplete }: JoinBusinessProps) {
   const { createBusiness, joinBusiness, hasBusiness, loading } = useBusiness();
   const { toast } = useToast();
+  const { t } = useLanguage();
+  const { canUseEmployeeSystem, isFree } = useSubscriptionPermissions();
   const [mode, setMode] = useState<'choose' | 'create' | 'join'>('choose');
   const [inviteCode, setInviteCode] = useState('');
   const [businessName, setBusinessName] = useState('');
@@ -91,6 +95,53 @@ export function JoinBusiness({ onComplete }: JoinBusinessProps) {
   };
 
   if (mode === 'create') {
+    // If free tier, show upgrade prompt for creating business with employee features
+    if (isFree) {
+      return (
+        <Card className="w-full max-w-md mx-auto border-2 border-dashed border-gray-300 bg-gray-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-gray-400" />
+              {t.tierPremiumFeature || 'Premium Feature'}
+            </CardTitle>
+            <CardDescription>
+              {t.employeeSystemDescription || 'The employee/staff system is a premium feature that allows you to invite employees to record sales.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">{t.tierEmployeeSystem || 'Employee/Staff System'} {t.tierIncludes || 'includes'}:</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>✓ {t.tierInviteEmployees || 'Invite employees with secure codes'}</li>
+                <li>✓ {t.tierEmployeeSalesRecording || 'Employees can record sales'}</li>
+                <li>✓ {t.tierProtectFinancials || 'Protect your financial data'}</li>
+                <li>✓ {t.tierManageStaff || 'Manage staff access'}</li>
+              </ul>
+            </div>
+            <Button
+              className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
+              onClick={() => {
+                const subscriptionSection = document.querySelector('[data-subscription-status]');
+                if (subscriptionSection) {
+                  subscriptionSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
+              {t.upgradeToPlansAction || 'Upgrade to Premium'} - $1.99/{t.month || 'month'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setMode('choose')}
+            >
+              {t.cancel || 'Back'}
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+    
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>

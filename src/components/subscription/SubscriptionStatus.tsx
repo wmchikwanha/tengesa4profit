@@ -170,7 +170,7 @@ export const SubscriptionStatus: React.FC = () => {
     {
       name: 'Premium',
       tier: 'premium',
-      price: 99, // $0.99 in cents
+      price: 199, // $1.99 in cents
       features: [
         'Full sales & profit reporting', 
         'Share & download reports', 
