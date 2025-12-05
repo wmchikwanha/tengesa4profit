@@ -12,8 +12,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, ArrowUp, ArrowDown } from 'lucide-react';
 import { Product, calculateProduct } from '@/lib/types';
+
+type SortColumn = 'date' | 'name' | 'supplier' | 'stockQty' | 'costPerUnit' | 'sellingPrice' | 'stockValue';
+type SortDirection = 'asc' | 'desc';
 
 interface ProductsTableProps {
   products: Product[];
@@ -23,6 +26,36 @@ interface ProductsTableProps {
   showTitle?: boolean;
   readOnly?: boolean;
 }
+
+interface SortableHeaderProps {
+  column: SortColumn;
+  currentSort: SortColumn;
+  direction: SortDirection;
+  onSort: (column: SortColumn) => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const SortableHeader: React.FC<SortableHeaderProps> = ({ 
+  column, currentSort, direction, onSort, children, className = '' 
+}) => {
+  const isActive = currentSort === column;
+  return (
+    <TableHead 
+      className={`text-zimbabwe-darkGreen font-semibold cursor-pointer hover:bg-zimbabwe-green/10 select-none ${className}`}
+      onClick={() => onSort(column)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{children}</span>
+        {isActive && (
+          direction === 'asc' 
+            ? <ArrowUp className="h-3 w-3" /> 
+            : <ArrowDown className="h-3 w-3" />
+        )}
+      </div>
+    </TableHead>
+  );
+};
 
 const ProductsTable: React.FC<ProductsTableProps> = ({
   products,
@@ -34,9 +67,59 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
 }) => {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+  const [sortColumn, setSortColumn] = React.useState<SortColumn>('name');
+  const [sortDirection, setSortDirection] = React.useState<SortDirection>('asc');
 
   // Check if it's read-only by seeing if handlers are no-ops
   const isReadOnly = readOnly || (onEditProduct.toString().includes('{}') && onDeleteProduct.toString().includes('{}'));
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedProducts = React.useMemo(() => {
+    return [...products].sort((a, b) => {
+      const calcA = calculateProduct(a);
+      const calcB = calculateProduct(b);
+      const effectiveSellingPriceA = a.sellingPrice || calcA.sellingPrice;
+      const effectiveSellingPriceB = b.sellingPrice || calcB.sellingPrice;
+      const stockValueA = calcA.stockRemaining * effectiveSellingPriceA;
+      const stockValueB = calcB.stockRemaining * effectiveSellingPriceB;
+
+      let comparison = 0;
+      switch (sortColumn) {
+        case 'date':
+          const dateA = a.purchaseDate ? new Date(a.purchaseDate).getTime() : 0;
+          const dateB = b.purchaseDate ? new Date(b.purchaseDate).getTime() : 0;
+          comparison = dateA - dateB;
+          break;
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'supplier':
+          comparison = (a.supplier || '').localeCompare(b.supplier || '');
+          break;
+        case 'stockQty':
+          comparison = calcA.stockRemaining - calcB.stockRemaining;
+          break;
+        case 'costPerUnit':
+          comparison = calcA.costPerUnit - calcB.costPerUnit;
+          break;
+        case 'sellingPrice':
+          comparison = effectiveSellingPriceA - effectiveSellingPriceB;
+          break;
+        case 'stockValue':
+          comparison = stockValueA - stockValueB;
+          break;
+      }
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [products, sortColumn, sortDirection]);
 
   if (products.length === 0) {
     return (
@@ -62,30 +145,30 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
           <Table>
             <TableHeader className="sticky top-0 bg-zimbabwe-lightGreen">
               <TableRow>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                <SortableHeader column="date" currentSort={sortColumn} direction={sortDirection} onSort={handleSort}>
                   {t.dateOfPurchase}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                </SortableHeader>
+                <SortableHeader column="name" currentSort={sortColumn} direction={sortDirection} onSort={handleSort}>
                   {t.productName}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                </SortableHeader>
+                <SortableHeader column="supplier" currentSort={sortColumn} direction={sortDirection} onSort={handleSort}>
                   {t.supplier}
-                </TableHead>
+                </SortableHeader>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold">
                   {t.productDescription}
                 </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
+                <SortableHeader column="stockQty" currentSort={sortColumn} direction={sortDirection} onSort={handleSort} className="text-center">
                   {t.stockQty}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
+                </SortableHeader>
+                <SortableHeader column="costPerUnit" currentSort={sortColumn} direction={sortDirection} onSort={handleSort} className="text-right">
                   {t.costPerUnit}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
+                </SortableHeader>
+                <SortableHeader column="sellingPrice" currentSort={sortColumn} direction={sortDirection} onSort={handleSort} className="text-right">
                   {t.sellingPrice}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-right">
+                </SortableHeader>
+                <SortableHeader column="stockValue" currentSort={sortColumn} direction={sortDirection} onSort={handleSort} className="text-right">
                   {t.stockValue}
-                </TableHead>
+                </SortableHeader>
                 {!isReadOnly && (
                   <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
                     {t.actions}
@@ -94,7 +177,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => {
+              {sortedProducts.map((product) => {
                 const calc = calculateProduct(product);
                 // Use the calculated selling price if no selling price is set
                 const effectiveSellingPrice = product.sellingPrice || calc.sellingPrice;
