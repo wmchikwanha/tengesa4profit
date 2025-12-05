@@ -12,6 +12,7 @@ import TallyProfit from '@/components/profit-tally/TallyProfit';
 import Marketplace from '@/components/marketplace/Marketplace';
 import { JoinBusiness } from '@/components/staff/JoinBusiness';
 import { Badge } from '@/components/ui/badge';
+import EmployeeSalesCard from '@/components/EmployeeSalesCard';
 
 export default function Index() {
   const { user, loading, signOut } = useAuth();
@@ -92,12 +93,15 @@ export default function Index() {
           </div>
         )}
         
-        {/* Employee view - simplified with only sales recording */}
+        {/* Employee view - simplified with sales dashboard */}
         {isEmployee && (
-          <div className="bg-muted/50 border rounded-lg p-4 mb-6">
-            <p className="text-sm text-muted-foreground">
-              You are logged in as an employee. You can view stock and record sales.
-            </p>
+          <div className="mb-6 space-y-4">
+            <div className="bg-muted/50 border rounded-lg p-4">
+              <p className="text-sm text-muted-foreground">
+                You are logged in as an employee. You can view stock and record sales.
+              </p>
+            </div>
+            <EmployeeSalesCard />
           </div>
         )}
         
