@@ -15,18 +15,83 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product, calculateProduct } from '@/lib/types';
-import { Package } from 'lucide-react';
+import { Package, ArrowUp, ArrowDown } from 'lucide-react';
+
+type SortColumn = 'name' | 'supplier' | 'stockQty';
+type SortDirection = 'asc' | 'desc';
 
 interface ProductsTableEmployeeProps {
   products: Product[];
   showTitle?: boolean;
 }
 
+interface SortableHeaderProps {
+  column: SortColumn;
+  currentSort: SortColumn;
+  direction: SortDirection;
+  onSort: (column: SortColumn) => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const SortableHeader: React.FC<SortableHeaderProps> = ({ 
+  column, currentSort, direction, onSort, children, className = '' 
+}) => {
+  const isActive = currentSort === column;
+  return (
+    <TableHead 
+      className={`text-zimbabwe-darkGreen font-semibold cursor-pointer hover:bg-zimbabwe-green/10 select-none ${className}`}
+      onClick={() => onSort(column)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{children}</span>
+        {isActive && (
+          direction === 'asc' 
+            ? <ArrowUp className="h-3 w-3" /> 
+            : <ArrowDown className="h-3 w-3" />
+        )}
+      </div>
+    </TableHead>
+  );
+};
+
 const ProductsTableEmployee: React.FC<ProductsTableEmployeeProps> = ({
   products,
   showTitle = true,
 }) => {
   const { t } = useLanguage();
+  const [sortColumn, setSortColumn] = React.useState<SortColumn>('name');
+  const [sortDirection, setSortDirection] = React.useState<SortDirection>('asc');
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedProducts = React.useMemo(() => {
+    return [...products].sort((a, b) => {
+      const calcA = calculateProduct(a);
+      const calcB = calculateProduct(b);
+
+      let comparison = 0;
+      switch (sortColumn) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'supplier':
+          comparison = (a.supplier || '').localeCompare(b.supplier || '');
+          break;
+        case 'stockQty':
+          comparison = calcA.stockRemaining - calcB.stockRemaining;
+          break;
+      }
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [products, sortColumn, sortDirection]);
 
   if (products.length === 0) {
     return (
@@ -55,22 +120,22 @@ const ProductsTableEmployee: React.FC<ProductsTableEmployeeProps> = ({
           <Table>
             <TableHeader className="sticky top-0 bg-zimbabwe-lightGreen">
               <TableRow>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                <SortableHeader column="name" currentSort={sortColumn} direction={sortDirection} onSort={handleSort}>
                   {t.productName}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold">
+                </SortableHeader>
+                <SortableHeader column="supplier" currentSort={sortColumn} direction={sortDirection} onSort={handleSort}>
                   {t.supplier}
-                </TableHead>
-                <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
+                </SortableHeader>
+                <SortableHeader column="stockQty" currentSort={sortColumn} direction={sortDirection} onSort={handleSort} className="text-center">
                   {t.stockQty}
-                </TableHead>
+                </SortableHeader>
                 <TableHead className="text-zimbabwe-darkGreen font-semibold text-center">
                   Unit
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => {
+              {sortedProducts.map((product) => {
                 const calc = calculateProduct(product);
                 
                 return (
