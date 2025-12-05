@@ -11,6 +11,12 @@ export interface SubscriptionPermissions {
   canAccessMarketplace: boolean;
   canContactSuppliers: boolean;
   canListProducts: boolean;
+  canUseEmployeeSystem: boolean;
+  canUseAIAssistant: boolean;
+  isTrial: boolean;
+  isFree: boolean;
+  isPremium: boolean;
+  trialDaysLeft: number;
   showUpgradePrompt: (feature: string) => boolean;
 }
 
@@ -38,6 +44,16 @@ export const useSubscriptionPermissions = (): SubscriptionPermissions => {
   // Calculate if trial has expired using effective trial end
   const trialExpired = effectiveTrialEnd ? new Date() > new Date(effectiveTrialEnd) : false;
 
+  // Calculate days left in trial
+  const calculateDaysLeft = () => {
+    if (!effectiveTrialEnd) return 0;
+    const end = new Date(effectiveTrialEnd);
+    const now = new Date();
+    const diffTime = end.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  };
+
   // Treat as trial if not premium and we have a non-expired trial window
   const isTrial = !isPremium && !!effectiveTrialEnd && !trialExpired;
   
@@ -59,6 +75,18 @@ export const useSubscriptionPermissions = (): SubscriptionPermissions => {
     // Only trial and premium can list products
     canListProducts: isTrial || isPremium,
     
+    // Only trial and premium can use employee system
+    canUseEmployeeSystem: isTrial || isPremium,
+    
+    // Only trial and premium can use AI assistant
+    canUseAIAssistant: isTrial || isPremium,
+    
+    // Export tier status for UI display
+    isTrial,
+    isFree,
+    isPremium,
+    trialDaysLeft: calculateDaysLeft(),
+    
     // Show upgrade prompt for free tier when trying to use premium features
     showUpgradePrompt: (feature: string) => {
       return isFree && (
@@ -66,7 +94,9 @@ export const useSubscriptionPermissions = (): SubscriptionPermissions => {
         feature === 'contact_suppliers' ||
         feature === 'list_products' ||
         feature === 'share_reports' ||
-        feature === 'download_reports'
+        feature === 'download_reports' ||
+        feature === 'employee_system' ||
+        feature === 'ai_assistant'
       );
     }
   };

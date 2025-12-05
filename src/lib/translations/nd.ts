@@ -269,5 +269,29 @@ export const nd: TranslationDictionary = {
     "Xhumana nabahlinzeki ngokuthe ngqo ngendawo yokuthengisa",
     "Dweba imikhiqizo yakho ukuze abathengisi bakuthole",
     "Usekelo lwamakhasimende olufika kuqala"
-  ]
+  ],
+  
+  // Tier comparison translations
+  freeVsPremium: "Mahhala vs Premium",
+  trialIncludesPremium: "Ukuhlola kwakho kuhlanganisa zonke izinsiza ze-Premium",
+  tierFeature: "Insiza",
+  tierFree: "Mahhala",
+  tierPremium: "Premium",
+  tierSalesProfitTracking: "Ukulandelela Ukuthengisa & Inzuzo",
+  tierProductManagement: "Ukuphathwa Kwemikhiqizo",
+  tierMarketplaceBrowsing: "Ukuhlola Indawo Yokuthengisa",
+  tierViewProductPrices: "Buka Amanani Emikhiqizo",
+  tierSalesProfitReports: "Imibiko Yokuthengisa & Inzuzo",
+  tierDownloadShareReports: "Landa & Yabelana Ngemibiko",
+  tierContactSuppliers: "Xhumana Nabahlinzeki",
+  tierListProducts: "Dweba Imikhiqizo Njengomhlinzeki",
+  tierEmployeeSystem: "Uhlelo Lwabasebenzi",
+  tierAIAssistant: "Umsizi Webhizinisi we-AI",
+  tierPremiumFeature: "Insiza ye-Premium",
+  tierIncludes: "ihlanganisa",
+  tierInviteEmployees: "Mema abasebenzi ngamakhodi aphephile",
+  tierEmployeeSalesRecording: "Abasebenzi bangabhala ukuthengisa",
+  tierProtectFinancials: "Vikela imininingwane yakho yezimali",
+  tierManageStaff: "Phatha ukufinyelela kwabasebenzi",
+  employeeSystemDescription: "Uhlelo lwabasebenzi/staff yinsiza ye-Premium ekuvumela ukumema abasebenzi ukubhala ukuthengisa."
 };

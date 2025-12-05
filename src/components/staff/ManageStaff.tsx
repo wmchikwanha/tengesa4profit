@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Copy, RefreshCw, Trash2, UserPlus } from 'lucide-react';
+import { Users, Copy, RefreshCw, Trash2, UserPlus, Lock } from 'lucide-react';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +30,8 @@ interface Employee {
 export function ManageStaff() {
   const { businessInfo, permissions, regenerateInviteCode, businessId } = useBusiness();
   const { toast } = useToast();
+  const { t } = useLanguage();
+  const { canUseEmployeeSystem, isFree } = useSubscriptionPermissions();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
@@ -131,6 +135,45 @@ export function ManageStaff() {
 
   if (!permissions.canManageStaff) {
     return null;
+  }
+
+  // Show upgrade prompt for free tier
+  if (isFree) {
+    return (
+      <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lock className="h-5 w-5 text-gray-400" />
+            {t.tierPremiumFeature || 'Premium Feature'}
+          </CardTitle>
+          <CardDescription>
+            {t.employeeSystemDescription || 'The employee/staff system is a premium feature that allows you to invite employees to record sales.'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-muted/30 p-4 rounded-lg">
+            <h4 className="font-medium mb-2">{t.tierEmployeeSystem || 'Employee/Staff System'} {t.tierIncludes || 'includes'}:</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>✓ {t.tierInviteEmployees || 'Invite employees with secure codes'}</li>
+              <li>✓ {t.tierEmployeeSalesRecording || 'Employees can record sales'}</li>
+              <li>✓ {t.tierProtectFinancials || 'Protect your financial data'}</li>
+              <li>✓ {t.tierManageStaff || 'Manage staff access'}</li>
+            </ul>
+          </div>
+          <Button
+            className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"
+            onClick={() => {
+              const subscriptionSection = document.querySelector('[data-subscription-status]');
+              if (subscriptionSection) {
+                subscriptionSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
+            {t.upgradeToPlansAction || 'Upgrade to Premium'} - $1.99/{t.month || 'month'}
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

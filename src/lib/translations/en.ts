@@ -269,5 +269,29 @@ export const en: TranslationDictionary = {
     "Contact suppliers directly through the marketplace",
     "List your products for vendors to find",
     "Priority customer support"
-  ]
+  ],
+  
+  // Tier comparison translations
+  freeVsPremium: "Free vs Premium",
+  trialIncludesPremium: "Your trial includes all Premium features",
+  tierFeature: "Feature",
+  tierFree: "Free",
+  tierPremium: "Premium",
+  tierSalesProfitTracking: "Sales & Profit Tracking",
+  tierProductManagement: "Product Management",
+  tierMarketplaceBrowsing: "Marketplace Browsing",
+  tierViewProductPrices: "View Product Prices",
+  tierSalesProfitReports: "Sales & Profit Reports",
+  tierDownloadShareReports: "Download & Share Reports",
+  tierContactSuppliers: "Contact Suppliers",
+  tierListProducts: "List Products as Supplier",
+  tierEmployeeSystem: "Employee/Staff System",
+  tierAIAssistant: "AI Business Assistant",
+  tierPremiumFeature: "Premium Feature",
+  tierIncludes: "includes",
+  tierInviteEmployees: "Invite employees with secure codes",
+  tierEmployeeSalesRecording: "Employees can record sales",
+  tierProtectFinancials: "Protect your financial data",
+  tierManageStaff: "Manage staff access",
+  employeeSystemDescription: "The employee/staff system is a premium feature that allows you to invite employees to record sales."
 };

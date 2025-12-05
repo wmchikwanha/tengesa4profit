@@ -269,5 +269,29 @@ export const sn: TranslationDictionary = {
     "Bata vatengesi zvakananga kuburikidza nemusika",
     "Nyora zvinhu zvako kuti vatengesi vakubate",
     "Rubatsiro rwekutanga rwevatengi"
-  ]
+  ],
+  
+  // Tier comparison translations
+  freeVsPremium: "Mahara vs Premium",
+  trialIncludesPremium: "Edzo rako rine zvese zvePremium",
+  tierFeature: "Chinhu",
+  tierFree: "Mahara",
+  tierPremium: "Premium",
+  tierSalesProfitTracking: "Kutevera Kutengesa & Purofiti",
+  tierProductManagement: "Kubata Zvinhu",
+  tierMarketplaceBrowsing: "Kutarisa Musika",
+  tierViewProductPrices: "Tarisa Mitengo Yezvinhu",
+  tierSalesProfitReports: "Mishumo Yekutengesa & Purofiti",
+  tierDownloadShareReports: "Dhaunirodha & Govera Mishumo",
+  tierContactSuppliers: "Bata Vatengesi",
+  tierListProducts: "Nyora Zvinhu seMupi",
+  tierEmployeeSystem: "Hurongwa Hwevashandi",
+  tierAIAssistant: "AI Mubatsiri weBhizinesi",
+  tierPremiumFeature: "Chinhu chePremium",
+  tierIncludes: "chinosanganisira",
+  tierInviteEmployees: "Koka vashandi nekodhi dzakachengeteka",
+  tierEmployeeSalesRecording: "Vashandi vanogona kunyora kutengesa",
+  tierProtectFinancials: "Chengetedza ruzivo rwako rwemari",
+  tierManageStaff: "Bata mukana wevashandi",
+  employeeSystemDescription: "Hurongwa hwevashandi/staff chinhu chePremium chinokubvumira kukoka vashandi kuti vanyore kutengesa."
 };

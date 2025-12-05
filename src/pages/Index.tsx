@@ -7,17 +7,20 @@ import { useAppData } from '@/contexts/AppDataContext';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
+import { TierComparisonCard } from '@/components/subscription/TierComparisonCard';
 import ProductForm from '@/components/ProductForm';
 import TallyProfit from '@/components/profit-tally/TallyProfit';
 import Marketplace from '@/components/marketplace/Marketplace';
 import { JoinBusiness } from '@/components/staff/JoinBusiness';
 import { Badge } from '@/components/ui/badge';
 import EmployeeSalesCard from '@/components/EmployeeSalesCard';
+import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 
 export default function Index() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, subscriptionStatus } = useAuth();
   const { hasBusiness, loading: businessLoading, isOwner, isEmployee, businessInfo, permissions } = useBusiness();
   const { loading: dataLoading } = useAppData();
+  const { isTrial, isFree, trialDaysLeft } = useSubscriptionPermissions();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,8 +89,16 @@ export default function Index() {
           </Button>
         </div>
         
-        {/* Only show subscription status for owners */}
-        {isOwner && (
+        {/* Show tier comparison and subscription status for owners */}
+        {isOwner && !subscriptionStatus.subscribed && (
+          <div className="mb-8 grid gap-6 md:grid-cols-2">
+            <TierComparisonCard />
+            <SubscriptionStatus />
+          </div>
+        )}
+        
+        {/* Show only subscription status for subscribed owners */}
+        {isOwner && subscriptionStatus.subscribed && (
           <div className="mb-8">
             <SubscriptionStatus />
           </div>

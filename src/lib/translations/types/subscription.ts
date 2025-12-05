@@ -40,4 +40,28 @@ export interface SubscriptionTranslations {
   trialExpiresSoon: string;
   upgradeNowAction: string;
   upgradeToPlansAction: string;
+  
+  // Tier comparison
+  freeVsPremium: string;
+  trialIncludesPremium: string;
+  tierFeature: string;
+  tierFree: string;
+  tierPremium: string;
+  tierSalesProfitTracking: string;
+  tierProductManagement: string;
+  tierMarketplaceBrowsing: string;
+  tierViewProductPrices: string;
+  tierSalesProfitReports: string;
+  tierDownloadShareReports: string;
+  tierContactSuppliers: string;
+  tierListProducts: string;
+  tierEmployeeSystem: string;
+  tierAIAssistant: string;
+  tierPremiumFeature: string;
+  tierIncludes: string;
+  tierInviteEmployees: string;
+  tierEmployeeSalesRecording: string;
+  tierProtectFinancials: string;
+  tierManageStaff: string;
+  employeeSystemDescription: string;
 }
