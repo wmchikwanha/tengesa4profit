@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { AboutDialog } from './AboutDialog';
 import { AppFooter } from './AppFooter';
 import { AIAssistant } from './AIAssistant';
+import { AIAssistantLocked } from './AIAssistantLocked';
 import { NotificationBell } from './NotificationBell';
 import { useProactiveAlerts } from '@/hooks/useProactiveAlerts';
 
@@ -45,8 +46,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="trader-container min-h-screen">
       <AboutDialog />
-      {/* Only show AI Assistant for users with permission */}
-      {permissions.canUseAIAssistant && <AIAssistant />}
+      {/* Show AI Assistant for premium users, locked version for free users */}
+      {permissions.canUseAIAssistant ? <AIAssistant /> : <AIAssistantLocked />}
       
       <header className="text-center mb-6 relative">
         <div className="absolute top-0 right-4">
