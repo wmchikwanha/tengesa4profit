@@ -108,9 +108,13 @@ export const TierComparisonCard: React.FC<TierComparisonCardProps> = ({ onUpgrad
         {!subscriptionStatus.subscribed && (
           <div className="pt-4 border-t">
             <div className="text-center mb-3">
+              <span className="text-lg text-muted-foreground line-through mr-2">$2.99</span>
               <span className="text-2xl font-bold text-zimbabwe-darkGreen">$1.99</span>
               <span className="text-muted-foreground">/{t.month}</span>
             </div>
+            <p className="text-xs text-center text-zimbabwe-green font-medium mb-3">
+              Early Adopter Price!
+            </p>
             <Button 
               onClick={handleUpgrade}
               className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen"

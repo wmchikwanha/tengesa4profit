@@ -250,45 +250,6 @@ export const SubscriptionStatus: React.FC = () => {
         </CardContent>
       </Card>
 
-      {!subscriptionStatus.subscribed && (
-        <div className="max-w-md mx-auto">
-          {plans.map((plan) => (
-            <Card key={plan.tier} className="relative">
-              <CardHeader>
-                <CardTitle className="text-lg break-words">{plan.name}</CardTitle>
-                <div className="text-2xl font-bold">
-                  ${(plan.price / 100).toFixed(2)}
-                  <span className="text-sm font-normal text-gray-600 break-words">/{t.month}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 mb-4">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="text-sm flex items-start">
-                      <span className="w-1 h-1 bg-zimbabwe-green rounded-full mr-2 mt-2 flex-shrink-0"></span>
-                      <span className="break-words">{t.premiumBenefits[index] || feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className="w-full bg-zimbabwe-green hover:bg-zimbabwe-darkGreen text-xs sm:text-sm"
-                  onClick={() => handleCheckout(plan.tier, plan.price)}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      <span className="break-words">Loading...</span>
-                    </>
-                  ) : (
-                    <span className="break-words">{t.upgradeToPlansAction}</span>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
