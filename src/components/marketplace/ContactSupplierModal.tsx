@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Building, User, Mail, MessageCircle, Phone } from 'lucide-react';
 import { MarketplaceProduct, ProductInquiry } from '@/lib/marketplace-types';
 import { useToast } from '@/hooks/use-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const contactSchema = z.object({
   traderName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100, 'Name must be less than 100 characters'),
@@ -38,6 +39,7 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
   const { addInquiry } = useMarketplace();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
   const [formData, setFormData] = React.useState({
     traderName: '',
     traderEmail: '',
@@ -88,6 +90,11 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
     };
 
     addInquiry(inquiry);
+    trackEvent('supplier_contacted', {
+      productId: product.id,
+      method: 'form',
+      hasQuantity: !!validation.data.quantity,
+    });
     
     // Reset form and close modal
     setFormData({
@@ -113,6 +120,7 @@ export const ContactSupplierModal: React.FC<ContactSupplierModalProps> = ({
       return;
     }
     
+    trackEvent('supplier_contacted', { productId: product.id, method: 'whatsapp' });
     const message = encodeURIComponent(
       `${t.whatsappMessage}\n\nProduct: ${product.name}\nPrice: $${product.price}/${product.unit}`
     );

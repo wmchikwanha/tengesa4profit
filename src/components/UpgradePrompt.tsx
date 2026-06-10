@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface UpgradePromptProps {
   feature: string;
@@ -16,8 +17,10 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
   onUpgrade 
 }) => {
   const { t } = useLanguage();
+  const { trackEvent } = useAnalytics();
   
   const handleUpgrade = () => {
+    trackEvent('upgrade_clicked', { source: 'upgrade_prompt', feature });
     if (onUpgrade) {
       onUpgrade();
     } else {

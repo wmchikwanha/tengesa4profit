@@ -10,12 +10,14 @@ import { useSalesReports } from '@/hooks/useSalesReports';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useToast } from '@/hooks/use-toast';
 import { useBusiness } from '@/contexts/BusinessContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const TallyProfit: React.FC = () => {
   const { salesHistory, clearSalesData, addToHistory } = useAppData();
   const { reportRef, handleSharePDF, handleDownloadPDF } = usePDFReports();
   const { toast } = useToast();
   const { permissions: businessPermissions } = useBusiness();
+  const { trackEvent } = useAnalytics();
   const [saleDate, setSaleDate] = React.useState<string>(new Date().toISOString().split('T')[0]);
   
   const {
@@ -72,6 +74,11 @@ const TallyProfit: React.FC = () => {
   const handleAddSale = async () => {
     await handleCalculate(async ({ productId, soldQty, discardedQty }) => {
       await addToHistory(saleDate, productId, soldQty, discardedQty);
+      trackEvent('sale_recorded', {
+        productId,
+        quantitySold: soldQty,
+        quantityDiscarded: discardedQty,
+      });
     });
   };
   

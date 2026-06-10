@@ -15,12 +15,14 @@ import { JoinBusiness } from '@/components/staff/JoinBusiness';
 import { Badge } from '@/components/ui/badge';
 import EmployeeSalesCard from '@/components/EmployeeSalesCard';
 import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function Index() {
   const { user, loading, signOut, subscriptionStatus } = useAuth();
   const { hasBusiness, loading: businessLoading, isOwner, isEmployee, businessInfo, permissions } = useBusiness();
   const { loading: dataLoading } = useAppData();
   const { isTrial, isFree, trialDaysLeft } = useSubscriptionPermissions();
+  const { trackEvent } = useAnalytics();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,18 @@ export default function Index() {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    if (user && hasBusiness) {
+      trackEvent('page_view', {
+        page: 'home',
+        role: isOwner ? 'owner' : 'employee',
+        subscribed: subscriptionStatus.subscribed,
+        tier: subscriptionStatus.tier,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, hasBusiness]);
 
   if (loading || businessLoading) {
     return (

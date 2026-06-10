@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, X, Crown, Clock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface TierComparisonCardProps {
   onUpgrade?: () => void;
@@ -13,6 +14,7 @@ interface TierComparisonCardProps {
 export const TierComparisonCard: React.FC<TierComparisonCardProps> = ({ onUpgrade }) => {
   const { t } = useLanguage();
   const { user, subscriptionStatus } = useAuth();
+  const { trackEvent } = useAnalytics();
   
   // Calculate trial days left
   const storageKey = user ? `t4p:${user.id}:trialEnd` : null;
@@ -32,6 +34,7 @@ export const TierComparisonCard: React.FC<TierComparisonCardProps> = ({ onUpgrad
   const isTrialActive = daysLeft > 0;
   
   const handleUpgrade = () => {
+    trackEvent('upgrade_clicked', { source: 'tier_comparison_card', isTrialActive });
     if (onUpgrade) {
       onUpgrade();
     } else {
