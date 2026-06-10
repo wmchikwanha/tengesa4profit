@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { Product } from '@/lib/types';
 import { ReportFilters, SalesReportData, ProductReportData } from '@/hooks/useSalesReports';
 import { UpgradePrompt } from '@/components/UpgradePrompt';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface SalesReportDialogProps {
   products: Product[];
@@ -50,6 +51,7 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
 }) => {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+  const { trackEvent } = useAnalytics();
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<ReportFilters>({
     startDate: undefined,
@@ -58,6 +60,10 @@ export const SalesReportDialog: React.FC<SalesReportDialogProps> = ({
   });
 
   const handleGenerateReport = () => {
+    trackEvent('report_generated', {
+      hasDateRange: !!(filters.startDate && filters.endDate),
+      productFilter: filters.productId,
+    });
     onGenerateReport(filters);
   };
 

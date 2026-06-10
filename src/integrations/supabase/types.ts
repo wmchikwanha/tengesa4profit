@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          event_data: Json | null
+          event_name: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_name: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_name?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       business_members: {
         Row: {
           business_id: string

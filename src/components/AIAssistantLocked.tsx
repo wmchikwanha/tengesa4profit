@@ -9,12 +9,20 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export const AIAssistantLocked: React.FC = () => {
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const { t } = useLanguage();
+  const { trackEvent } = useAnalytics();
+
+  const handleOpen = () => {
+    trackEvent('ai_locked_tapped');
+    setShowUpgradePrompt(true);
+  };
 
   const handleUpgrade = () => {
+    trackEvent('upgrade_clicked', { source: 'ai_locked' });
     setShowUpgradePrompt(false);
     const subscriptionSection = document.querySelector('[data-subscription-status]');
     if (subscriptionSection) {
@@ -28,7 +36,7 @@ export const AIAssistantLocked: React.FC = () => {
         size="lg"
         className="fixed bottom-4 right-4 z-50 rounded-full h-16 w-16 shadow-lg hover:shadow-xl transition-all duration-300 bg-muted hover:bg-muted/80 flex flex-col items-center justify-center gap-0.5 border border-border"
         aria-label="AI Business Assistant (Premium)"
-        onClick={() => setShowUpgradePrompt(true)}
+        onClick={handleOpen}
       >
         <div className="relative">
           <Sparkles className="h-5 w-5 text-muted-foreground" />

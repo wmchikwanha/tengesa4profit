@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Users, Copy, RefreshCw, Trash2, UserPlus, Lock } from 'lucide-react';
 import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,7 @@ export function ManageStaff() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { canUseEmployeeSystem, isFree } = useSubscriptionPermissions();
+  const { trackEvent } = useAnalytics();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
@@ -79,6 +81,7 @@ export function ManageStaff() {
   const handleCopyCode = () => {
     if (businessInfo?.inviteCode) {
       navigator.clipboard.writeText(businessInfo.inviteCode);
+      trackEvent('staff_invite_shared', { action: 'copy_code' });
       toast({
         title: 'Copied!',
         description: 'Invite code copied to clipboard',

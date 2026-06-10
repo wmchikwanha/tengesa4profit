@@ -47,6 +47,7 @@ import {
 } from '@/components/ui/tooltip';
 import CurrencySelector from './CurrencySelector';
 import ProductsTable from './ProductsTable';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const DEFAULT_PRODUCT: Omit<Product, 'id'> = {
   name: '',
@@ -90,6 +91,7 @@ const ProductForm: React.FC = () => {
   const { products, addProduct, getProduct, deleteProduct, updateProduct } = useAppData();
   const { formatPrice, getCurrencySymbol } = useCurrency();
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
   
   const [formData, setFormData] = React.useState<Omit<Product, 'id'>>(DEFAULT_PRODUCT);
   const [activeProductId, setActiveProductId] = React.useState<string | null>(null);
@@ -239,6 +241,10 @@ const ProductForm: React.FC = () => {
       } else {
         // Add new product
         await addProduct(formData);
+        trackEvent('product_added', {
+          unit: formData.unitOfMeasurement,
+          quantity: formData.quantityBought,
+        });
         toast({
           title: "Success",
           description: "Product saved successfully",

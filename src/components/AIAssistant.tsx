@@ -10,6 +10,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { calculateProduct } from '@/lib/types';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -28,6 +29,7 @@ export const AIAssistant: React.FC = () => {
   const { formatPrice, getCurrencySymbol, settings } = useCurrency();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('ai_assistant_visited');
@@ -107,6 +109,8 @@ export const AIAssistant: React.FC = () => {
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
+
+    trackEvent('ai_assistant_used', { messageLength: text.length });
 
     const userMessage: Message = {
       role: 'user',
