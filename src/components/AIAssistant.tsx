@@ -304,6 +304,22 @@ export const AIAssistant: React.FC = () => {
                   <p className="text-xs opacity-60 mt-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
+                  {msg.transparency && (
+                    <div className="mt-2 border-t border-primary-foreground/20 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedTransparency(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                        className="text-[11px] opacity-80 underline"
+                      >
+                        🔍 {expandedTransparency[idx] ? 'Hide' : 'What was sent?'}
+                      </button>
+                      {expandedTransparency[idx] && (
+                        <pre className="mt-1 text-[10px] whitespace-pre-wrap opacity-90 max-h-48 overflow-auto">
+                          {JSON.stringify(msg.transparency, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
