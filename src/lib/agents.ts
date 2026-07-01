@@ -24,7 +24,7 @@ const anonProducts = (products: Product[]) =>
     };
   });
 
-export function buildDailyClosing(products: Product[], sales: SaleRecord[]): AgentBuild {
+export function buildDailyClosing(products: Product[], sales: SalesRecord[]): AgentBuild {
   const today = new Date().toISOString().split('T')[0];
   const todaySales = sales.filter((s) => s.date === today);
   const revenue = todaySales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + (b.sellingPrice * b.quantity), 0), 0);
@@ -44,7 +44,7 @@ export function buildDailyClosing(products: Product[], sales: SaleRecord[]): Age
   return { prompt, transparency, label: 'Close today\'s books' };
 }
 
-export function buildRestockForecast(products: Product[], sales: SaleRecord[]): AgentBuild {
+export function buildRestockForecast(products: Product[], sales: SalesRecord[]): AgentBuild {
   const now = Date.now();
   const cutoff = now - 14 * 24 * 60 * 60 * 1000;
   const recent = sales.filter((s) => new Date(s.date).getTime() >= cutoff);
@@ -82,10 +82,10 @@ export function buildNegotiationCoach(productName: string, supplierOffer: number
   return { prompt, transparency, label: 'Help me negotiate' };
 }
 
-export function buildHealthWatchdog(products: Product[], sales: SaleRecord[]): AgentBuild {
+export function buildHealthWatchdog(products: Product[], sales: SalesRecord[]): AgentBuild {
   const totalStockValue = products.reduce((sum, p) => {
     const c = calculateProduct(p);
-    return sum + c.stockRemaining * p.costPrice;
+    return sum + c.stockRemaining * p.buyingPrice;
   }, 0);
 
   const last7 = Date.now() - 7 * 24 * 60 * 60 * 1000;
