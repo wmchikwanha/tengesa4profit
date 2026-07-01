@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import EmployeeSalesCard from '@/components/EmployeeSalesCard';
 import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { PrivacyBanner } from '@/components/PrivacyBanner';
 
 export default function Index() {
   const { user, loading, signOut, subscriptionStatus } = useAuth();
