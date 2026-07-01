@@ -251,6 +251,21 @@ export const AIAssistant: React.FC = () => {
     "Give me business advice"
   ];
 
+  const runAgent = (build: AgentBuild, agentId: string) => {
+    trackEvent('agent_used', { agent: agentId });
+    sendMessage(build.prompt, build.transparency);
+  };
+
+  const runNegotiation = () => {
+    if (!negProduct.trim() || !negOffer.trim()) return;
+    const build = buildNegotiationCoach(negProduct, Number(negOffer), language);
+    trackEvent('agent_used', { agent: 'negotiation_coach' });
+    setNegotiateOpen(false);
+    setNegProduct('');
+    setNegOffer('');
+    sendMessage(build.prompt, build.transparency);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
