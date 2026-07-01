@@ -27,9 +27,9 @@ const anonProducts = (products: Product[]) =>
 export function buildDailyClosing(products: Product[], sales: SalesRecord[]): AgentBuild {
   const today = new Date().toISOString().split('T')[0];
   const todaySales = sales.filter((s) => s.date === today);
-  const revenue = todaySales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + (b.sellingPrice * b.quantity), 0), 0);
+  const revenue = todaySales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + (b.sellingPrice * b.quantitySold), 0), 0);
   const profit = todaySales.reduce((sum, s) => sum + s.totalProfit, 0);
-  const items = todaySales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + b.quantity, 0), 0);
+  const items = todaySales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + b.quantitySold, 0), 0);
 
   const transparency = {
     date: today,
@@ -52,7 +52,7 @@ export function buildRestockForecast(products: Product[], sales: SalesRecord[]):
   const velocity: Record<string, number> = {};
   recent.forEach((s) => {
     s.products.forEach((p) => {
-      velocity[p.name] = (velocity[p.name] || 0) + p.quantity;
+      velocity[p.name] = (velocity[p.name] || 0) + p.quantitySold;
     });
   });
 
