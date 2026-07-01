@@ -12,10 +12,17 @@ import { useToast } from '@/hooks/use-toast';
 import { calculateProduct } from '@/lib/types';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
+import { buildDailyClosing, buildRestockForecast, buildHealthWatchdog, buildNegotiationCoach, AgentBuild } from '@/lib/agents';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  transparency?: Record<string, unknown>;
 }
 
 export const AIAssistant: React.FC = () => {
