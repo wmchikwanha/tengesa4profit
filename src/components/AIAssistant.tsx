@@ -119,7 +119,7 @@ export const AIAssistant: React.FC = () => {
     };
   };
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, transparency?: Record<string, unknown>) => {
     if (!text.trim() || isLoading) return;
 
     trackEvent('ai_assistant_used', { messageLength: text.length });
@@ -127,7 +127,8 @@ export const AIAssistant: React.FC = () => {
     const userMessage: Message = {
       role: 'user',
       content: text,
-      timestamp: new Date()
+      timestamp: new Date(),
+      transparency,
     };
 
     setMessages(prev => [...prev, userMessage]);
