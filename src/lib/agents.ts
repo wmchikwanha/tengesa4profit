@@ -2,7 +2,8 @@
 // Each returns { prompt, transparency } — transparency is the exact data snapshot
 // the AI will see, shown to the user in the Transparency Log.
 
-import { calculateProduct, Product, SaleRecord } from '@/lib/types';
+import { calculateProduct, Product } from '@/lib/types';
+import type { SalesRecord } from '@/contexts/AppDataContext';
 
 export type AgentId = 'daily_closing' | 'restock_forecast' | 'negotiation_coach' | 'health_watchdog';
 
