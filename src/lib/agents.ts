@@ -90,7 +90,7 @@ export function buildHealthWatchdog(products: Product[], sales: SalesRecord[]): 
 
   const last7 = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const recentSales = sales.filter((s) => new Date(s.date).getTime() >= last7);
-  const revenue7d = recentSales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + b.sellingPrice * b.quantity, 0), 0);
+  const revenue7d = recentSales.reduce((sum, s) => sum + s.products.reduce((a, b) => a + b.sellingPrice * b.quantitySold, 0), 0);
   const profit7d = recentSales.reduce((sum, s) => sum + s.totalProfit, 0);
 
   const slowMovers = products.filter((p) => {
