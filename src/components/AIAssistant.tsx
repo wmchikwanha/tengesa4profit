@@ -12,10 +12,17 @@ import { useToast } from '@/hooks/use-toast';
 import { calculateProduct } from '@/lib/types';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
+import { buildDailyClosing, buildRestockForecast, buildHealthWatchdog, buildNegotiationCoach, AgentBuild } from '@/lib/agents';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  transparency?: Record<string, unknown>;
 }
 
 export const AIAssistant: React.FC = () => {
@@ -27,9 +34,14 @@ export const AIAssistant: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products, salesHistory } = useAppData();
   const { formatPrice, getCurrencySymbol, settings } = useCurrency();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const [negotiateOpen, setNegotiateOpen] = useState(false);
+  const [negProduct, setNegProduct] = useState('');
+  const [negOffer, setNegOffer] = useState('');
+  const [expandedTransparency, setExpandedTransparency] = useState<Record<number, boolean>>({});
+  const [pendingTransparency, setPendingTransparency] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('ai_assistant_visited');
@@ -107,7 +119,7 @@ export const AIAssistant: React.FC = () => {
     };
   };
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, transparency?: Record<string, unknown>) => {
     if (!text.trim() || isLoading) return;
 
     trackEvent('ai_assistant_used', { messageLength: text.length });
@@ -115,7 +127,8 @@ export const AIAssistant: React.FC = () => {
     const userMessage: Message = {
       role: 'user',
       content: text,
-      timestamp: new Date()
+      timestamp: new Date(),
+      transparency,
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -238,6 +251,21 @@ export const AIAssistant: React.FC = () => {
     "Give me business advice"
   ];
 
+  const runAgent = (build: AgentBuild, agentId: string) => {
+    trackEvent('agent_used', { agent: agentId });
+    sendMessage(build.prompt, build.transparency);
+  };
+
+  const runNegotiation = () => {
+    if (!negProduct.trim() || !negOffer.trim()) return;
+    const build = buildNegotiationCoach(negProduct, Number(negOffer), language);
+    trackEvent('agent_used', { agent: 'negotiation_coach' });
+    setNegotiateOpen(false);
+    setNegProduct('');
+    setNegOffer('');
+    sendMessage(build.prompt, build.transparency);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -276,6 +304,22 @@ export const AIAssistant: React.FC = () => {
                   <p className="text-xs opacity-60 mt-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
+                  {msg.transparency && (
+                    <div className="mt-2 border-t border-primary-foreground/20 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedTransparency(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                        className="text-[11px] opacity-80 underline"
+                      >
+                        🔍 {expandedTransparency[idx] ? 'Hide' : 'What was sent?'}
+                      </button>
+                      {expandedTransparency[idx] && (
+                        <pre className="mt-1 text-[10px] whitespace-pre-wrap opacity-90 max-h-48 overflow-auto">
+                          {JSON.stringify(msg.transparency, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -308,6 +352,32 @@ export const AIAssistant: React.FC = () => {
           )}
         </ScrollArea>
 
+        <div className="px-4 py-2 border-t bg-muted/30">
+          <p className="text-[11px] font-semibold text-muted-foreground mb-2">⚡ Quick Agents</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildDailyClosing(products, salesHistory), 'daily_closing')}>
+              📊 Close books
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildRestockForecast(products, salesHistory), 'restock_forecast')}>
+              📦 What to buy?
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => setNegotiateOpen(true)}>
+              💬 Negotiate
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildHealthWatchdog(products, salesHistory), 'health_watchdog')}>
+              🩺 Health check
+            </Button>
+          </div>
+        </div>
+
         <div className="p-4 border-t">
           <form
             onSubmit={(e) => {
@@ -329,6 +399,28 @@ export const AIAssistant: React.FC = () => {
           </form>
         </div>
       </SheetContent>
+
+      <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>💬 Price Negotiation Coach</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>What product?</Label>
+              <Input value={negProduct} onChange={(e) => setNegProduct(e.target.value)} placeholder="e.g. Cooking oil 2L" />
+            </div>
+            <div>
+              <Label>Supplier's price per unit ({getCurrencySymbol()})</Label>
+              <Input type="number" value={negOffer} onChange={(e) => setNegOffer(e.target.value)} placeholder="e.g. 4.50" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
+            <Button onClick={runNegotiation} disabled={!negProduct.trim() || !negOffer.trim()}>Get advice</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Sheet>
   );
 };

@@ -1,93 +1,76 @@
+## Plan: Agentic Features + Privacy Trust Layer
 
+### Part 1 — Four Agentic Modules
 
-## Plan: Add Analytics Tracking for Portfolio Metrics
+All four run on the existing Lovable AI Gateway path used by `AIAssistant.tsx`. No new edge functions — reuse the existing chat endpoint with structured system prompts. Each agent is a **button on the AI Assistant panel** ("Quick Agents") that pre-fills a specialized query with the user's real business data (sales, products, stock).
 
-### What We're Building
-A lightweight, client-side analytics system that tracks user engagement metrics and stores them in Supabase. This gives you real data to showcase in your portfolio (DAU, feature usage, conversion rates).
+**1. Daily Closing Agent** — End-of-day summary
+- Button: "Close today's books"
+- Pulls today's sales + starting stock, sends to AI with a closing-agent system prompt
+- Output: today's revenue, profit, discrepancies (bought vs sold), tomorrow's restock list
 
-### Architecture
-- **New Supabase table**: `analytics_events` to store all events
-- **New hook**: `useAnalytics` - simple event tracking utility
-- **Integration points**: Key user actions tracked across existing components
-- **New admin view**: Simple analytics dashboard (owner-only) on the Settings page
+**2. Restock Forecasting Agent**
+- Button: "What should I buy?"
+- Computes 14-day sales velocity per product client-side, sends top movers to AI
+- Output: predicted stock-out dates + suggested quantities
 
-### 1. Database Migration - Create `analytics_events` table
+**3. Price Negotiation Coach**
+- Button: "Help me negotiate"
+- Modal asks: product + supplier's offer
+- AI returns counter-offer + bilingual script (English/Shona/Ndebele based on user's language)
 
-```sql
-CREATE TABLE public.analytics_events (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  business_id uuid,
-  event_name text NOT NULL,
-  event_data jsonb DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
+**4. Spoilage + Cash-Flow Watchdog**
+- Button: "Check my business health"
+- Analyzes stock aging, discard patterns (products deleted after being added), inflow vs outflow
+- Output: warnings + concrete actions
 
-ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
+**Implementation:** One new file `src/lib/agents.ts` with 4 prompt builders. Modify `AIAssistant.tsx` to add a "Quick Agents" row of 4 chips above the free-text input. Each chip → builds the specialized prompt → sends via existing chat flow. Track each via `trackEvent('agent_used', { agent: 'daily_closing' })`.
 
--- Users can insert their own events
-CREATE POLICY "Users can insert own events"
-  ON public.analytics_events FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+### Part 2 — Privacy Center + Trust Layer
 
--- Owners can read events for their business
-CREATE POLICY "Owners can read business events"
-  ON public.analytics_events FOR SELECT
-  USING (is_business_owner(auth.uid(), business_id) OR user_id = auth.uid());
+**A. New page: `/privacy-center`** (`src/pages/PrivacyCenter.tsx`)
+Sections:
+- "Your Data, Your Control" hero (multilingual)
+- What we store / what we never store (plain language)
+- **Export all my data** button → downloads JSON of products + sales
+- **Delete everything** button → wired to existing delete-account edge function
+- **Local-Only Mode** toggle (see D)
+- Link to AI Transparency Log
 
--- Index for efficient querying
-CREATE INDEX idx_analytics_events_name_created ON public.analytics_events (event_name, created_at);
-CREATE INDEX idx_analytics_events_user ON public.analytics_events (user_id, created_at);
-```
+**B. Home banner** — dismissible strip on `Index.tsx`: "🔒 Your data stays private — [Privacy Center →]". Uses localStorage `privacy_banner_dismissed`.
 
-### 2. Create `src/hooks/useAnalytics.ts`
+**C. Route + nav** — add to `App.tsx`; link from Settings/Profile menu and AboutDialog.
 
-A minimal hook that:
-- Exposes `trackEvent(eventName, eventData?)` function
-- Batches events (debounced writes to reduce DB calls)
-- Auto-tracks `page_view` and `session_start`
-- Silently fails (never blocks UI)
+**D. Local-Only Mode**
+- New context `LocalOnlyModeContext` reading `localStorage.local_only_mode`
+- When ON: `useProducts`/sales hooks skip Supabase writes, use localStorage only
+- Big warning modal on enable: "Multi-device sync will stop. Employees won't see your data."
+- Simplest safe approach: gate Supabase mutations behind `if (!localOnly)` in the existing hooks — reads still work but writes go to localStorage mirror. Include disable toggle to restore cloud.
+- *Scoped implementation:* wire the toggle + context + UI warnings; add the guard in `useSupabaseProducts` and `useSupabaseSalesHistory` write functions to short-circuit to localStorage. Full offline data parity is a follow-up if the user wants deeper coverage.
 
-### 3. Track Key Events Across the App
+**E. AI Transparency Log**
+- Every AI call already goes through `AIAssistant.tsx`. Add a collapsible "🔍 What was sent" accordion below each assistant message showing the exact context payload (product counts, sales numbers — anonymized, no supplier/customer names).
+- Store last 20 payloads in `sessionStorage` (never persisted server-side).
 
-| Event | Location | Purpose |
-|-------|----------|---------|
-| `session_start` | AuthContext (on login) | DAU measurement |
-| `page_view` | Index.tsx | Active usage |
-| `product_added` | ProductForm.tsx | Feature usage |
-| `sale_recorded` | TallyProfit.tsx | Core engagement |
-| `report_generated` | SalesReportDialog.tsx | Premium feature usage |
-| `marketplace_viewed` | Marketplace.tsx | Feature discovery |
-| `supplier_contacted` | ContactSupplierModal.tsx | Conversion metric |
-| `upgrade_clicked` | TierComparisonCard, UpgradePrompt | Conversion funnel |
-| `ai_assistant_used` | AIAssistant.tsx | Premium feature usage |
-| `ai_locked_tapped` | AIAssistantLocked.tsx | Upgrade intent |
-| `staff_invited` | ManageStaff.tsx | Premium feature usage |
-| `pdf_downloaded` | usePDFReports.ts | Feature usage |
+### Files
 
-### 4. No Admin Dashboard (Keep It Simple)
+**New:**
+- `src/lib/agents.ts` — 4 prompt builders
+- `src/pages/PrivacyCenter.tsx`
+- `src/contexts/LocalOnlyModeContext.tsx`
+- `src/components/PrivacyBanner.tsx`
 
-Analytics data lives in the database for querying via Supabase SQL Editor or for future dashboard builds. No UI overhead added now -- the portfolio value is in the tracking infrastructure and the data itself, which can be queried directly.
+**Edited:**
+- `src/components/AIAssistant.tsx` — Quick Agents chips + transparency accordion
+- `src/App.tsx` — route + LocalOnlyMode provider
+- `src/pages/Index.tsx` — banner mount
+- `src/hooks/useSupabaseProducts.ts` — local-only write guard
+- `src/hooks/useSupabaseSalesHistory.ts` — local-only write guard
+- `src/components/AboutDialog.tsx` — Privacy Center link
 
-### Files Changed
+### Not in scope
+- No new DB tables (transparency log is client-only, agents reuse existing AI path)
+- No new edge functions
+- Language translations for new copy: English first; Shona/Ndebele strings added to existing i18n where trivial, otherwise English fallback.
 
-| File | Action |
-|------|--------|
-| Migration SQL | Create `analytics_events` table |
-| `src/hooks/useAnalytics.ts` | New - event tracking hook |
-| `src/contexts/AuthContext.tsx` | Track `session_start` on login |
-| `src/pages/Index.tsx` | Track `page_view` |
-| `src/components/ProductForm.tsx` | Track `product_added` |
-| `src/components/profit-tally/TallyProfit.tsx` | Track `sale_recorded` |
-| `src/components/profit-tally/SalesReportDialog.tsx` | Track `report_generated` |
-| `src/components/marketplace/Marketplace.tsx` | Track `marketplace_viewed` |
-| `src/components/marketplace/ContactSupplierModal.tsx` | Track `supplier_contacted` |
-| `src/components/subscription/TierComparisonCard.tsx` | Track `upgrade_clicked` |
-| `src/components/UpgradePrompt.tsx` | Track `upgrade_clicked` |
-| `src/components/AIAssistant.tsx` | Track `ai_assistant_used` |
-| `src/components/AIAssistantLocked.tsx` | Track `ai_locked_tapped` |
-| `src/components/staff/ManageStaff.tsx` | Track `staff_invited` |
-| `src/hooks/usePDFReports.ts` | Track `pdf_downloaded` |
-
-Each integration is a single `trackEvent()` call -- minimal code changes per file.
-
+Ready to build on approval.

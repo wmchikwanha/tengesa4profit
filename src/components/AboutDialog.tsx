@@ -55,7 +55,14 @@ export const AboutDialog = () => {
                 <p className="text-sm">{t.aboutMultiLangDesc}</p>
               </div>
             </div>
-            
+
+            <a
+              href="/privacy-center"
+              className="block text-sm font-medium text-zimbabwe-darkGreen underline pt-2"
+            >
+              🔒 Privacy Center — Your data, your control
+            </a>
+
             <p className="text-xs text-muted-foreground pt-4 border-t">
               {t.aboutFooter}
             </p>
