@@ -102,7 +102,9 @@ export default function Index() {
             Sign Out
           </Button>
         </div>
-        
+
+        <PrivacyBanner />
+
         {/* Show tier comparison and subscription status for owners */}
         {isOwner && !subscriptionStatus.subscribed && (
           <div className="mb-8 grid gap-6 md:grid-cols-2">
