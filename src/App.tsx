@@ -12,6 +12,7 @@ import { MarketplaceProvider } from '@/contexts/MarketplaceContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { BusinessProvider } from '@/contexts/BusinessContext';
+import { LocalOnlyModeProvider } from '@/contexts/LocalOnlyModeContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import Index from "./pages/Index";
@@ -22,6 +23,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Install from "./pages/Install";
+import PrivacyCenter from "./pages/PrivacyCenter";
 
 const queryClient = new QueryClient();
 
