@@ -34,9 +34,14 @@ export const AIAssistant: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products, salesHistory } = useAppData();
   const { formatPrice, getCurrencySymbol, settings } = useCurrency();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const [negotiateOpen, setNegotiateOpen] = useState(false);
+  const [negProduct, setNegProduct] = useState('');
+  const [negOffer, setNegOffer] = useState('');
+  const [expandedTransparency, setExpandedTransparency] = useState<Record<number, boolean>>({});
+  const [pendingTransparency, setPendingTransparency] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('ai_assistant_visited');
