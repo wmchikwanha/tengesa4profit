@@ -352,6 +352,32 @@ export const AIAssistant: React.FC = () => {
           )}
         </ScrollArea>
 
+        <div className="px-4 py-2 border-t bg-muted/30">
+          <p className="text-[11px] font-semibold text-muted-foreground mb-2">⚡ Quick Agents</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildDailyClosing(products, salesHistory), 'daily_closing')}>
+              📊 Close books
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildRestockForecast(products, salesHistory), 'restock_forecast')}>
+              📦 What to buy?
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => setNegotiateOpen(true)}>
+              💬 Negotiate
+            </Button>
+            <Button size="sm" variant="secondary" className="text-xs h-auto py-1.5"
+              disabled={isLoading}
+              onClick={() => runAgent(buildHealthWatchdog(products, salesHistory), 'health_watchdog')}>
+              🩺 Health check
+            </Button>
+          </div>
+        </div>
+
         <div className="p-4 border-t">
           <form
             onSubmit={(e) => {
@@ -373,6 +399,29 @@ export const AIAssistant: React.FC = () => {
           </form>
         </div>
       </SheetContent>
+
+      <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>💬 Price Negotiation Coach</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>What product?</Label>
+              <Input value={negProduct} onChange={(e) => setNegProduct(e.target.value)} placeholder="e.g. Cooking oil 2L" />
+            </div>
+            <div>
+              <Label>Supplier's price per unit ({getCurrencySymbol()})</Label>
+              <Input type="number" value={negOffer} onChange={(e) => setNegOffer(e.target.value)} placeholder="e.g. 4.50" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
+            <Button onClick={runNegotiation} disabled={!negProduct.trim() || !negOffer.trim()}>Get advice</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Sheet>
   );
+};
 };
