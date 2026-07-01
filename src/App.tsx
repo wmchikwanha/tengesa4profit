@@ -34,29 +34,32 @@ const App = () => (
         <BusinessProvider>
           <LanguageProvider>
             <CurrencyProvider>
-              <AppDataProvider>
-                <MarketplaceProvider>
-                  <NotificationProvider>
-                    <TooltipProvider>
-                      <ToastProvider>
-                        <OfflineIndicator />
-                        <PWAInstallPrompt />
-                        <Routes>
-                          <Route path="/auth" element={<Auth />} />
-                          <Route path="/reset-password" element={<ResetPassword />} />
-                          <Route path="/verify-email" element={<VerifyEmail />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="/profile" element={<Profile />} />
-                          <Route path="/install" element={<Install />} />
-                          <Route path="/" element={<Index />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                        <Toaster />
-                      </ToastProvider>
-                    </TooltipProvider>
-                  </NotificationProvider>
-                </MarketplaceProvider>
-              </AppDataProvider>
+              <LocalOnlyModeProvider>
+                <AppDataProvider>
+                  <MarketplaceProvider>
+                    <NotificationProvider>
+                      <TooltipProvider>
+                        <ToastProvider>
+                          <OfflineIndicator />
+                          <PWAInstallPrompt />
+                          <Routes>
+                            <Route path="/auth" element={<Auth />} />
+                            <Route path="/reset-password" element={<ResetPassword />} />
+                            <Route path="/verify-email" element={<VerifyEmail />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/install" element={<Install />} />
+                            <Route path="/privacy-center" element={<PrivacyCenter />} />
+                            <Route path="/" element={<Index />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                          <Toaster />
+                        </ToastProvider>
+                      </TooltipProvider>
+                    </NotificationProvider>
+                  </MarketplaceProvider>
+                </AppDataProvider>
+              </LocalOnlyModeProvider>
             </CurrencyProvider>
           </LanguageProvider>
         </BusinessProvider>
