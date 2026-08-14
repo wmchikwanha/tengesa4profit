@@ -13,6 +13,7 @@ import { TermsDialog } from '@/components/TermsDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { AppFooter } from '@/components/AppFooter';
 import { AboutDialog } from '@/components/AboutDialog';
+import { useGuestMode } from '@/contexts/GuestModeContext';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -27,6 +28,7 @@ export default function Auth() {
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isGuest, guestExpired, startGuest } = useGuestMode();
 
   useEffect(() => {
     if (user) {
@@ -258,6 +260,21 @@ export default function Auth() {
               </button>
             )}
           </div>
+
+          {!guestExpired && (
+            <div className="mt-4 pt-4 border-t text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isGuest) startGuest();
+                  navigate('/');
+                }}
+                className="text-sm text-muted-foreground hover:underline"
+              >
+                Or try it free for 60 days — no sign up needed
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
       

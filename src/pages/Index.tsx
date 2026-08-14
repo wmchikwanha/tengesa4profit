@@ -17,6 +17,11 @@ import EmployeeSalesCard from '@/components/EmployeeSalesCard';
 import { useSubscriptionPermissions } from '@/hooks/useSubscriptionPermissions';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { PrivacyBanner } from '@/components/PrivacyBanner';
+import { useGuestMode } from '@/contexts/GuestModeContext';
+import { GuestWelcome } from '@/components/guest/GuestWelcome';
+import { GuestExpiredWall } from '@/components/guest/GuestExpiredWall';
+import { GuestTrialBanner } from '@/components/guest/GuestTrialBanner';
+import { useGuestMigration } from '@/hooks/useGuestMigration';
 
 export default function Index() {
   const { user, loading, signOut, subscriptionStatus } = useAuth();
@@ -24,13 +29,9 @@ export default function Index() {
   const { loading: dataLoading } = useAppData();
   const { isTrial, isFree, trialDaysLeft } = useSubscriptionPermissions();
   const { trackEvent } = useAnalytics();
+  const { isGuest, guestExpired } = useGuestMode();
+  useGuestMigration();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (user && hasBusiness) {
@@ -55,12 +56,14 @@ export default function Index() {
     );
   }
 
+  // No account: offer the free 60-day guest run, or the sign-up wall once it ends
   if (!user) {
-    return null; // Will redirect to auth
+    if (guestExpired) return <GuestExpiredWall />;
+    if (!isGuest) return <GuestWelcome />;
   }
 
   // If user doesn't have a business, show the join/create flow
-  if (!hasBusiness) {
+  if (!hasBusiness && user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white flex flex-col items-center justify-center p-4">
         <h1 className="text-3xl font-bold text-zimbabwe-darkGreen mb-8">
@@ -91,23 +94,33 @@ export default function Index() {
                 {isOwner ? 'Owner' : 'Employee'}
               </Badge>
               <span className="text-sm text-muted-foreground">
-                {user.email}
+                {user ? user.email : 'Guest — this phone only'}
               </span>
             </div>
           </div>
-          <Button 
-            onClick={signOut}
-            variant="outline"
-            className="border-zimbabwe-green text-zimbabwe-green hover:bg-zimbabwe-green hover:text-white"
-          >
-            Sign Out
-          </Button>
+          {user ? (
+            <Button 
+              onClick={signOut}
+              variant="outline"
+              className="border-zimbabwe-green text-zimbabwe-green hover:bg-zimbabwe-green hover:text-white"
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button
+              onClick={() => navigate('/auth')}
+              variant="outline"
+              className="border-zimbabwe-green text-zimbabwe-green hover:bg-zimbabwe-green hover:text-white"
+            >
+              Create account
+            </Button>
+          )}
         </div>
 
-        <PrivacyBanner />
+        {isGuest ? <GuestTrialBanner /> : <PrivacyBanner />}
 
         {/* Show tier comparison and subscription status for owners */}
-        {isOwner && !subscriptionStatus.subscribed && (
+        {!isGuest && isOwner && !subscriptionStatus.subscribed && (
           <div className="mb-8 grid gap-6 md:grid-cols-2">
             <TierComparisonCard />
             <SubscriptionStatus />
@@ -115,7 +128,7 @@ export default function Index() {
         )}
         
         {/* Show only subscription status for subscribed owners */}
-        {isOwner && subscriptionStatus.subscribed && (
+        {!isGuest && isOwner && subscriptionStatus.subscribed && (
           <div className="mb-8">
             <SubscriptionStatus />
           </div>

@@ -13,6 +13,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { BusinessProvider } from '@/contexts/BusinessContext';
 import { LocalOnlyModeProvider } from '@/contexts/LocalOnlyModeContext';
+import { GuestModeProvider } from '@/contexts/GuestModeContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 import Index from "./pages/Index";
@@ -31,6 +32,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <Router>
       <AuthProvider>
+        <GuestModeProvider>
         <BusinessProvider>
           <LanguageProvider>
             <CurrencyProvider>
@@ -63,6 +65,7 @@ const App = () => (
             </CurrencyProvider>
           </LanguageProvider>
         </BusinessProvider>
+        </GuestModeProvider>
       </AuthProvider>
     </Router>
   </QueryClientProvider>

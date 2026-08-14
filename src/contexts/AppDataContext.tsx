@@ -3,6 +3,8 @@ import { Product } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBusiness } from '@/contexts/BusinessContext';
 import { supabase } from '@/integrations/supabase/client';
+import { GUEST_BUSINESS_ID } from '@/contexts/GuestModeContext';
+import { guestStore, newGuestId } from '@/lib/guestStore';
 
 export interface SalesRecord {
   date: string;
@@ -94,6 +96,11 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return;
     }
 
+    if (businessId === GUEST_BUSINESS_ID) {
+      setProducts(guestStore.getProducts());
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('products')
@@ -116,6 +123,11 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const loadSalesHistory = React.useCallback(async () => {
     if (!businessId) {
       setSalesHistory([]);
+      return;
+    }
+
+    if (businessId === GUEST_BUSINESS_ID) {
+      setSalesHistory(guestStore.getSales());
       return;
     }
 
@@ -192,6 +204,14 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return;
     }
 
+    if (businessId === GUEST_BUSINESS_ID) {
+      const local: Product = { ...(product as Product), id: newGuestId() };
+      const next = [local, ...guestStore.getProducts()];
+      guestStore.setProducts(next);
+      setProducts(next);
+      return;
+    }
+
     const dbProduct = mapProductToDb(product, businessId);
     
     const { data, error } = await supabase
@@ -213,6 +233,13 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Update product in Supabase
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     if (!businessId) return;
+
+    if (businessId === GUEST_BUSINESS_ID) {
+      const next = guestStore.getProducts().map(p => (p.id === id ? { ...p, ...updates } : p));
+      guestStore.setProducts(next);
+      setProducts(next);
+      return;
+    }
 
     const dbUpdates: Record<string, any> = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
@@ -249,6 +276,13 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteProduct = async (id: string) => {
     if (!businessId) return;
 
+    if (businessId === GUEST_BUSINESS_ID) {
+      const next = guestStore.getProducts().filter(p => p.id !== id);
+      guestStore.setProducts(next);
+      setProducts(next);
+      return;
+    }
+
     const { error } = await supabase
       .from('products')
       .delete()
@@ -269,7 +303,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Add to sales history in Supabase
   const addToHistory = async (date: string, productId: string, deltaSold: number, deltaDiscarded: number) => {
-    if (!productId || !businessId || !user?.id) return;
+    const isGuestStore = businessId === GUEST_BUSINESS_ID;
+    if (!productId || !businessId || (!user?.id && !isGuestStore)) return;
 
     const recordDate = (date && /^\d{4}-\d{2}-\d{2}$/.test(date))
       ? date
@@ -286,6 +321,38 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       (costPerUnit * (1 + product.markupPercentage / 100));
     const profitPerUnit = sellingPrice - costPerUnit;
     const profitDelta = deltaSold * profitPerUnit;
+
+    if (isGuestStore) {
+      const sales = guestStore.getSales();
+      const idx = sales.findIndex(r => r.date === recordDate);
+
+      if (idx >= 0) {
+        const record = { ...sales[idx], products: [...sales[idx].products] };
+        const pIdx = record.products.findIndex(p => p.id === productId);
+        if (pIdx >= 0) {
+          record.products[pIdx] = {
+            ...record.products[pIdx],
+            quantitySold: (record.products[pIdx].quantitySold || 0) + deltaSold,
+            quantityDiscarded: (record.products[pIdx].quantityDiscarded || 0) + deltaDiscarded,
+          };
+        } else {
+          record.products.push({ ...product, quantitySold: deltaSold, quantityDiscarded: deltaDiscarded });
+        }
+        record.totalProfit = Number(record.totalProfit || 0) + profitDelta;
+        sales[idx] = record;
+      } else {
+        sales.unshift({
+          date: recordDate,
+          products: [{ ...product, quantitySold: deltaSold, quantityDiscarded: deltaDiscarded }],
+          totalProfit: profitDelta,
+        });
+      }
+
+      sales.sort((a, b) => (a.date < b.date ? 1 : -1));
+      guestStore.setSales(sales);
+      setSalesHistory([...sales]);
+      return;
+    }
 
     // Check if record exists for this date
     const { data: existingRecords } = await supabase
@@ -366,6 +433,10 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const clearAllData = async () => {
     if (!businessId) return;
 
+    if (businessId === GUEST_BUSINESS_ID) {
+      guestStore.setProducts([]);
+      guestStore.setSales([]);
+    } else {
     // Delete all products
     await supabase
       .from('products')
@@ -377,6 +448,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       .from('sales_history')
       .delete()
       .eq('business_id', businessId);
+    }
 
     setProducts([]);
     setSalesHistory([]);
@@ -398,18 +470,24 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const clearSalesData = async () => {
     if (!businessId) return;
 
-    // Reset quantitySold and quantityDiscarded for all products
-    const { error } = await supabase
-      .from('products')
-      .update({
-        quantity_sold: 0,
-        quantity_discarded: 0,
-      })
-      .eq('business_id', businessId);
+    if (businessId === GUEST_BUSINESS_ID) {
+      guestStore.setProducts(
+        guestStore.getProducts().map(p => ({ ...p, quantitySold: 0, quantityDiscarded: 0 }))
+      );
+    } else {
+      // Reset quantitySold and quantityDiscarded for all products
+      const { error } = await supabase
+        .from('products')
+        .update({
+          quantity_sold: 0,
+          quantity_discarded: 0,
+        })
+        .eq('business_id', businessId);
 
-    if (error) {
-      console.error('Error clearing sales data:', error);
-      return;
+      if (error) {
+        console.error('Error clearing sales data:', error);
+        return;
+      }
     }
 
     setProducts(prev => prev.map(product => ({

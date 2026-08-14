@@ -11,6 +11,7 @@ import {
 import { useAppData } from '@/contexts/AppDataContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocalOnlyMode } from '@/contexts/LocalOnlyModeContext';
+import { useGuestMode } from '@/contexts/GuestModeContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,6 +20,7 @@ export default function PrivacyCenter() {
   const { products, salesHistory } = useAppData();
   const { user, signOut } = useAuth();
   const { localOnly, setLocalOnly } = useLocalOnlyMode();
+  const { clearGuestData } = useGuestMode();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
 
@@ -42,6 +44,16 @@ export default function PrivacyCenter() {
   const deleteEverything = async () => {
     setDeleting(true);
     try {
+      // Guests have no account: wiping this device is a full delete
+      if (!user) {
+        clearGuestData();
+        localStorage.clear();
+        toast({ title: 'Everything deleted', description: 'All records on this phone are gone.' });
+        navigate('/');
+        window.location.reload();
+        return;
+      }
+
       const { error } = await supabase.functions.invoke('delete-account');
       if (error) throw error;
       localStorage.clear();
@@ -54,6 +66,7 @@ export default function PrivacyCenter() {
       setDeleting(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zimbabwe-lightGreen to-white p-4">

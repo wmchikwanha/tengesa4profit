@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useGuestMode } from '@/contexts/GuestModeContext';
 
 export interface SubscriptionPermissions {
   // Trial: Full access to everything
@@ -22,6 +23,27 @@ export interface SubscriptionPermissions {
 
 export const useSubscriptionPermissions = (): SubscriptionPermissions => {
   const { subscriptionStatus, user } = useAuth();
+  const { isGuest, guestDaysLeft } = useGuestMode();
+
+  // Guest (no account) users get the full 60-day local trial, minus account-only features
+  if (isGuest) {
+    return {
+      canUseReporting: true,
+      canShareReports: true,
+      canDownloadReports: true,
+      canAccessMarketplace: false,
+      canContactSuppliers: false,
+      canListProducts: false,
+      canUseEmployeeSystem: false,
+      canUseAIAssistant: false,
+      isTrial: true,
+      isFree: false,
+      isPremium: false,
+      trialDaysLeft: guestDaysLeft,
+      showUpgradePrompt: () => false,
+    };
+  }
+
   
   // Determine effective trial end with robust fallback that does not rely on visiting the subscription screen
   const storageKey = user ? `t4p:${user.id}:trialEnd` : null;
