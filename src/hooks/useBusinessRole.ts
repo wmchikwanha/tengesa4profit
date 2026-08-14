@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useGuestMode, GUEST_BUSINESS_ID } from '@/contexts/GuestModeContext';
 
 export type BusinessRole = 'owner' | 'employee' | null;
 
@@ -66,8 +67,17 @@ const NO_PERMISSIONS: BusinessPermissions = {
   canUseAIAssistant: false,
 };
 
+const GUEST_PERMISSIONS: BusinessPermissions = {
+  ...OWNER_PERMISSIONS,
+  // Guests work fully offline on this device: no staff, marketplace or AI (those need an account)
+  canManageStaff: false,
+  canAccessReports: false,
+  canUseAIAssistant: false,
+};
+
 export function useBusinessRole() {
   const { user } = useAuth();
+  const { isGuest, businessName } = useGuestMode();
   const [role, setRole] = useState<BusinessRole>(null);
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
@@ -76,6 +86,14 @@ export function useBusinessRole() {
 
   useEffect(() => {
     if (!user) {
+      if (isGuest) {
+        setRole('owner');
+        setBusinessId(GUEST_BUSINESS_ID);
+        setBusinessInfo({ id: GUEST_BUSINESS_ID, name: businessName, inviteCode: null });
+        setPermissions(GUEST_PERMISSIONS);
+        setLoading(false);
+        return;
+      }
       setRole(null);
       setBusinessId(null);
       setBusinessInfo(null);
@@ -83,6 +101,7 @@ export function useBusinessRole() {
       setLoading(false);
       return;
     }
+
 
     const fetchBusinessRole = async () => {
       setLoading(true);
@@ -147,7 +166,7 @@ export function useBusinessRole() {
     };
 
     fetchBusinessRole();
-  }, [user]);
+  }, [user, isGuest, businessName]);
 
   const createBusiness = async (name: string = 'My Business') => {
     if (!user) return { error: 'Not authenticated' };
