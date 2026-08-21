@@ -6,6 +6,23 @@ import { guestStore } from '@/lib/guestStore';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+export type MigrationStepKey = 'products' | 'sales' | 'cleanup';
+export type MigrationStepState = 'pending' | 'active' | 'done' | 'error';
+
+export interface MigrationStep {
+  key: MigrationStepKey;
+  label: string;
+  count: number;
+  state: MigrationStepState;
+}
+
+export interface MigrationStatus {
+  migrating: boolean;
+  finished: boolean;
+  error: string | null;
+  steps: MigrationStep[];
+}
+
 /**
  * When a former guest signs in / signs up, copy the data that lived only on their
  * phone into their new business, then wipe the local guest copy.
@@ -15,7 +32,12 @@ export function useGuestMigration() {
   const { businessId, isOwner } = useBusiness();
   const { clearGuestData } = useGuestMode();
   const { toast } = useToast();
-  const [migrating, setMigrating] = useState(false);
+  const [status, setStatus] = useState<MigrationStatus>({
+    migrating: false,
+    finished: false,
+    error: null,
+    steps: [],
+  });
   const done = useRef(false);
 
   useEffect(() => {
@@ -24,11 +46,24 @@ export function useGuestMigration() {
 
     done.current = true;
     const migrate = async () => {
-      setMigrating(true);
-      try {
-        const products = guestStore.getProducts();
-        const sales = guestStore.getSales();
+      const products = guestStore.getProducts();
+      const sales = guestStore.getSales();
 
+      const steps: MigrationStep[] = [
+        { key: 'products', label: 'Copying your products', count: products.length, state: 'pending' },
+        { key: 'sales', label: 'Copying your sales days', count: sales.length, state: 'pending' },
+        { key: 'cleanup', label: 'Finishing up', count: 0, state: 'pending' },
+      ];
+      const setStep = (key: MigrationStepKey, state: MigrationStepState) => {
+        const i = steps.findIndex(s => s.key === key);
+        if (i >= 0) steps[i] = { ...steps[i], state };
+        setStatus(s => ({ ...s, steps: [...steps] }));
+      };
+
+      setStatus({ migrating: true, finished: false, error: null, steps: [...steps] });
+
+      try {
+        setStep('products', 'active');
         if (products.length > 0) {
           const rows = products.map(p => ({
             business_id: businessId,
@@ -49,7 +84,9 @@ export function useGuestMigration() {
           const { error } = await supabase.from('products').insert(rows);
           if (error) throw error;
         }
+        setStep('products', 'done');
 
+        setStep('sales', 'active');
         if (sales.length > 0) {
           const rows = sales.map(s => ({
             business_id: businessId,
@@ -61,28 +98,38 @@ export function useGuestMigration() {
           const { error } = await supabase.from('sales_history').insert(rows);
           if (error) throw error;
         }
+        setStep('sales', 'done');
 
+        setStep('cleanup', 'active');
         clearGuestData();
+        setStep('cleanup', 'done');
+
+        setStatus(s => ({ ...s, migrating: false, finished: true }));
         toast({
           title: 'Your records are saved',
           description: 'Everything from your free trial is now in your account.',
         });
-        window.location.reload();
       } catch (error) {
         console.error('Guest data migration failed:', error);
         done.current = false;
+        const active = steps.find(s => s.state === 'active');
+        if (active) setStep(active.key, 'error');
+        setStatus(s => ({
+          ...s,
+          migrating: false,
+          finished: false,
+          error: 'We could not copy everything yet. Your records are still safe on this phone.',
+        }));
         toast({
           title: 'Could not save trial data yet',
           description: 'Your records are still safe on this phone. We will try again next time.',
           variant: 'destructive',
         });
-      } finally {
-        setMigrating(false);
       }
     };
 
     migrate();
   }, [user?.id, businessId, isOwner]);
 
-  return { migrating };
+  return { migrating: status.migrating, status };
 }
