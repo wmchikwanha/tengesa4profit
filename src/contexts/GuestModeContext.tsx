@@ -99,19 +99,44 @@ export const GuestModeProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setBusinessNameState('My Business');
   }, []);
 
-  const daysLeft = daysLeftFrom(guestStartedAt);
+  // Live ticking clock so the countdown is correct after reloads, tab wake-ups
+  // and any clock change on the phone.
+  const [now, setNow] = React.useState(() => Date.now());
+  React.useEffect(() => {
+    const tick = () => setNow(Date.now());
+    const id = window.setInterval(tick, 60 * 1000);
+    document.addEventListener('visibilitychange', tick);
+    window.addEventListener('focus', tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+      window.removeEventListener('focus', tick);
+    };
+  }, []);
+
+  const msLeft = React.useMemo(() => {
+    void now;
+    return remainingMs(guestStartedAt);
+  }, [guestStartedAt, now]);
+
+  const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+  const hoursLeft = Math.ceil(msLeft / (1000 * 60 * 60));
+  const endMs = endTime(guestStartedAt);
   const hasGuestSession = !user && !!guestStartedAt;
 
   const value: GuestModeContextType = {
-    isGuest: hasGuestSession && daysLeft > 0,
-    guestExpired: hasGuestSession && daysLeft === 0,
+    isGuest: hasGuestSession && msLeft > 0,
+    guestExpired: hasGuestSession && msLeft === 0,
     guestStartedAt,
     guestDaysLeft: daysLeft,
+    guestEndsAt: endMs === null ? null : new Date(endMs),
+    guestHoursLeft: hoursLeft,
     businessName,
     startGuest,
     setBusinessName,
     clearGuestData,
   };
+
 
   return <GuestModeContext.Provider value={value}>{children}</GuestModeContext.Provider>;
 };
