@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { GUEST_TRIAL_DAYS } from '@/contexts/GuestModeContext';
+import { GuestDataTools } from '@/components/guest/GuestDataTools';
 import { Lock } from 'lucide-react';
+
 
 export const GuestExpiredWall: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +32,12 @@ export const GuestExpiredWall: React.FC = () => {
           <Button variant="outline" className="w-full" onClick={() => navigate('/auth')}>
             I already have an account
           </Button>
+          <div className="pt-2 border-t">
+            <p className="text-xs text-muted-foreground mb-2">
+              Prefer to keep a copy or start fresh? These only affect this phone.
+            </p>
+            <GuestDataTools layout="stacked" />
+          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -43,3 +51,4 @@ export const GuestExpiredWall: React.FC = () => {
     </div>
   );
 };
+
