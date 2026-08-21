@@ -22,6 +22,7 @@ import { GuestWelcome } from '@/components/guest/GuestWelcome';
 import { GuestExpiredWall } from '@/components/guest/GuestExpiredWall';
 import { GuestTrialBanner } from '@/components/guest/GuestTrialBanner';
 import { useGuestMigration } from '@/hooks/useGuestMigration';
+import { GuestMigrationScreen } from '@/components/guest/GuestMigrationScreen';
 
 export default function Index() {
   const { user, loading, signOut, subscriptionStatus } = useAuth();
@@ -30,8 +31,10 @@ export default function Index() {
   const { isTrial, isFree, trialDaysLeft } = useSubscriptionPermissions();
   const { trackEvent } = useAnalytics();
   const { isGuest, guestExpired } = useGuestMode();
-  useGuestMigration();
+  const { status: migrationStatus } = useGuestMigration();
+  const [migrationDismissed, setMigrationDismissed] = React.useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     if (user && hasBusiness) {
