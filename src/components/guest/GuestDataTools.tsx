@@ -38,8 +38,8 @@ export const GuestDataTools: React.FC<Props> = ({ layout = 'inline' }) => {
   };
 
   const handleReset = () => {
-    exportGuestData;
     clearGuestData();
+
     toast({
       title: 'This phone is now empty',
       description: 'All guest records were removed from this device.',
