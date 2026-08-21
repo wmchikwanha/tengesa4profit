@@ -59,11 +59,23 @@ export default function Index() {
     );
   }
 
+  // Copying guest records into a brand new account — show progress
+  if (
+    user &&
+    !migrationDismissed &&
+    (migrationStatus.migrating || (migrationStatus.steps.length > 0 && (migrationStatus.finished || migrationStatus.error)))
+  ) {
+    return (
+      <GuestMigrationScreen status={migrationStatus} onContinue={() => setMigrationDismissed(true)} />
+    );
+  }
+
   // No account: offer the free 60-day guest run, or the sign-up wall once it ends
   if (!user) {
     if (guestExpired) return <GuestExpiredWall />;
     if (!isGuest) return <GuestWelcome />;
   }
+
 
   // If user doesn't have a business, show the join/create flow
   if (!hasBusiness && user) {
