@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { GUEST_TRIAL_DAYS } from '@/contexts/GuestModeContext';
+import { GuestDataTools } from '@/components/guest/GuestDataTools';
 import { Lock } from 'lucide-react';
+
 
 export const GuestExpiredWall: React.FC = () => {
   const navigate = useNavigate();
