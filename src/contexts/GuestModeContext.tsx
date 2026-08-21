@@ -19,6 +19,10 @@ interface GuestModeContextType {
   guestExpired: boolean;
   guestStartedAt: string | null;
   guestDaysLeft: number;
+  /** Exact end date of the free window (null when no guest session). */
+  guestEndsAt: Date | null;
+  /** Hours left within the current day, for the final 48h. */
+  guestHoursLeft: number;
   businessName: string;
   startGuest: () => void;
   setBusinessName: (name: string) => void;
@@ -34,12 +38,19 @@ export const useGuestMode = () => {
   return ctx;
 };
 
-const daysLeftFrom = (startedAt: string | null) => {
-  if (!startedAt) return 0;
-  const end = new Date(startedAt).getTime() + GUEST_TRIAL_DAYS * 24 * 60 * 60 * 1000;
-  const diff = end - Date.now();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+const endTime = (startedAt: string | null) => {
+  if (!startedAt) return null;
+  const start = new Date(startedAt).getTime();
+  if (Number.isNaN(start)) return null;
+  return start + GUEST_TRIAL_DAYS * 24 * 60 * 60 * 1000;
 };
+
+const remainingMs = (startedAt: string | null) => {
+  const end = endTime(startedAt);
+  if (end === null) return 0;
+  return Math.max(0, end - Date.now());
+};
+
 
 export const GuestModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
