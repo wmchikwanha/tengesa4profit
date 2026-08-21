@@ -30,6 +30,12 @@ export const GuestExpiredWall: React.FC = () => {
           <Button variant="outline" className="w-full" onClick={() => navigate('/auth')}>
             I already have an account
           </Button>
+          <div className="pt-2 border-t">
+            <p className="text-xs text-muted-foreground mb-2">
+              Prefer to keep a copy or start fresh? These only affect this phone.
+            </p>
+            <GuestDataTools layout="stacked" />
+          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -43,3 +49,4 @@ export const GuestExpiredWall: React.FC = () => {
     </div>
   );
 };
+
