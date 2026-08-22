@@ -106,6 +106,8 @@ export type Database = {
           buying_price: number
           created_at: string | null
           description: string | null
+          entry_currency: string
+          entry_rate: number
           id: string
           markup_percentage: number | null
           name: string
@@ -125,6 +127,8 @@ export type Database = {
           buying_price?: number
           created_at?: string | null
           description?: string | null
+          entry_currency?: string
+          entry_rate?: number
           id?: string
           markup_percentage?: number | null
           name: string
@@ -144,6 +148,8 @@ export type Database = {
           buying_price?: number
           created_at?: string | null
           description?: string | null
+          entry_currency?: string
+          entry_rate?: number
           id?: string
           markup_percentage?: number | null
           name?: string

@@ -6,6 +6,25 @@ export interface FormTranslations {
   currency: string;
   exchangeRate: string;
   enterExchangeRate: string;
+
+  // Currency safeguards
+  rateLastUpdated?: string;
+  enteringPricesIn?: string;
+  savedAtRate?: string;
+  rateCheckTitle?: string;
+  rateCheckBody?: string;
+  rateCheckTo?: string;
+  rateCheckQuestion?: string;
+  rateCheckFix?: string;
+  rateCheckConfirm?: string;
+  rateStaleTitle?: string;
+  rateStaleBody?: string;
+  rateStaleNever?: string;
+  updateRateNow?: string;
+  dismissForToday?: string;
+  realProfitUsd?: string;
+  rateMovedNote?: string;
+
   cancel?: string;
   add?: string;
   
