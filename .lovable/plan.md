@@ -1,76 +1,43 @@
-## Plan: Agentic Features + Privacy Trust Layer
+# Currency Safeguards for Zimbabwe Trading Reality
 
-### Part 1 — Four Agentic Modules
+## The problem today (verified in code)
 
-All four run on the existing Lovable AI Gateway path used by `AIAssistant.tsx`. No new edge functions — reuse the existing chat endpoint with structured system prompts. Each agent is a **button on the AI Assistant panel** ("Quick Agents") that pre-fills a specialized query with the user's real business data (sales, products, stock).
+- Every product price (`buyingPrice`, `transportCost`, `stallFee`, `sellingPrice`) is stored as a plain number with **no currency tag**. `ProductForm` has no currency logic at all.
+- The app has one global rate (`CurrencyContext`, saved in `localStorage`) used **only for display**. Switching to ZWL just multiplies all stored numbers by the rate.
+- So if a trader is in ZWL mode and types a ZWL buying price, it is stored as if it were USD, then multiplied by the rate again on screen. Costs and profit become wrong by a factor of the rate, silently.
+- The rate has no date and never expires. A rate typed weeks ago keeps re-pricing today's stock with no warning.
+- Profit mixes goods bought at an old rate with sales made at a new rate, with nothing showing the trader that this happened.
 
-**1. Daily Closing Agent** — End-of-day summary
-- Button: "Close today's books"
-- Pulls today's sales + starting stock, sends to AI with a closing-agent system prompt
-- Output: today's revenue, profit, discrepancies (bought vs sold), tomorrow's restock list
+These are exactly the traps that knock an informal trader off kilter. Fixes below stay simple and visual — no accounting jargon.
 
-**2. Restock Forecasting Agent**
-- Button: "What should I buy?"
-- Computes 14-day sales velocity per product client-side, sends top movers to AI
-- Output: predicted stock-out dates + suggested quantities
+## What we build
 
-**3. Price Negotiation Coach**
-- Button: "Help me negotiate"
-- Modal asks: product + supplier's offer
-- AI returns counter-offer + bilingual script (English/Shona/Ndebele based on user's language)
+### 1. Money always knows its currency
+Every price entered is stamped with the currency it was typed in plus the rate in force at that moment. Under the hood everything still settles to a single USD base figure, so totals and profit never double-convert. The trader just sees "You are entering prices in USD / ZWL" right above the price fields, matching the currency switch.
 
-**4. Spoilage + Cash-Flow Watchdog**
-- Button: "Check my business health"
-- Analyzes stock aging, discard patterns (products deleted after being added), inflow vs outflow
-- Output: warnings + concrete actions
+### 2. Rate freshness reminder
+The rate gets a "last updated" date. If it is older than 3 days, a soft yellow strip appears at the top: "Your ZWL rate is from 18/08. Is it still correct?" with an Update button. No blocking, one tap to fix or dismiss for the day.
 
-**Implementation:** One new file `src/lib/agents.ts` with 4 prompt builders. Modify `AIAssistant.tsx` to add a "Quick Agents" row of 4 chips above the free-text input. Each chip → builds the specialized prompt → sends via existing chat flow. Track each via `trackEvent('agent_used', { agent: 'daily_closing' })`.
+### 3. Sanity check on the rate
+If a newly typed rate is more than 30% away from the previous one, ask once: "You changed the rate from 1 200 to 30 000. Is that right?" Catches missing or extra zeros, the most common and most damaging typo.
 
-### Part 2 — Privacy Center + Trust Layer
+### 4. Silent-loss warning on ZWL sales
+When a product was bought at an older rate and is now being sold after the rate has moved, the sale row shows a small note: "Rate moved since you bought this — your real profit is X, not Y." Plain numbers only.
 
-**A. New page: `/privacy-center`** (`src/pages/PrivacyCenter.tsx`)
-Sections:
-- "Your Data, Your Control" hero (multilingual)
-- What we store / what we never store (plain language)
-- **Export all my data** button → downloads JSON of products + sales
-- **Delete everything** button → wired to existing delete-account edge function
-- **Local-Only Mode** toggle (see D)
-- Link to AI Transparency Log
+### 5. Real profit in USD, always visible
+The Daily Summary keeps its current headline but adds one small line underneath: the same profit expressed in USD at today's rate. This is the number that tells a Zimbabwean trader whether they actually made money or just held depreciating cash.
 
-**B. Home banner** — dismissible strip on `Index.tsx`: "🔒 Your data stays private — [Privacy Center →]". Uses localStorage `privacy_banner_dismissed`.
+### 6. Rounding that matches the street
+ZWL amounts display as whole numbers with thousand separators (no cents — nobody prices in ZWL cents). USD keeps 2 decimals. Change and totals never show misleading fractions.
 
-**C. Route + nav** — add to `App.tsx`; link from Settings/Profile menu and AboutDialog.
+### 7. Change-of-currency guard
+Switching USD to ZWL while a form is half filled clears nothing but shows: "Prices you type now are in ZWL." Prevents the mixed-entry mistake at its source.
 
-**D. Local-Only Mode**
-- New context `LocalOnlyModeContext` reading `localStorage.local_only_mode`
-- When ON: `useProducts`/sales hooks skip Supabase writes, use localStorage only
-- Big warning modal on enable: "Multi-device sync will stop. Employees won't see your data."
-- Simplest safe approach: gate Supabase mutations behind `if (!localOnly)` in the existing hooks — reads still work but writes go to localStorage mirror. Include disable toggle to restore cloud.
-- *Scoped implementation:* wire the toggle + context + UI warnings; add the guard in `useSupabaseProducts` and `useSupabaseSalesHistory` write functions to short-circuit to localStorage. Full offline data parity is a follow-up if the user wants deeper coverage.
+## Technical notes
 
-**E. AI Transparency Log**
-- Every AI call already goes through `AIAssistant.tsx`. Add a collapsible "🔍 What was sent" accordion below each assistant message showing the exact context payload (product counts, sales numbers — anonymized, no supplier/customer names).
-- Store last 20 payloads in `sessionStorage` (never persisted server-side).
-
-### Files
-
-**New:**
-- `src/lib/agents.ts` — 4 prompt builders
-- `src/pages/PrivacyCenter.tsx`
-- `src/contexts/LocalOnlyModeContext.tsx`
-- `src/components/PrivacyBanner.tsx`
-
-**Edited:**
-- `src/components/AIAssistant.tsx` — Quick Agents chips + transparency accordion
-- `src/App.tsx` — route + LocalOnlyMode provider
-- `src/pages/Index.tsx` — banner mount
-- `src/hooks/useSupabaseProducts.ts` — local-only write guard
-- `src/hooks/useSupabaseSalesHistory.ts` — local-only write guard
-- `src/components/AboutDialog.tsx` — Privacy Center link
-
-### Not in scope
-- No new DB tables (transparency log is client-only, agents reuse existing AI path)
-- No new edge functions
-- Language translations for new copy: English first; Shona/Ndebele strings added to existing i18n where trivial, otherwise English fallback.
-
-Ready to build on approval.
+- `Product` gains `entryCurrency` and `entryRate`; `calculateProduct` normalises to USD base before all maths. Existing rows default to `USD` / rate `1`, so current data stays correct.
+- `CurrencySettings` gains `rateUpdatedAt` and `previousRate`; the sanity check and freshness strip read from these.
+- Add `formatPrice` variants: ZWL to 0 decimals with locale grouping, USD to 2.
+- New `src/components/currency/RateFreshnessBar.tsx` and a confirm dialog inside `CurrencySelector`.
+- Guest local store and Supabase both persist the two new product fields; a migration adds nullable `entry_currency` / `entry_rate` columns with USD/1 defaults.
+- All new strings translated in English, Shona and Ndebele.
